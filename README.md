@@ -1,4 +1,4 @@
 durham-seg-group-3
 ==================
 
-Here will be the things
+Here will be the things.
