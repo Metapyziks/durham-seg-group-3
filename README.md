@@ -1,2 +1,4 @@
-durham-ceg-group-3
+durham-seg-group-3
 ==================
+
+Here will be the things
