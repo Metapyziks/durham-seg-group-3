@@ -1,6 +1,5 @@
 package com.meta.gpstestthing;
 
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.location.LocationProvider;
@@ -23,17 +22,17 @@ public class MainActivity extends Activity
 		
 		public void onLocationChanged( Location location )
 		{
-			myContext.println( "New loc: " + location.toString() );
+			myContext.println( "new loc: " + location.toString() );
 		}
 
 		public void onProviderDisabled( String provider )
 		{
-			myContext.println( "Provider \"" + provider + "\" disabled." );			
+			myContext.println( "provider \"" + provider + "\" disabled." );			
 		}
 
 		public void onProviderEnabled( String provider )
 		{
-			myContext.println( "Provider \"" + provider + "\" enabled." );
+			myContext.println( "provider \"" + provider + "\" enabled." );
 		}
 
 		public void onStatusChanged( String provider, int status, Bundle extras )
@@ -57,7 +56,7 @@ public class MainActivity extends Activity
         
         try
         {        	
-	        println( "Getting location manager\n" );
+	        println( "getting location manager\n" );
 	        myLocManager = (LocationManager) this.getSystemService( Context.LOCATION_SERVICE );
 	        
 	        LocationProvider provider = myLocManager.getProvider( LocationManager.GPS_PROVIDER );
@@ -65,6 +64,7 @@ public class MainActivity extends Activity
 	        
 	        myLocListener = new GPSLocationListener( this );
 	        myLocManager.requestLocationUpdates( provider.getName(), 1000, 100.0f, myLocListener );
+			println( "new listener added" );
         }
         catch( Exception ex )
         {
