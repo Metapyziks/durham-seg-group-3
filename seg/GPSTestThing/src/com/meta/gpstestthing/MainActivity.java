@@ -46,38 +46,38 @@ public class MainActivity extends Activity
 	private LocationManager myLocManager;
 	private GPSLocationListener myLocListener;
 	
-    @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
-        super.onCreate(savedInstanceState);
-        
-        myTextView = new TextView( this );
-        this.setContentView( myTextView );
-        
-        try
-        {        	
-	        println( "getting location manager\n" );
-	        myLocManager = (LocationManager) this.getSystemService( Context.LOCATION_SERVICE );
-	        
-	        LocationProvider provider = myLocManager.getProvider( LocationManager.GPS_PROVIDER );
-	        println( "provider \"" + provider + "\" enabled: " + myLocManager.isProviderEnabled( provider.getName() ) );
-	        
-	        myLocListener = new GPSLocationListener( this );
-	        myLocManager.requestLocationUpdates( provider.getName(), 1000, 100.0f, myLocListener );
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		
+		myTextView = new TextView( this );
+		this.setContentView( myTextView );
+		
+		try
+		{			
+			println( "getting location manager\n" );
+			myLocManager = (LocationManager) this.getSystemService( Context.LOCATION_SERVICE );
+			
+			LocationProvider provider = myLocManager.getProvider( LocationManager.GPS_PROVIDER );
+			println( "provider \"" + provider + "\" enabled: " + myLocManager.isProviderEnabled( provider.getName() ) );
+			
+			myLocListener = new GPSLocationListener( this );
+			myLocManager.requestLocationUpdates( provider.getName(), 1000, 100.0f, myLocListener );
 			println( "new listener added" );
-        }
-        catch( Exception ex )
-        {
-        	println( "It done broked: " + ex.toString() );
-        	for( StackTraceElement el : ex.getStackTrace() )
-        	{
-        		println( el.toString() );
-        	}
-        }
-    }
-    
-    public void println( String line )
-    {
-    	myTextView.setText( myTextView.getText() + line + "\n" );
-    }
+		}
+		catch( Exception ex )
+		{
+			println( "It done broked: " + ex.toString() );
+			for( StackTraceElement el : ex.getStackTrace() )
+			{
+				println( el.toString() );
+			}
+		}
+	}
+	
+	public void println( String line )
+	{
+		myTextView.setText( myTextView.getText() + line + "\n" );
+	}
 }
