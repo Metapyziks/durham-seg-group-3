@@ -7,3 +7,9 @@
 *.ear
 
 seg/GPSTestThing/bin/
+
+*.suo
+
+seg/TestServer/TestServer/bin
+seg/TestServer/TestServer/obj
+seg/TestServer/TestServer/*.user
