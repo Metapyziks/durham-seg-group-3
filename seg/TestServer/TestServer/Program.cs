@@ -63,7 +63,8 @@ namespace TestServer
 
         static void ProcessRequest( HttpListenerContext context )
         {
-            Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.Address.MapToIPv4().ToString() );
+            Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.Address.MapToIPv4().ToString() + " : " + context.Request.RawUrl );
+            
             String url = context.Request.RawUrl;
             int pathEnd = url.IndexOf( '.' );
             if ( pathEnd == -1 )
@@ -71,16 +72,36 @@ namespace TestServer
             if ( pathEnd == -1 )
                 pathEnd = url.Length;
 
-            RequestType requestType = RequestType.Get( url.Substring( 1, pathEnd - 1 ) );
+            String requestTypeString = url.Substring( 1, pathEnd - 1 );
 
-            if ( requestType != null )
+            StreamWriter writer = new StreamWriter( context.Response.OutputStream );
+            if ( requestTypeString.StartsWith( "api/" ) )
             {
-                StreamWriter writer = new StreamWriter( context.Response.OutputStream );
-                object response = requestType.Respond( context.Request.QueryString );
+                requestTypeString = requestTypeString.Substring( 4 );
+                RequestType requestType = RequestType.Get( requestTypeString );
+                object response;
+                if ( requestType != null )
+                    response = requestType.Respond( context.Request.QueryString );
+                else
+                    response = new Responses.ErrorResponse( "invalid request type (" + requestTypeString + ")" );
+
                 writer.WriteLine( JSONSerializer.Serialize( response ) );
-                writer.Flush();
-                context.Response.OutputStream.Close();
             }
+            else
+            {
+                String path = "Content" + context.Request.RawUrl;
+
+                if ( requestTypeString.Length == 0 )
+                    path = "Content/index.html";
+
+                if ( !File.Exists( path ) )
+                    path = "Content/404.html";
+
+                writer.WriteLine( File.ReadAllText( path ) );
+            }
+
+            writer.Flush();
+            context.Response.OutputStream.Close();
         }
     }
 }
