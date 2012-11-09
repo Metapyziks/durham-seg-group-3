@@ -46,6 +46,25 @@ namespace TestServer
                 return;
             }
 
+            if ( obj is DateTime )
+            {
+                builder.Append( ( ( (DateTime) obj ).ToUniversalTime() -
+                    Tools.UnixEpoch ).TotalSeconds.ToString() );
+                return;
+            }
+
+            if ( obj is Enum )
+            {
+                builder.Append( ( (Enum) obj ).ToString() );
+                return;
+            }
+
+            if ( obj.IsNumerical() )
+            {
+                builder.Append( obj.ToString() );
+                return;
+            }
+
             if ( obj is Array )
             {
                 builder.Append( "[" );

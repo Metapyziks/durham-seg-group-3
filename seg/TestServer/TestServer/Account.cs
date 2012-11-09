@@ -10,11 +10,12 @@ namespace TestServer
     enum Rank : byte
     {
         Unverified = 0,
-        User = 1,
+        Verified = 1,
         Admin = 3,
         Owner = 7
     }
 
+    [Serializable]
     [DatabaseEntity( "Account", Account.Fields.AccountID,
         Account.Fields.AccountID,
         Account.Fields.Username,
@@ -76,12 +77,31 @@ namespace TestServer
             return true;
         }
 
+        [Serialize( "accountid" )]
         public int AccountID;
+        [Serialize( "uname" )]
         public String Username;
         public char[] PasswordHash;
         public String Email;
+        [Serialize( "regdate" )]
         public DateTime RegistrationDate;
+        [Serialize( "rank" )]
         public Rank Rank;
+
+        public bool IsVerified
+        {
+            get { return Rank.HasFlag( Rank.Verified ); }
+        }
+
+        public bool IsAdmin
+        {
+            get { return Rank.HasFlag( Rank.Admin ); }
+        }
+
+        public bool IsOwner
+        {
+            get { return Rank.HasFlag( Rank.Owner ); }
+        }
 
         public string GetField( string fieldName )
         {

@@ -16,5 +16,10 @@ namespace TestServer.Responses
         {
             Message = message;
         }
+
+        public ErrorResponse( String format, params Object[] args )
+        {
+            Message = String.Format( format, args );
+        }
     }
 }
