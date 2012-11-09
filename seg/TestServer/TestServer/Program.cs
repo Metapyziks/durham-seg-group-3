@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Nini.Ini;
+
 namespace TestServer
 {
     class Program
@@ -17,28 +19,34 @@ namespace TestServer
         {
             stActive = true;
 
+            if ( !File.Exists( "config.ini" ) )
+                Console.WriteLine( "WARNING: config.ini not found, some features may not function" );
+            else
+            {
+                IniDocument ini = new IniDocument( "config.ini" );
+                EmailManager.CreateClient( ini.Sections[ "smtp" ] );
+            }
+
             DatabaseManager.Connect();
 
             Thread clientThread = new Thread( async () =>
             {
+                HttpListener listener = new HttpListener();
+                listener.Prefixes.Add( "http://+:8080/" );
+                listener.Start();
+
+                Console.WriteLine( "Http server started and ready for requests" );
+
+                while ( stActive )
                 {
-                    HttpListener listener = new HttpListener();
-                    listener.Prefixes.Add( "http://+:8080/" );
-                    listener.Start();
+                    Task<HttpListenerContext> ctxTask = listener.GetContextAsync();
 
-                    Console.WriteLine( "Http server started and ready for requests" );
+                    while ( !ctxTask.IsCompleted && stActive ) ;
 
-                    while ( stActive )
-                    {
-                        Task<HttpListenerContext> ctxTask = listener.GetContextAsync();
+                    if ( !stActive )
+                        break;
 
-                        while ( !ctxTask.IsCompleted && stActive ) ;
-
-                        if ( !stActive )
-                            break;
-
-                        ProcessRequest( await ctxTask );
-                    }
+                    ProcessRequest( await ctxTask );
                 }
             } );
             clientThread.Start();

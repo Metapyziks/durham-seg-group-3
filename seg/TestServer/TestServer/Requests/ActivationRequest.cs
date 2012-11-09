@@ -36,8 +36,10 @@ namespace TestServer.Requests
             VerifyRequest[] requests = DatabaseManager.Select<VerifyRequest>( null,
                 String.Format( "AccountID = '{0}'", accounts[ 0 ].AccountID.ToString() ) );
 
-            if ( requests.Length == 0 || String.Join( "", requests.Last().ValidationString ) != code )
+            if ( requests.Length == 0 || String.Join( "", requests.Last().ValidationCode ) != code )
                 return new Responses.ErrorResponse( "incorrect activation code" );
+
+            DatabaseManager.Delete<VerifyRequest>( requests );
 
             accounts[ 0 ].Rank = Rank.Verified;
             DatabaseManager.Update( accounts[ 0 ] );

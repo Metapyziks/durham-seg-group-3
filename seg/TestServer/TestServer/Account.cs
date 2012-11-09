@@ -83,7 +83,7 @@ namespace TestServer
         public String Username { get; set; }
         public char[] PasswordHash { get; set; }
         public String Email { get; set; }
-        [Serialize( "regdate" )]
+        [Serialize( "joindate" )]
         public DateTime RegistrationDate { get; set; }
         [Serialize( "rank" )]
         public Rank Rank { get; set; }

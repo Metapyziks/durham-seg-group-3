@@ -13,3 +13,4 @@ seg/GPSTestThing/bin/
 seg/TestServer/TestServer/bin
 seg/TestServer/TestServer/obj
 seg/TestServer/TestServer/*.user
+seg/TestServer/TestServer/config.ini

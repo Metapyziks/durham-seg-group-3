@@ -150,6 +150,31 @@ namespace TestServer
                 entity.GetField( entAttrib.PrimaryKey ) ) );
         }
 
+        public static int Delete<T>( IEnumerable<T> entities )
+            where T : IDatabaseEntity
+        {
+            Type t = typeof( T );
+
+            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+                throw new Exception( t.FullName + " is not a valid database entity type" );
+
+            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+
+            StringBuilder condBuilder = new StringBuilder();
+            bool first = true;
+            foreach ( T entity in entities )
+            {
+                if ( !first )
+                    condBuilder.Append( " OR " );
+                else
+                    first = false;
+                
+                condBuilder.AppendFormat( "{0}='{1}'", entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
+            }
+
+            return Delete<T>( condBuilder.ToString() );
+        }
+
         public static int Delete<T>( String condition )
             where T : IDatabaseEntity
         {

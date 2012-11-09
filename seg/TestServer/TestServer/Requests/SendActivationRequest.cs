@@ -32,7 +32,10 @@ namespace TestServer.Requests
             DatabaseManager.Delete<VerifyRequest>( String.Format( "{0}='{1}'",
                 VerifyRequest.Fields.AccountID, accounts[ 0 ].AccountID ) );
 
-            DatabaseManager.Insert( VerifyRequest.Create( accounts[ 0 ] ) );
+            VerifyRequest verify = VerifyRequest.Create( accounts[ 0 ] );
+            DatabaseManager.Insert( verify );
+
+            verify.SendEmail( accounts[ 0 ] );
 
             return new Responses.AcknowledgeResponse( true );
         }

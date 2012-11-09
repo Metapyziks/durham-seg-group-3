@@ -55,7 +55,12 @@ namespace TestServer.Requests
             };
 
             DatabaseManager.Insert( account );
-            DatabaseManager.Insert( VerifyRequest.Create( account ) );
+
+            account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
+            VerifyRequest verify = VerifyRequest.Create( account );
+            DatabaseManager.Insert( verify );
+
+            verify.SendEmail( account );
 
             return new Responses.AcknowledgeResponse( true );
         }

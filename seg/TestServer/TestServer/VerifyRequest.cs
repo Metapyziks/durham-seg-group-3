@@ -9,7 +9,7 @@ namespace TestServer
     [DatabaseEntity( "VerifyRequest", VerifyRequest.Fields.VerifyRequestID,
         VerifyRequest.Fields.VerifyRequestID,
         VerifyRequest.Fields.AccountID,
-        VerifyRequest.Fields.ValidationString,
+        VerifyRequest.Fields.ValidationCode,
         VerifyRequest.Fields.SentDate
     )]
     class VerifyRequest : IDatabaseEntity
@@ -20,11 +20,11 @@ namespace TestServer
         {
             public const String VerifyRequestID = "VerifyRequestID";
             public const String AccountID = "AccountID";
-            public const String ValidationString = "ValidationString";
+            public const String ValidationCode = "ValidationCode";
             public const String SentDate = "SentDate";
         }
 
-        public static char[] GenerateValidationString()
+        public static char[] GenerateValidationCode()
         {
             char[] str = new char[ 32 ];
             for ( int i = 0; i < 32; ++i )
@@ -41,14 +41,14 @@ namespace TestServer
             return new VerifyRequest()
             {
                 AccountID = account.AccountID,
-                ValidationString = GenerateValidationString(),
+                ValidationCode = GenerateValidationCode(),
                 SentDate = DateTime.Now
             };
         }
 
         public int VerifyRequestID { get; private set; }
         public int AccountID { get; set; }
-        public char[] ValidationString { get; set; }
+        public char[] ValidationCode { get; set; }
         public DateTime SentDate { get; set; }
 
         public string GetField( string fieldName )
@@ -59,8 +59,8 @@ namespace TestServer
                     return VerifyRequestID.ToString();
                 case Fields.AccountID:
                     return AccountID.ToString();
-                case Fields.ValidationString:
-                    return String.Join( "", ValidationString );
+                case Fields.ValidationCode:
+                    return String.Join( "", ValidationCode );
                 case Fields.SentDate:
                     return SentDate.ToString();
                 default:
@@ -76,11 +76,21 @@ namespace TestServer
                     VerifyRequestID = Convert.ToInt32( value ); break;
                 case Fields.AccountID:
                     AccountID = Convert.ToInt32( value ); break;
-                case Fields.ValidationString:
-                    ValidationString = Convert.ToString( value ).ToCharArray(); break;
+                case Fields.ValidationCode:
+                    ValidationCode = Convert.ToString( value ).ToCharArray(); break;
                 case Fields.SentDate:
                     SentDate = Convert.ToDateTime( value ); break;
             }
+        }
+
+        public void SendEmail( Account account )
+        {
+            EmailManager.Send( account.Email, "TestServer account activation", String.Format(
+@"Hey {0},
+
+To finish the registration process just click this link: http://94.194.89.32/api/activate?email={1}&code={2}
+
+Have fun!", account.Username, account.Email, String.Join( "", ValidationCode ) ) );
         }
     }
 }
