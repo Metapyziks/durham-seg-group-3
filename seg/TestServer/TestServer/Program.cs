@@ -13,6 +13,8 @@ namespace TestServer
 {
     class Program
     {
+        public static String ServerAddress = null;
+
         static bool stActive;
 
         static void Main( String[] args )
@@ -24,6 +26,9 @@ namespace TestServer
             else
             {
                 IniDocument ini = new IniDocument( "config.ini" );
+
+                ServerAddress = ini.Sections[ "general" ].GetValue( "address" );
+
                 EmailManager.CreateClient( ini.Sections[ "smtp" ] );
             }
 

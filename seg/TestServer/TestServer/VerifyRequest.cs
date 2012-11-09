@@ -88,9 +88,9 @@ namespace TestServer
             EmailManager.Send( account.Email, "TestServer account activation", String.Format(
 @"Hey {0},
 
-To finish the registration process just click this link: http://94.194.89.32/api/activate?email={1}&code={2}
+To finish the registration process just click this link: {1}api/activate?email={2}&code={3}
 
-Have fun!", account.Username, account.Email, String.Join( "", ValidationCode ) ) );
+Have fun!", account.Username, Program.ServerAddress, account.Email, String.Join( "", ValidationCode ) ) );
         }
     }
 }

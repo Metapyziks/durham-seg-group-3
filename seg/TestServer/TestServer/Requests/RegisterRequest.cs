@@ -35,7 +35,7 @@ namespace TestServer.Requests
                 return new Responses.ErrorResponse( "invalid email address" );
 
             Account[] clashes = DatabaseManager.Select<Account>( null,
-                String.Format( "Username = '{0}' OR Email ='{1}'", uname, email ) );
+                String.Format( "Username='{0}' OR Email='{1}'", uname, email ) );
 
             if ( clashes.Length > 0 )
             {
