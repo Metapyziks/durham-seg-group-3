@@ -21,14 +21,14 @@ namespace TestServer
     class DatabaseEntityAttribute : Attribute
     {
         public readonly String EntityName;
-        public readonly String PublicKey;
+        public readonly String PrimaryKey;
         public readonly String[] FieldNames;
 
         public DatabaseEntityAttribute( String entityName, String publicKey,
             params String[] fieldNames )
         {
             EntityName = entityName;
-            PublicKey = publicKey;
+            PrimaryKey = publicKey;
             FieldNames = fieldNames;
         }
     }
@@ -77,6 +77,8 @@ namespace TestServer
                 entities.Add( entity );
             }
 
+            reader.Close();
+
             return entities.ToArray();
         }
 
@@ -94,7 +96,7 @@ namespace TestServer
             Dictionary<String, String> fieldDict = new Dictionary<String, String>();
             foreach ( String field in entAttrib.FieldNames )
             {
-                if( field == entAttrib.PublicKey )
+                if( field == entAttrib.PrimaryKey )
                     continue;
 
                 fieldDict.Add( field, entity.GetField( field ) );
@@ -102,6 +104,64 @@ namespace TestServer
 
             String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
                 String.Join( ", ", fieldDict.Keys ), String.Join( "', '", fieldDict.Values ) );
+
+            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            return cmd.ExecuteNonQuery();
+        }
+
+        public static int Update<T>( T entity )
+            where T : IDatabaseEntity
+        {
+            Type t = typeof( T );
+
+            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+                throw new Exception( t.FullName + " is not a valid database entity type" );
+
+            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            String entityName = entAttrib.EntityName;
+
+            List<String> fieldSets = new List<string>();
+            foreach ( String field in entAttrib.FieldNames )
+            {
+                if ( field == entAttrib.PrimaryKey )
+                    continue;
+
+                fieldSets.Add( String.Format( "{0}='{1}'", field, entity.GetField( field ) ) );
+            }
+
+            String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
+                String.Join( ", ", fieldSets ), entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
+
+            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            return cmd.ExecuteNonQuery();
+        }
+
+        public static int Delete<T>( T entity )
+            where T : IDatabaseEntity
+        {
+            Type t = typeof( T );
+
+            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+                throw new Exception( t.FullName + " is not a valid database entity type" );
+
+            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+
+            return Delete<T>( String.Format( "{0} = '{1}'", entAttrib.PrimaryKey,
+                entity.GetField( entAttrib.PrimaryKey ) ) );
+        }
+
+        public static int Delete<T>( String condition )
+            where T : IDatabaseEntity
+        {
+            Type t = typeof( T );
+
+            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+                throw new Exception( t.FullName + " is not a valid database entity type" );
+
+            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            String entityName = entAttrib.EntityName;
+
+            String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
 
             SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
             return cmd.ExecuteNonQuery();

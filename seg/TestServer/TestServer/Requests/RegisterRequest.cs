@@ -55,6 +55,7 @@ namespace TestServer.Requests
             };
 
             DatabaseManager.Insert( account );
+            DatabaseManager.Insert( VerifyRequest.Create( account ) );
 
             return new Responses.AcknowledgeResponse( true );
         }

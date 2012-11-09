@@ -68,8 +68,10 @@
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Requests\SendActivationRequest.cs" />
     <Compile Include="Requests\UserInfoRequest.cs" />
     <Compile Include="Requests\RegisterRequest.cs" />
+    <Compile Include="Requests\ActivationRequest.cs" />
     <Compile Include="RequestType.cs" />
     <Compile Include="Requests\EchoRequest.cs" />
     <Compile Include="Responses\AcknowledgeResponse.cs" />
@@ -78,6 +80,7 @@
     <Compile Include="Responses\UserInfoResponse.cs" />
     <Compile Include="Serialization.cs" />
     <Compile Include="Tools.cs" />
+    <Compile Include="VerifyRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\404.html">

@@ -26,6 +26,16 @@ namespace TestServer
     )]
     class Account : IDatabaseEntity
     {
+        public struct Fields
+        {
+            public const String AccountID = "AccountID";
+            public const String Username = "Username";
+            public const String PasswordHash = "PasswordHash";
+            public const String Email = "Email";
+            public const String RegistrationDate = "RegistrationDate";
+            public const String Rank = "Rank";
+        }
+
         private static readonly Regex stUsernameRegex;
         private static readonly Regex stEmailRegex;
         private static readonly Regex stPasswordHashRegex;
@@ -35,16 +45,6 @@ namespace TestServer
             stUsernameRegex = new Regex( "^[a-zA-Z0-9_-]([ a-zA-Z0-9_-]{1,31})$" );
             stEmailRegex = new Regex( "^[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" );
             stPasswordHashRegex = new Regex( "^[0-9a-f]{32}$" );
-        }
-
-        public struct Fields
-        {
-            public const String AccountID = "AccountID";
-            public const String Username = "Username";
-            public const String PasswordHash = "PasswordHash";
-            public const String Email = "Email";
-            public const String RegistrationDate = "RegistrationDate";
-            public const String Rank = "Rank";
         }
 
         public static bool IsUsernameValid( String username )
@@ -78,15 +78,15 @@ namespace TestServer
         }
 
         [Serialize( "accountid" )]
-        public int AccountID;
+        public int AccountID { get; private set; }
         [Serialize( "uname" )]
-        public String Username;
-        public char[] PasswordHash;
-        public String Email;
+        public String Username { get; set; }
+        public char[] PasswordHash { get; set; }
+        public String Email { get; set; }
         [Serialize( "regdate" )]
-        public DateTime RegistrationDate;
+        public DateTime RegistrationDate { get; set; }
         [Serialize( "rank" )]
-        public Rank Rank;
+        public Rank Rank { get; set; }
 
         public bool IsVerified
         {

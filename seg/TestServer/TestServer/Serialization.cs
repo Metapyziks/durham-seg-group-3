@@ -55,7 +55,7 @@ namespace TestServer
 
             if ( obj is Enum )
             {
-                builder.Append( ( (Enum) obj ).ToString() );
+                builder.AppendFormat( "\"{0}\"", ( (Enum) obj ).ToString() );
                 return;
             }
 
@@ -87,18 +87,23 @@ namespace TestServer
             {
                 builder.Append( "{" );
                 bool first = true;
-                foreach ( FieldInfo field in type.GetFields() )
+                IEnumerable<MemberInfo> members =
+                    ( (IEnumerable<MemberInfo>) type.GetFields() ).Union( type.GetProperties() );
+                foreach ( MemberInfo member in members )
                 {
-                    if ( field.IsDefined( typeof( SerializeAttribute ), true ) )
+                    if ( member.IsDefined( typeof( SerializeAttribute ), true ) )
                     {
                         if ( !first )
                             builder.Append( "," );
                         else
                             first = false;
 
-                        SerializeAttribute attrib = field.GetCustomAttribute<SerializeAttribute>( true );
+                        SerializeAttribute attrib = member.GetCustomAttribute<SerializeAttribute>( true );
                         builder.AppendFormat( "\"{0}\":", attrib.KeyName );
-                        Serialize( field.GetValue( obj ), builder );
+                        Object val = ( member is FieldInfo ) ?
+                            ( (FieldInfo) member ).GetValue( obj ) :
+                            ( (PropertyInfo) member ).GetValue( obj );
+                        Serialize( val, builder );
                     }
                 }
                 builder.Append( "}" );
