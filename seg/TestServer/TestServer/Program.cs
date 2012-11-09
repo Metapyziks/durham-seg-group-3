@@ -17,6 +17,8 @@ namespace TestServer
         {
             stActive = true;
 
+            DatabaseManager.Connect();
+
             Thread clientThread = new Thread( async () =>
             {
                 {
@@ -49,6 +51,11 @@ namespace TestServer
             }
 
             clientThread.Abort();
+
+            while ( clientThread.IsAlive )
+                Thread.Sleep( 10 );
+
+            DatabaseManager.Disconnect();
         }
 
         static void ProcessCommand( String command, String[] args )
@@ -64,44 +71,59 @@ namespace TestServer
         static void ProcessRequest( HttpListenerContext context )
         {
             Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.Address.MapToIPv4().ToString() + " : " + context.Request.RawUrl );
-            
-            String url = context.Request.RawUrl;
-            int pathEnd = url.IndexOf( '.' );
-            if ( pathEnd == -1 )
-                pathEnd = url.IndexOf( '?' );
-            if ( pathEnd == -1 )
-                pathEnd = url.Length;
-
-            String requestTypeString = url.Substring( 1, pathEnd - 1 );
 
             StreamWriter writer = new StreamWriter( context.Response.OutputStream );
-            if ( requestTypeString.StartsWith( "api/" ) )
+
+            try
             {
-                requestTypeString = requestTypeString.Substring( 4 );
-                RequestType requestType = RequestType.Get( requestTypeString );
-                object response;
-                if ( requestType != null )
-                    response = requestType.Respond( context.Request.QueryString );
-                else
-                    response = new Responses.ErrorResponse( "invalid request type (" + requestTypeString + ")" );
+                if ( context.Request.HttpMethod == "GET" )
+                {
+                    String url = context.Request.RawUrl;
+                    int pathEnd = url.IndexOf( '?' );
+                    if ( pathEnd == -1 )
+                        pathEnd = url.Length;
 
-                writer.WriteLine( JSONSerializer.Serialize( response ) );
+                    String requestTypeString = url.Substring( 1, pathEnd - 1 );
+
+                    if ( requestTypeString.StartsWith( "api/" ) )
+                    {
+                        requestTypeString = requestTypeString.Substring( 4 );
+                        RequestType requestType = RequestType.Get( requestTypeString );
+                        object response;
+                        if ( requestType != null )
+                            response = requestType.Respond( context.Request.QueryString );
+                        else
+                            response = new Responses.ErrorResponse( "invalid request type (" + requestTypeString + ")" );
+
+                        String obj = JSONSerializer.Serialize( response );
+
+                        writer.WriteLine( obj );
+                    }
+                    else
+                    {
+                        String path = "Content" + context.Request.RawUrl;
+
+                        if ( requestTypeString.Length == 0 )
+                            path = "Content/index.html";
+
+                        if ( !File.Exists( path ) )
+                            path = "Content/404.html";
+
+                        String file = File.ReadAllText( path );
+
+                        writer.WriteLine( file );
+                    }
+                }
             }
-            else
+            catch( Exception e )
             {
-                String path = "Content" + context.Request.RawUrl;
-
-                if ( requestTypeString.Length == 0 )
-                    path = "Content/index.html";
-
-                if ( !File.Exists( path ) )
-                    path = "Content/404.html";
-
-                writer.WriteLine( File.ReadAllText( path ) );
+                Console.WriteLine( e.GetType().Name + " thrown" );
             }
-
-            writer.Flush();
-            context.Response.OutputStream.Close();
+            finally
+            {
+                writer.Flush();
+                context.Response.OutputStream.Close();
+            }
         }
     }
 }

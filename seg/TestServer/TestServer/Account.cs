@@ -1,0 +1,101 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TestServer
+{
+    enum Rank : byte
+    {
+        Unverified = 0,
+        User = 1,
+        Admin = 3,
+        Owner = 7
+    }
+
+    [DatabaseEntity( "Account", Account.Fields.AccountID,
+        Account.Fields.AccountID,
+        Account.Fields.Username,
+        Account.Fields.PasswordHash,
+        Account.Fields.Email,
+        Account.Fields.RegistrationDate,
+        Account.Fields.Rank
+    )]
+    class Account : IDatabaseEntity
+    {
+        public struct Fields
+        {
+            public const String AccountID = "AccountID";
+            public const String Username = "Username";
+            public const String PasswordHash = "PasswordHash";
+            public const String Email = "Email";
+            public const String RegistrationDate = "RegistrationDate";
+            public const String Rank = "Rank";
+        }
+
+        public static bool IsPasswordHashValid( String hash )
+        {
+            if ( hash.Length != 32 )
+                return false;
+
+            for ( int i = 0; i < 32; ++i )
+            {
+                if ( char.IsNumber( hash[ i ] ) )
+                    continue;
+
+                if ( (int) hash[ i ] < 0x61 || (int) hash[ i ] >= 0x67 )
+                    return false;
+            }
+
+            return true;
+        }
+
+        public int AccountID;
+        public String Username;
+        public char[] PasswordHash;
+        public String Email;
+        public DateTime RegistrationDate;
+        public Rank Rank;
+
+        public string GetField( string fieldName )
+        {
+            switch ( fieldName )
+            {
+                case Fields.AccountID:
+                    return AccountID.ToString();
+                case Fields.Username:
+                    return Username;
+                case Fields.PasswordHash:
+                    return String.Join( "", PasswordHash );
+                case Fields.Email:
+                    return Email;
+                case Fields.RegistrationDate:
+                    return RegistrationDate.ToString();
+                case Fields.Rank:
+                    return ( (byte) Rank ).ToString();
+                default:
+                    return "";
+            }
+        }
+
+        public void SetField( string fieldName, object value )
+        {
+            switch ( fieldName )
+            {
+                case Fields.AccountID:
+                    AccountID = Convert.ToInt32( value ); break;
+                case Fields.Username:
+                    Username = Convert.ToString( value ); break;
+                case Fields.PasswordHash:
+                    PasswordHash = Convert.ToString( value ).ToCharArray(); break;
+                case Fields.Email:
+                    Email = Convert.ToString( value ); break;
+                case Fields.RegistrationDate:
+                    RegistrationDate = Convert.ToDateTime( value ); break;
+                case Fields.Rank:
+                    Rank = (Rank) Convert.ToByte( value ); break;
+            }
+        }
+    }
+}

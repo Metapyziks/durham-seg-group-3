@@ -29,11 +29,20 @@ namespace TestServer
         public static void Serialize( Object obj, StringBuilder builder )
         {
             if ( obj == null )
+            {
                 builder.Append( "null" );
+                return;
+            }
 
             if ( obj is string )
             {
                 builder.AppendFormat( "\"{0}\"", ( (string) obj ).Replace( "\"", "\\\"" ) );
+                return;
+            }
+
+            if ( obj is bool )
+            {
+                builder.Append( (bool) obj ? "true" : "false" );
                 return;
             }
 
