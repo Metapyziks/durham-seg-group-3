@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace TestServer
@@ -24,6 +25,17 @@ namespace TestServer
     )]
     class Account : IDatabaseEntity
     {
+        private static readonly Regex stUsernameRegex;
+        private static readonly Regex stEmailRegex;
+        private static readonly Regex stPasswordHashRegex;
+
+        static Account()
+        {
+            stUsernameRegex = new Regex( "^[a-zA-Z0-9_-]([ a-zA-Z0-9_-]{1,31})$" );
+            stEmailRegex = new Regex( "^[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}$" );
+            stPasswordHashRegex = new Regex( "^[0-9a-f]{32}$" );
+        }
+
         public struct Fields
         {
             public const String AccountID = "AccountID";
@@ -32,6 +44,19 @@ namespace TestServer
             public const String Email = "Email";
             public const String RegistrationDate = "RegistrationDate";
             public const String Rank = "Rank";
+        }
+
+        public static bool IsUsernameValid( String username )
+        {
+            return stUsernameRegex.IsMatch( username );
+        }
+
+        public static bool IsEmailValid( String email )
+        {
+            if ( email.Length > 64 )
+                return false;
+
+            return stEmailRegex.IsMatch( email );
         }
 
         public static bool IsPasswordHashValid( String hash )
