@@ -68,7 +68,7 @@ namespace TestServer
             }
         }
 
-        public bool IsAuthorised( NameValueCollection args, out Account account, out Object error, bool acceptSession = true )
+        public bool CheckAuth( NameValueCollection args, out Account account, out Object error, bool acceptSession = true )
         {
             error = new Responses.ErrorResponse( "auth error" );
             account = null;

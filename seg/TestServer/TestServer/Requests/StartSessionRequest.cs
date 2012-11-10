@@ -17,7 +17,7 @@ namespace TestServer.Requests
             Account account;
             Object error;
 
-            if ( IsAuthorised( args, out account, out error, false ) )
+            if ( CheckAuth( args, out account, out error, false ) )
             {
                 AuthSession sess = AuthSession.Create( account );
                 return new KeyValuePair<String, Object>( "code", new String( sess.SessionCode ) );

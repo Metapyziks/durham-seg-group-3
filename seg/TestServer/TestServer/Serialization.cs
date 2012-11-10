@@ -74,17 +74,38 @@ namespace TestServer
                 return;
             }
 
+            Type type = obj.GetType();
+            if ( type.IsDefined( typeof( SerializableAttribute ) ) )
+            {
+                builder.Append( "{" );
+                bool first = true;
+                IEnumerable<MemberInfo> members =
+                    ( (IEnumerable<MemberInfo>) type.GetFields() ).Union( type.GetProperties() );
+                foreach ( MemberInfo member in members )
+                {
+                    if ( member.IsDefined( typeof( SerializeAttribute ), true ) )
+                    {
+                        if ( !first ) builder.Append( "," ); else first = false;
+
+                        SerializeAttribute attrib = member.GetCustomAttribute<SerializeAttribute>( true );
+                        builder.AppendFormat( "\"{0}\":", attrib.KeyName );
+                        Object val = ( member is FieldInfo ) ?
+                            ( (FieldInfo) member ).GetValue( obj ) :
+                            ( (PropertyInfo) member ).GetValue( obj );
+                        Serialize( val, builder );
+                    }
+                }
+                builder.Append( "}" );
+                return;
+            }
+
             if ( obj is IEnumerable<KeyValuePair<String, Object>> )
             {
                 builder.Append( "{" );
                 bool first = true;
                 foreach ( KeyValuePair<String, Object> pair in (IEnumerable<KeyValuePair<String, Object>>) obj )
                 {
-                    if ( !first )
-                        builder.Append( "," );
-                    else
-                        first = false;
-
+                    if ( !first )  builder.Append( "," ); else first = false;
                     Serialize( pair, builder );
                 }
                 builder.Append( "}" );
@@ -97,47 +118,14 @@ namespace TestServer
                 bool first = true;
                 foreach ( Object o in (IEnumerable<Object>) obj )
                 {
-                    if ( !first )
-                        builder.Append( "," );
-                    else
-                        first = false;
-
+                    if ( !first ) builder.Append( "," ); else first = false;
                     Serialize( o, builder );
                 }
                 builder.Append( "]" );
                 return;
             }
 
-            Type type = obj.GetType();
-            if ( type.IsDefined( typeof( SerializableAttribute ) ) )
-            {
-                builder.Append( "{" );
-                bool first = true;
-                IEnumerable<MemberInfo> members =
-                    ( (IEnumerable<MemberInfo>) type.GetFields() ).Union( type.GetProperties() );
-                foreach ( MemberInfo member in members )
-                {
-                    if ( member.IsDefined( typeof( SerializeAttribute ), true ) )
-                    {
-                        if ( !first )
-                            builder.Append( "," );
-                        else
-                            first = false;
-
-                        SerializeAttribute attrib = member.GetCustomAttribute<SerializeAttribute>( true );
-                        builder.AppendFormat( "\"{0}\":", attrib.KeyName );
-                        Object val = ( member is FieldInfo ) ?
-                            ( (FieldInfo) member ).GetValue( obj ) :
-                            ( (PropertyInfo) member ).GetValue( obj );
-                        Serialize( val, builder );
-                    }
-                }
-                builder.Append( "}" );
-            }
-            else
-            {
-                builder.Append( obj.ToString() );
-            }
+            builder.Append( obj.ToString() );
         }
     }
 }
