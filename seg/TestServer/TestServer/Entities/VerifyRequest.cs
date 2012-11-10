@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TestServer
+namespace TestServer.Entities
 {
     [DatabaseEntity( "VerifyRequest", VerifyRequest.Fields.VerifyRequestID,
         VerifyRequest.Fields.VerifyRequestID,
