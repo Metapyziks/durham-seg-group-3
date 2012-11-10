@@ -37,7 +37,7 @@ namespace TestServer.Requests
 
             VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
 
-            if ( request == null || String.Join( "", request.Code ) != code )
+            if ( request == null || !code.EqualsCharArray( request.Code ) )
                 return new Responses.ErrorResponse( "incorrect activation code" );
 
             request.Remove();

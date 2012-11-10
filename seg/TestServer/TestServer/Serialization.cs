@@ -65,11 +65,37 @@ namespace TestServer
                 return;
             }
 
-            if ( obj is Array )
+            if ( obj is KeyValuePair<String, Object> )
+            {
+                KeyValuePair<String, Object> pair = (KeyValuePair<String, Object>) obj;
+                builder.Append( "{\"" + pair.Key + "\":" );
+                Serialize( pair.Value, builder );
+                builder.Append( "}" );
+                return;
+            }
+
+            if ( obj is IEnumerable<KeyValuePair<String, Object>> )
+            {
+                builder.Append( "{" );
+                bool first = true;
+                foreach ( KeyValuePair<String, Object> pair in (IEnumerable<KeyValuePair<String, Object>>) obj )
+                {
+                    if ( !first )
+                        builder.Append( "," );
+                    else
+                        first = false;
+
+                    Serialize( pair, builder );
+                }
+                builder.Append( "}" );
+                return;
+            }
+
+            if ( obj is IEnumerable<Object> )
             {
                 builder.Append( "[" );
                 bool first = true;
-                foreach ( Object o in (Array) obj )
+                foreach ( Object o in (IEnumerable<Object>) obj )
                 {
                     if ( !first )
                         builder.Append( "," );

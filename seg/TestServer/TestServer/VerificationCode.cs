@@ -12,17 +12,7 @@ namespace TestServer
     {
         public const double ExpirationTime = 60.0 * 60.0 * 24.0;
 
-        private static Random stRand = new Random();
         private static Dictionary<Int32, VerificationCode> stCodes = new Dictionary<int, VerificationCode>();
-
-        public static char[] GenerateCode()
-        {
-            char[] str = new char[ 32 ];
-            for ( int i = 0; i < 32; ++i )
-                str[ i ] = stRand.Next( 16 ).ToString( "X" ).ToLower()[ 0 ];
-
-            return str;
-        }
 
         public static VerificationCode Create( Account account )
         {
@@ -32,7 +22,7 @@ namespace TestServer
             VerificationCode code = new VerificationCode()
             {
                 AccountID = account.AccountID,
-                Code = GenerateCode(),
+                Code = Tools.GenerateHash(),
                 SentDate = DateTime.Now
             };
 
@@ -46,8 +36,17 @@ namespace TestServer
 
         public static VerificationCode Get( Account account )
         {
-            return stCodes.ContainsKey( account.AccountID ) ?
-                stCodes[ account.AccountID ] : null;
+            if ( stCodes.ContainsKey( account.AccountID ) )
+            {
+                VerificationCode code = stCodes[ account.AccountID ];
+
+                if ( !code.IsExpired )
+                    return code;
+
+                stCodes.Remove( account.AccountID );
+            }
+
+            return null;
         }
 
         public static void Remove( Account account )

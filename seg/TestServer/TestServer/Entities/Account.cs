@@ -62,19 +62,7 @@ namespace TestServer.Entities
 
         public static bool IsPasswordHashValid( String hash )
         {
-            if ( hash.Length != 32 )
-                return false;
-
-            for ( int i = 0; i < 32; ++i )
-            {
-                if ( char.IsNumber( hash[ i ] ) )
-                    continue;
-
-                if ( (int) hash[ i ] < 0x61 || (int) hash[ i ] >= 0x67 )
-                    return false;
-            }
-
-            return true;
+            return stPasswordHashRegex.IsMatch( hash );
         }
 
         [Serialize( "accountid" )]
