@@ -31,7 +31,7 @@ namespace TestServer.Requests
             if ( accounts[ 0 ].IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerifyRequest.Create( accounts[ 0 ] ).SendEmail( accounts[ 0 ] );
+            VerificationCode.Create( accounts[ 0 ] ).SendEmail( accounts[ 0 ] );
 
             return new Responses.AcknowledgeResponse( true );
         }

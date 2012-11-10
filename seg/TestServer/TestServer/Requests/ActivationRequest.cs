@@ -35,9 +35,9 @@ namespace TestServer.Requests
             if ( accounts[ 0 ].IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerifyRequest request = VerifyRequest.Get( accounts[ 0 ] );
+            VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
 
-            if ( request == null || String.Join( "", request.ValidationCode ) != code )
+            if ( request == null || String.Join( "", request.Code ) != code )
                 return new Responses.ErrorResponse( "incorrect activation code" );
 
             request.Remove();

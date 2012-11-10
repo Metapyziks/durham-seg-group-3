@@ -84,7 +84,7 @@
     <Compile Include="Responses\UserInfoResponse.cs" />
     <Compile Include="Serialization.cs" />
     <Compile Include="Tools.cs" />
-    <Compile Include="VerifyRequest.cs" />
+    <Compile Include="VerificationCode.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\404.html">

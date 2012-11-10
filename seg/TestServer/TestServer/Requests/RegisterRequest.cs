@@ -59,7 +59,7 @@ namespace TestServer.Requests
             DatabaseManager.Insert( account );
 
             account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
-            VerifyRequest.Create( account ).SendEmail( account );
+            VerificationCode.Create( account ).SendEmail( account );
 
             return new Responses.AcknowledgeResponse( true );
         }
