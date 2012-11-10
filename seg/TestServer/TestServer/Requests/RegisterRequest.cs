@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TestServer.Entities;
+
 namespace TestServer.Requests
 {
     [RequestTypeName( "register" )]
@@ -57,10 +59,7 @@ namespace TestServer.Requests
             DatabaseManager.Insert( account );
 
             account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
-            VerifyRequest verify = VerifyRequest.Create( account );
-            DatabaseManager.Insert( verify );
-
-            verify.SendEmail( account );
+            VerifyRequest.Create( account ).SendEmail( account );
 
             return new Responses.AcknowledgeResponse( true );
         }

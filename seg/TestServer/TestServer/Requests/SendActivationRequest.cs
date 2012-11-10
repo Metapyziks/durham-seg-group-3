@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TestServer.Entities;
+
 namespace TestServer.Requests
 {
     [RequestTypeName( "sendverify" )]
@@ -29,13 +31,7 @@ namespace TestServer.Requests
             if ( accounts[ 0 ].IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            DatabaseManager.Delete<VerifyRequest>( String.Format( "{0}='{1}'",
-                VerifyRequest.Fields.AccountID, accounts[ 0 ].AccountID ) );
-
-            VerifyRequest verify = VerifyRequest.Create( accounts[ 0 ] );
-            DatabaseManager.Insert( verify );
-
-            verify.SendEmail( accounts[ 0 ] );
+            VerifyRequest.Create( accounts[ 0 ] ).SendEmail( accounts[ 0 ] );
 
             return new Responses.AcknowledgeResponse( true );
         }

@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TestServer.Entities;
+
 namespace TestServer.Requests
 {
     [RequestTypeName( "activate" )]
@@ -33,13 +35,12 @@ namespace TestServer.Requests
             if ( accounts[ 0 ].IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerifyRequest[] requests = DatabaseManager.Select<VerifyRequest>( null,
-                String.Format( "AccountID = '{0}'", accounts[ 0 ].AccountID.ToString() ) );
+            VerifyRequest request = VerifyRequest.Get( accounts[ 0 ] );
 
-            if ( requests.Length == 0 || String.Join( "", requests.Last().ValidationCode ) != code )
+            if ( request == null || String.Join( "", request.ValidationCode ) != code )
                 return new Responses.ErrorResponse( "incorrect activation code" );
 
-            DatabaseManager.Delete<VerifyRequest>( requests );
+            request.Remove();
 
             accounts[ 0 ].Rank = Rank.Verified;
             DatabaseManager.Update( accounts[ 0 ] );

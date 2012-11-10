@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TestServer.Entities;
+
 namespace TestServer.Requests
 {
     [RequestTypeName( "userinfo" )]
