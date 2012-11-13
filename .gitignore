@@ -14,3 +14,7 @@ seg/TestServer/TestServer/bin
 seg/TestServer/TestServer/obj
 seg/TestServer/TestServer/*.user
 seg/TestServer/TestServer/config.ini
+
+seg/documents/requirements/hardwaresoftware/*.log
+seg/documents/requirements/hardwaresoftware/*.aux
+seg/documents/requirements/hardwaresoftware/*.pdf
