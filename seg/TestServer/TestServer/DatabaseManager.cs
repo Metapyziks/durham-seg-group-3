@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Data.SqlServerCe;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -35,6 +36,8 @@ namespace TestServer
 
     static class DatabaseManager
     {
+        public static CultureInfo CultureInfo = new CultureInfo( "en-US" );
+
         private static SqlCeConnection stConnection;
 
         public static void Connect()

@@ -25,14 +25,13 @@ namespace TestServer
             CreateClient( settings.GetValue( "server" ),
                 Int32.Parse( settings.GetValue( "port" ) ),
                 settings.GetValue( "address" ),
+                settings.GetValue( "username" ),
                 settings.GetValue( "password" ) );
         }
 
-        public static void CreateClient( String smtpAddress, int port, String email, String password )
+        public static void CreateClient( String smtpAddress, int port, String email, String username, String password )
         {
             stAdminEmail = email;
-
-            String username = email.Substring( 0, email.IndexOf( '@' ) );
 
             stClient = new SmtpClient( smtpAddress, port )
             {
