@@ -1,29 +1,31 @@
-\renewcommand{\arraystretch}{1.5}
+\renewcommand{\arraystretch}{1.2}
 \def\feedbackspace{0}
-\newcommand{\solreq}[7]
+\newcommand{\solreq}[8]
 {
 	\begin{tabular}{|r|p{12cm}|}
 		\hline
+		\multicolumn{2}{|c|}{\textbf{#1}} \\
+		\hline\hline
 		\textbf{Type} &
-			\ifnum#1=1 Functional \else Non - Functional \fi
+			\ifnum#2=1 Functional \else Non - Functional \fi
 		\\
 		\textbf{Description} &
-			#2
-		\\ 
+			#3
+		\\ \hline
 		\textbf{Priority} &
-			\ifnum#3=1 High \else\ifnum#3=2 Medium \else Low \fi\fi
+			\ifnum#4=1 High \else\ifnum#4=2 Medium \else Low \fi\fi
 		\\ 
 		\textbf{Pre-conditions} &
-			#4
-		\\ 
-		\textbf{Input} &
 			#5
 		\\ 
-		\textbf{Operations} &
+		\textbf{Input} &
 			#6
 		\\ 
-		\textbf{Expected Results} &
+		\textbf{Operations} &
 			#7
+		\\ 
+		\textbf{Expected Results} &
+			#8
 		\\ \hline
 		\if\feedbackspace1
 			\textbf{Result Pass / Fail} &
@@ -34,16 +36,30 @@
 			\\ \hline
 		\fi
 	\end{tabular}
+	~\newline~\newline~
 }
 
 \section{Solution Requirements}
-    \solreq
-		{1}
-		{New users shall be able to create an account which is stored on the server}
-		{1}
-		{None}
+	\solreq
+		{FR 1 - Account Registration}{1}
+		{New users shall be able to create an account which is stored on the server.}
+		{1}{None}
 		{The user will give a username, email address and password}
 		{The username and password will be checked to ensure they use no characters which could cause either accidental or malicious damage to the server or other clients. The username will be between 3 and 32 characters long, and the password between 8 and 32. The email will be checked to make sure it is structured correctly. The username and email address must be unique.}
 		{If the given information is valid, the user will be informed that the account was made successfully. Otherwise, the user will be told which part of their input was rejected, and why.}
-
+	\solreq
+		{FR 1.1 - Account Activation}{1}
+		{New accounts will have their email addresses verified with a verification email. The account will not be `active' until the user verifies their email.}
+		{1}{FR 1}
+		{The user will click a link on the verification email to activate the account.}
+		{If the account has already been activated, the user is informed. If the account has expired because it had not been activated for a day, an error message is shown to the user.}
+		{If the account exists and has not been activated, it is marked as active. If the account is not activated within a day of the email being sent, the account is removed from the system.}
+	\solreq
+		{FR 1.1.1 - Resend Activation Email}{1}
+		{A user may request that the activation email is resent. This will invalidate the previously sent email.}
+		{2}{FR 1.1}
+		{The user will supply their email address, which is where the activation email will be sent.}
+		{If the email address is not registered to an account, an error message is displayed telling this to the user. If the account that the email address belongs to is already active, the user is informed through an error message.}
+		{If the email is registered to an unactivated account, an activation email is sent to the user with a link to activate the account.}
+	
 \renewcommand{\arraystretch}{1}

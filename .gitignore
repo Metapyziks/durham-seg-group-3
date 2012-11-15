@@ -19,3 +19,4 @@ seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
 seg/documents/requirements/*.pdf
 seg/documents/requirements/*.out
+seg/documents/requirements/*.txt
