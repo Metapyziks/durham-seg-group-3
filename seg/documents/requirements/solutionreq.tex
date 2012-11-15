@@ -1,2 +1,49 @@
+\renewcommand{\arraystretch}{1.5}
+\def\feedbackspace{0}
+\newcommand{\solreq}[7]
+{
+	\begin{tabular}{|r|p{12cm}|}
+		\hline
+		\textbf{Type} &
+			\ifnum#1=1 Functional \else Non - Functional \fi
+		\\
+		\textbf{Description} &
+			#2
+		\\ 
+		\textbf{Priority} &
+			\ifnum#3=1 High \else\ifnum#3=2 Medium \else Low \fi\fi
+		\\ 
+		\textbf{Pre-conditions} &
+			#4
+		\\ 
+		\textbf{Input} &
+			#5
+		\\ 
+		\textbf{Operations} &
+			#6
+		\\ 
+		\textbf{Expected Results} &
+			#7
+		\\ \hline
+		\if\feedbackspace1
+			\textbf{Result Pass / Fail} &
+				~
+			\\
+			\textbf{Remarks} &
+				~\newline~\newline~\newline~
+			\\ \hline
+		\fi
+	\end{tabular}
+}
+
 \section{Solution Requirements}
-	\lipsum
+    \solreq
+		{1}
+		{New users shall be able to create an account which is stored on the server}
+		{1}
+		{None}
+		{The user will give a username, email address and password}
+		{The username and password will be checked to ensure they use no characters which could cause either accidental or malicious damage to the server or other clients. The username will be between 3 and 32 characters long, and the password between 8 and 32. The email will be checked to make sure it is structured correctly. The username and email address must be unique.}
+		{If the given information is valid, the user will be informed that the account was made successfully. Otherwise, the user will be told which part of their input was rejected, and why.}
+
+\renewcommand{\arraystretch}{1}
