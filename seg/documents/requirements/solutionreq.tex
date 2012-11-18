@@ -27,7 +27,7 @@
 		\fi
 	\end{tabular}
 }
-\newcommand{\nonfuncreq}[4]
+\newcommand{\nonfuncreq}[2]
 {
 	\subsubsection{#1}
 	\begin{tabular}{|>{\raggedleft\arraybackslash}p{3cm}|p{12cm}|}
@@ -36,10 +36,6 @@
 			Non - Functional
 		\\
 		\textbf{Description} & #2 \\
-		\textbf{Priority} &
-			\ifnum#3=1 High \else\ifnum#3=2 Medium \else Low \fi\fi
-		\\ 
-		\textbf{Pre-conditions} & #4 \\
 		\hline
 		\if\feedbackspace1
 			\textbf{Result Pass / Fail} &
@@ -59,46 +55,235 @@
 			{New users shall be able to create an account which is stored on the server.}
 			{1}{None}
 			{The user will give a username, email address and password.}
-			{The username and password will be checked to ensure they use no characters which could cause either accidental or malicious damage to the server or other clients. The username will be between 3 and 32 characters long, and the password between 8 and 32. The email will be checked to make sure it is structured correctly. The username and email address must be unique.}
+			{The username will be between 3 and 32 characters long, and the password between 8 and 32. The email will be checked to make sure it is structured correctly. The username and email address must be unique.}
 			{If the given information is valid, the user will be informed that the account was made successfully. Otherwise, the user will be told which part of their input was rejected, and why.}
 		\funcreq
 			{Account Activation}
-			{New accounts will have their email addresses verified with a verification email. The account will not be `active' until the user verifies their email.}
+			{New accounts will have their email addresses verified with a verification email. The account will not be `active' - it will not provide access to restricted resources - until the user verifies their email.}
 			{1}{Account Registration}
 			{The user will click a link on the verification email to activate the account.}
-			{If the account has already been activated, the user is informed. If the account has expired because it had not been activated for a day, an error message is shown to the user.}
-			{If the account exists and has not been activated, it is marked as active. If the account is not activated within a day of the email being sent, the account is removed from the system.}
+			{The server will check to see if the account has already been activated, or if the account has expired because it had not been activated for an amount of time.}
+			{The account will be marked as active if the account exists and has not been activated previously. If the account is not activated within a set amount of time of the email being sent, the account is removed from the system.}
 		\funcreq
 			{Resend Activation Email}
 			{A user may request that the activation email is resent. This will invalidate the previously sent email.}
 			{2}{Account Activation}
 			{The user will supply their email address, which is where the activation email will be sent.}
-			{If the email address is not registered to an account, an error message is displayed telling this to the user. If the account that the email address belongs to is already active, the user is informed through an error message.}
+			{The server will check that the email address is registered to an existing account that is not already active.}
 			{If the email is registered to an inactivated account, an activation email is sent to the user with a link to activate the account.}
 		\funcreq
 			{User Authentication}
-			{A user with an activated account will be able to authenticate themselves in order to access resources restricted to only account owners.}
+			{A user with an activated account will be able to authenticate themselves in order to access resources restricted to only them or account owners.}
 			{1}{Account Registration}
 			{The user will give their username and password.}
-			{The username and password will be checked to see if they conform to the formats specified in \emph{FR 1}, and if they do then they are compared to the database of accounts for matches. If the given credentials fail either test, the user is informed that either the username or the password is incorrect.}
+			{The username and password will be checked to see if they conform to the formats specified in \emph{Account Registration}, and if they do then they are compared to the database of accounts for matches.}
 			{If the credentials match an account, the user is authenticated as the account owner and they may access some otherwise restricted parts of the system.}
 		\funcreq
 			{Account Removal}
-			{A user with an activated account will be able to request the deletion of that account along with all personal data.}
-			{1}{User Authentication}
-			{The user will need to be authenticated (\emph{FR 1.2}) and also click on a link in a confirmation email.}
+			{An authenticated user will be able to request the deletion of that account along with all personal data. This request must be confirmed by the user through a confirmation email.}
+			{2}{User Authentication}
+			{The user will need to be authenticated and also click on a link in a confirmation email.}
 			{The request will only be fulfilled when the user has clicked a link in a confirmation email that was sent when they initiated the request.}
 			{When they have confirmed the action, their account will be deleted from the server along with any related personal data.}
-	\subsection{Application}
+		\funcreq
+			{Password Recovery}
+			{A user will be able to request for their password to be sent to their email address.}
+			{2}{Account Registration}
+			{} {} {}
 		\nonfuncreq
-			{Minimum Support}
-			{The application must support at least Android version 4.0 and above, and function correctly on a HTC Desire C device.}
+			{Request Sanitation}
+			{All requests should be sanitised before processing in order to prevent attacks or accidental system corruption.}
+		\nonfuncreq
+			{Credential Security}
+			{Passwords should be restricted to harder to guess values. This could mean requiring both numbers and letters, and a mixture of lower and upper case. Also, passwords should be hashed before sent between client and server.}
+	\subsection{Game Mechanics}
+		\funcreq
+			{Account Balance}
+			{Each user account will have a point balance associated with it. The user which owns the account can view this balance at any time if they are authenticated.}
+			{1}{Account Registration}
+			{N/A}
+			{Once a user has authenticated, they will have the ability to view the number of points in their balance.}
+			{An authenticated user will be able to display their account balance.}
+		\funcreq
+			{Account Transactions}
+			{It will be possible for points to be added and removed from a user's account balance by other components of the system.}
+			{1}{Account Balance}
+			{The amount of points to be added or removed is specified.}
+			{A withdrawal transaction will not occur if the number of points to remove exceeds the number of points stored in the account.}
+			{When a withdrawal or deposit occurs, the updated amount of points in the account will be updated immediately.}
+		\funcreq
+			{Cache Ownership}
+			{A geocache (cache) is able to be owned by at most one user at a time. Users will be able to see which caches are owned, and who owns them.}
+			{1}{Account Registration}
+			{A user will be able to view the owner of a selected cache.}
+			{N/A}
+			{The current owner of a cache will be displayed when requested by a user.}
+		\funcreq
+			{Cache Balance}
+			{A geocache will have a point balance associated with it, which will be visible to authorised users.}
 			{1}{None}
+			{An authenticated user performs an action that makes a request to view the point balance of a cache.}
+			{The cache balance is not displayed to the user if they are not authorised to view it at that moment in time.}
+			{Authorised users will be displayed the balance of a cache when requested.}
+		\funcreq
+			{Cache Transactions}
+			{Points may be added or removed from the cache by other components of the system.}
+			{1}{Cache Balance}
+			{When points are being added or removed, the amount is specified.}
+			{A withdrawal transaction will not occur if the number of points to remove exceeds the number of points stored in the account.}
+			{When a withdrawal or deposit occurs, the updated amount of points in the account will be visible to authorised users when requested.}
+		\funcreq
+			{Cache User Transactions}
+			{The owner of a cache will be able to transfer points between the cache and their account, but only when the player physically visits the location of the cache. An owned cache becomes unowned if the owning user withdraws all points from the cache. A cache that is not owned can have points transferred to it by any user, and after transferring one or more points the cache will become theirs.}
+			{1}{Account Balance, Cache Balance}
+			{The user will specify how many points to deposit or withdraw.}
+			{When depositing, the server checks to see if the user has enough points. When withdrawing, a similar check is performed on the cache's point balance to ensure there are less than or equal to the number they wish to withdraw.}
+			{The cache and user account balances are updated after the transaction. If a withdrawal leaves a cache empty then the cache is marked as unowned.}
+		\funcreq
+			{Cache Placement Cost}
+			{When placing a cache, a user must spend a number of points from their account.}
+			{1}{Account Balance, Cache Placement}
+			{A user attempts to place a cache.}
+			{The server will check to see if the user has enough points in their account to place the cache.}
+			{If the user can afford it, the cache is placed and points are removed from the placing user's account.}
+		\funcreq
+			{Cache Scouting}
+			{If a user physically visits the location of a cache owned by a different user, they are able to view the current point balance of that cache.}
+			{2}{Find Location, Cache Balance}
+			{The location of the user is supplied.}
+			{The distance of the user from the cache is checked to ensure they are near the cache.}
+			{If the user is within a given radius of the cache, they will be shown the number of points that is at the cache.}
+		\funcreq
+			{Cache Attacking}
+			{After scouting a cache, a user will be given the option to trigger an attack on that cache using at points from their account.}
+			{1}{Cache Scouting}
+			{The attacker chooses how many points from their account they will attack with.}
+			{The server checks that the attacker is within a given radius of the cache they are attacking, and has input a number of points between one and the number of points in their account. The server will decided which party survives the encounter, and how many points they lost in the conflict.}
+			{If the request was valid, an attack is initiated on the cache by that user with the specified number of points.}
+		\funcreq
+			{Successful Attack}
+			{If the attacker wins, the ownership of the cache passes to them. All defending points are lost, and the surviving attacking points are transferred to the cache.}
+			{1}{Cache Attacking}
+			{N/A}
+			{N/A}
+			{The surviving points from their attack will be moved to the cache's point balance, and the cache becomes owned by the attacker.}
+		\funcreq
+			{Successful Defence}
+			{If the defender wins, the cache remains theirs. All attacking points are lost, and the surviving defenders remain in the cache.}
+			{1}{Cache Attacking}
+			{N/A}
+			{N/A}
+			{The surviving defenders remain in the cache, which remains owned by the defending user.}
+		\funcreq
+			{Point Generation}
+			{Points will be supplied to each user based on their current performance in the game.}
+			{1}{Account Balance}
+			{The point allocation system will use a user's current cache number, the events of recent battles involving the user, and other relevant data.}
+			{N/A}
+			{Each user will receive points based on their performance in the game.}
+		\funcreq
+			{Admin Placed Caches}
+			{It shall be possible for administrators to place caches without needing to be at the location. These caches behave as normal. The administrator can place the cache with as many points in the cache balance as they wish, including none.}
+			{2}{Cache Attacking}
+			{Administrators will specify the longitude and latitude of a new cache to place, along with how many points will be stored there.}
+			{The server will validate the location given and if the number of units placed is non-negative.}
+			{The cache will immediately be placed at the given location with the specified number of points in its balance.}
+		\funcreq
+			{Non-Player Caches}
+			{It shall be possible for administrators to place caches which may be attacked by users, but not claimed after a victory.}
+			{2}{Cache Attacking}
+			{Administrators will specify the longitude and latitude of a new cache to place, along with how many points will be stored there.}
+			{The server will validate the location given and the point balance given is non-negative.}
+			{The cache will immediately be placed at the given location with the specified number of points in its balance.}
+		\funcreq
+			{Attacking Non-Player Caches}
+			{A user attacking a non-player cache will receive a number of points if they are victorious, but it will not become theirs. After the victory, the number of points in the cache balance will be reset.}
+			{2}{Non-Player Caches}
+			{Users may trigger an attack in the same was as they would on a user controlled cache.}
+			{The process for deciding the outcome of an attack on a non-player cache will take the same form as one on a user cache. Each attack is treated as a separate instance, and each user will have a time-out period before they can attack the same non-player cache again.}
+			{The attacking player will receive a point reward directly to their account if they are deemed to have won the battle, and the point balance in the cache will be reset.}
+		\funcreq
+			{Special Event Placement}
+			{It should be possible for administrators to define areas by the MAC address of a nearby wireless network. This area will define a collection point for a one-time-only reward which will be limited to a given number of users.}
+			{3}{Find MAC Address}
+			{Administrators will specify the MAC address of the new cache, the reward, and how many users may claim that reward.}
+			{The server will validate that the given address is a valid MAC address, and that the reward and number of users which can claim it are greater than zero.}
+			{The special event area will available for users to be notified of and claim, and removed after the given number of users has claimed it.}
+		\funcreq
+			{Special Event Rewards}
+			{When a user enters the vicinity of a wireless network whose MAC address has been designated as a special event placement, they may claim it. If it is still available, they will receive points directly to their account balance.}
+			{3}{Special Event Placement}
+			{A user claims a reward at a given wireless network.}
+			{The server will check to see if the reward is still available.}
+			{When a user claims the reward, the value is credited directly to their point balance. The special event area is removed after the reward has been claimed by the allowed number of users.}
+		\nonfuncreq
+			{Player Progression}
+			{Players should generally start out with a small point income, and naturally progress to a higher income as they play for longer.}
+		\nonfuncreq
+			{Attack Weighting}
+			{Battles for a cache should be weighted in favour of the defenders, so a larger party of attackers is needed to defeat them.}
+	\subsection{Application}
 		\funcreq
 			{Find Location}
 			{The application shall be able to find the current latitude and longitude of the host device when required.}
 			{1}{None}
-			{Blah}
-			{Blah}
-			{Blah}
+			{N/A}
+			{An error message will be shown if the GPS device has been disabled by the user, asking them to re-enable it.}
+			{The application will query the device's GPS antenna to find its position.}
+		\funcreq
+			{Find MAC Address}
+			{The application, when within range of a wireless network, should be able to find the MAC address of that network.}
+			{3}{None}
+			{N/A}
+			{The application does not need to connect to the network, only find the address.}
+			{The application will query the device's wireless adapter to find the MAC addresses of any nearby networks.}
+		\funcreq
+			{Display Location}
+			{The application will be able to display to the user their current location in the context of a map provided by the Google Maps API.}
+			{1}{Find Location}
+			{N/A}
+			{An error message will be shown if the user has no internet connection, asking them to connect to the internet.}
+			{The application will show the user's location on a map provided by the Google Maps API.}
+		\funcreq
+			{Server Connectivity}
+			{The application will be able to communicate with the central server to make requests and receive responses.}
+			{1}{None}
+			{N/A}
+			{An error message will be shown if the user has no internet connection, asking them to connect to the internet.}
+			{The application will share data with the server to allow a user to see content generated by other users.}
+		\funcreq
+			{Nearby Caches}
+			{The application will be able to show the user the locations of nearby geocaches.}
+			{1}{Find Location, Display Location, Server Connectivity}
+			{The application will use the host device's current position and information sent from the server which describes where the nearest caches are.}
+			{N/A}
+			{The application with mark on the map provided by the Google Maps API each geocache within a defined radius of the user's device.}
+		\funcreq
+			{Map Zooming}
+			{The application will allow the user to view a larger or smaller areas of the map.}
+			{2}{Display Location}
+			{The user will be able to specify the `zoom level', which is kept within defined bounds.}
+			{The application will request only caches within the portion of the map that is currently visible.}
+			{The map is displayed at different levels of zoom, as specified by the user.}
+		\funcreq
+			{Path Finding}
+			{The application should find and display a path between the user's current position and a target cache they specify.}
+			{3}{Find Location, Display Location, Nearby Caches}
+			{The user will select which cache they want to navigate to.}
+			{The application will use the Google Directions API to find a path to the target cache.}
+			{A path will be drawn on a map to show which route to take.}
+		\funcreq
+			{Cache Placement}
+			{The application will allow the user to request the placement of a cache at their current location.}
+			{1}{Find Location, Server Connectivity}
+			{The user will trigger a request to place a cache at their current position.}
+			{If the request is refused by the server the user will be shown an error message with the reason why the request was denied.}
+			{The application will send a cache placement request to the central server, and if it is successful all users will be able to see the new cache when requested.}
+		\nonfuncreq
+			{Minimum Support}
+			{The application must support at least Android version 4.0 and above, and function correctly on a HTC Desire C device.}
+		\nonfuncreq
+			{Cache Status Clarity}
+			{It should be easy for a client to see if a cache is owned, and if so caches owned by different users should be easily identifiable. For example, colour them differently for different owners.}
+
 \renewcommand{\arraystretch}{1}
