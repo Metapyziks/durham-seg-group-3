@@ -12,10 +12,16 @@
 		\textbf{Priority} &
 			\ifnum#3=1 High \else\ifnum#3=2 Medium \else Low \fi\fi
 		\\ 
-		\textbf{Pre-conditions} & #4 \\
+		\ifnum\pdfstrcmp{None}{#4}=0 \else
+			\textbf{Pre-conditions} & #4 \\
+		\fi
+		\ifnum\pdfstrcmp{N/A}{#5}=0 \else
 			\textbf{Input} & #5 \\ 
-			\textbf{Operations} & #6 \\ 
-			\textbf{Expected Results} & #7 \\
+		\fi
+		\ifnum\pdfstrcmp{N/A}{#6}=0 \else
+			\textbf{Operations} & #6 \\
+		\fi 
+		\textbf{Expected Results} & #7 \\
 		\hline
 		\if\feedbackspace1
 			\textbf{Result Pass / Fail} &
@@ -76,7 +82,7 @@
 			{A user with an activated account will be able to authenticate themselves in order to access resources restricted to only them or account owners.}
 			{1}{Account Registration}
 			{The user will give their username and password.}
-			{The username and password will be checked to see if they conform to the formats specified in \emph{Account Registration}, and if they do then they are compared to the database of accounts for matches.}
+			{The username and password will be checked to see if they conform to the formats specified in Account Registration, and if they do then they are compared to the database of accounts for matches.}
 			{If the credentials match an account, the user is authenticated as the account owner and they may access some otherwise restricted parts of the system.}
 		\funcreq
 			{Account Removal}
@@ -87,9 +93,11 @@
 			{When they have confirmed the action, their account will be deleted from the server along with any related personal data.}
 		\funcreq
 			{Password Recovery}
-			{A user will be able to request for their password to be sent to their email address.}
+			{A user will be able to have their password sent to their email address.}
 			{2}{Account Registration}
-			{} {} {}
+			{The user will enter their email address.}
+			{The given email address will to checked to see if it matches one registered to a user account.}
+			{An email will be sent to the given email address containing the corresponding account's username and password.}
 		\nonfuncreq
 			{Request Sanitation}
 			{All requests should be sanitised before processing in order to prevent attacks or accidental system corruption.}
@@ -113,14 +121,14 @@
 			{When a withdrawal or deposit occurs, the updated amount of points in the account will be updated immediately.}
 		\funcreq
 			{Cache Ownership}
-			{A geocache (cache) is able to be owned by at most one user at a time. Users will be able to see which caches are owned, and who owns them.}
+			{A cache is able to be owned by at most one user at a time. Users will be able to see which caches are owned, and who owns them.}
 			{1}{Account Registration}
 			{A user will be able to view the owner of a selected cache.}
 			{N/A}
 			{The current owner of a cache will be displayed when requested by a user.}
 		\funcreq
 			{Cache Balance}
-			{A geocache will have a point balance associated with it, which will be visible to authorised users.}
+			{A cache will have a point balance associated with it, which will be visible to authorised users.}
 			{1}{None}
 			{An authenticated user performs an action that makes a request to view the point balance of a cache.}
 			{The cache balance is not displayed to the user if they are not authorised to view it at that moment in time.}
@@ -182,7 +190,7 @@
 			{N/A}
 			{Each user will receive points based on their performance in the game.}
 		\funcreq
-			{Admin Placed Caches}
+			{Administrator Placed Caches}
 			{It shall be possible for administrators to place caches without needing to be at the location. These caches behave as normal. The administrator can place the cache with as many points in the cache balance as they wish, including none.}
 			{2}{Cache Attacking}
 			{Administrators will specify the longitude and latitude of a new cache to place, along with how many points will be stored there.}
@@ -224,43 +232,22 @@
 			{Battles for a cache should be weighted in favour of the defenders, so a larger party of attackers is needed to defeat them.}
 	\subsection{Application}
 		\funcreq
-			{Find Location}
-			{The application shall be able to find the current latitude and longitude of the host device when required.}
-			{1}{None}
-			{N/A}
-			{An error message will be shown if the GPS device has been disabled by the user, asking them to re-enable it.}
-			{The application will query the device's GPS antenna to find its position.}
-		\funcreq
-			{Find MAC Address}
-			{The application, when within range of a wireless network, should be able to find the MAC address of that network.}
-			{3}{None}
-			{N/A}
-			{The application does not need to connect to the network, only find the address.}
-			{The application will query the device's wireless adapter to find the MAC addresses of any nearby networks.}
-		\funcreq
 			{Display Location}
 			{The application will be able to display to the user their current location in the context of a map provided by the Google Maps API.}
 			{1}{Find Location}
-			{N/A}
+			{The user will navigate to part of the application which displays a may of the nearby area.}
 			{An error message will be shown if the user has no internet connection, asking them to connect to the internet.}
 			{The application will show the user's location on a map provided by the Google Maps API.}
 		\funcreq
-			{Server Connectivity}
-			{The application will be able to communicate with the central server to make requests and receive responses.}
-			{1}{None}
-			{N/A}
-			{An error message will be shown if the user has no internet connection, asking them to connect to the internet.}
-			{The application will share data with the server to allow a user to see content generated by other users.}
-		\funcreq
 			{Nearby Caches}
-			{The application will be able to show the user the locations of nearby geocaches.}
+			{The application will be able to show the user the locations of nearby caches.}
 			{1}{Find Location, Display Location, Server Connectivity}
 			{The application will use the host device's current position and information sent from the server which describes where the nearest caches are.}
-			{N/A}
-			{The application with mark on the map provided by the Google Maps API each geocache within a defined radius of the user's device.}
+			{The application will check that the device's GPS sensor is enabled and there is internet connectivity.}
+			{The application with mark on the map provided by the Google Maps API each cache within a defined radius of the user's device.}
 		\funcreq
 			{Map Zooming}
-			{The application will allow the user to view a larger or smaller areas of the map.}
+			{The application will allow the user to view a larger or smaller area of the map.}
 			{2}{Display Location}
 			{The user will be able to specify the `zoom level', which is kept within defined bounds.}
 			{The application will request only caches within the portion of the map that is currently visible.}
@@ -277,13 +264,13 @@
 			{The application will allow the user to request the placement of a cache at their current location.}
 			{1}{Find Location, Server Connectivity}
 			{The user will trigger a request to place a cache at their current position.}
-			{If the request is refused by the server the user will be shown an error message with the reason why the request was denied.}
-			{The application will send a cache placement request to the central server, and if it is successful all users will be able to see the new cache when requested.}
+			{The server will validate the request to place a new cache.}
+			{The application will send a cache placement request to the central server, and if it is successful all users will be able to see the new cache.}
 		\nonfuncreq
 			{Minimum Support}
-			{The application must support at least Android version 4.0 and above, and function correctly on a HTC Desire C device.}
+			{The application must support at least Android version 4.0 and above, and function without error on a HTC Desire C device.}
 		\nonfuncreq
 			{Cache Status Clarity}
-			{It should be easy for a client to see if a cache is owned, and if so caches owned by different users should be easily identifiable. For example, colour them differently for different owners.}
+			{It should be easy for a client to see if a cache is owned, and caches owned by different users should be easily identifiable.}
 
 \renewcommand{\arraystretch}{1}
