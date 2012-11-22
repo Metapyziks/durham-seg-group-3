@@ -1,5 +1,5 @@
 \renewcommand{\arraystretch}{1.2}
-\def\feedbackspace{1}
+\def\feedbackspace{0}
 \newcommand{\funcreq}[7]
 {
 	\subsubsection{#1}
@@ -24,6 +24,7 @@
 		\textbf{Expected Results} & #7 \\
 		\hline
 		\if\feedbackspace1
+			\hline
 			\textbf{Pass / Fail} &
 				~
 			\\
@@ -109,7 +110,7 @@
 		\funcreq
 			{User Authentication}
 			{A user with an activated account will be able to authenticate 
-			themselves in order to access resources restricted to only account 
+			themselves in order to access resources restricted to account 
 			owners.}
 			{1}{Account Registration}
 			{The user will give their username and password.}
@@ -133,6 +134,13 @@
 			{When the user has confirmed the action, their account will be 
 			deleted from the server along with any related personal data.}
 		\funcreq
+			{Administrator Account Removal}
+			{A user authenticated as an administrator will be able to delete any non-administrator account.}
+			{2}{Administrator Accounts}
+			{The administrator will select which account they wish to delete.}
+			{The server will check that the selected account exists and has not previously been deleted.}
+			{The selected account will be removed from the system.}
+		\funcreq
 			{Password Recovery}
 			{A user will be able to have their password sent to their email 
 			address.}
@@ -146,7 +154,7 @@
 		\funcreq
 			{Account Balance}
 			{Each user account will have a point balance associated with it. 
-			The user which owns the account can view this balance at any time.}
+			The user that owns the account can view this balance at any time.}
 			{1}{Account Registration}
 			{N/A}
 			{A user must be authenticated to have the ability to view the 
@@ -191,28 +199,33 @@
 			{When a withdrawal or deposit occurs, the updated amount of points 
 			in the account will be visible to authorised users when requested.}
 		\funcreq
-			{Cache User Transactions}
-			{The owner of a cache will be able to transfer points between the 
-			cache and their account when they physically visit the location of 
+			{Cache Withdrawal}
+			{The owner of a cache will be able to transfer points from the 
+			cache to their account when they physically visit the location of 
 			the cache. An owned cache becomes unowned if the owning user 
-			withdraws all points from the cache. A cache that is not owned can 
-			have points transferred to it by any user, and after transferring 
-			one or more points the cache will become theirs.}
+			withdraws all points from the cache.}
 			{1}{Account Balance, Cache Balance}
-			{The user will specify how many points to deposit or withdraw.}
+			{The user will specify how many points to withdraw.}
 			{The server will check to see if the user performing the 
-			transaction is within a given radius of the cache. When 
-			depositing, the server checks to see if the user has enough points.
-			When withdrawing, a similar check is performed on the cache's 
-			point balance to ensure there are less than or equal to the number 
+			transaction is within a given radius of the cache. The server will also check to ensure the point balance of the cache has at least the number 
 			they wish to withdraw.}
 			{The cache and user account balances are updated after the 
 			transaction. If a withdrawal leaves a cache empty then the cache 
 			is marked as unowned.}
 		\funcreq
+			{Cache Depositing}
+			{The owner of a cache will be able to transfer points to the 
+			cache from their account when they physically visit the location of 
+			the cache. A cache that is not owned can have points transferred to it by any user, and after transferring one or more points the cache will become theirs.}
+			{1}{Account Balance, Cache Balance}
+			{The user will specify how many points to deposit.}
+			{The server will check to see if the user performing the 
+			transaction is within a given radius of the cache. The server also checks to see if the user has enough points.}
+			{The cache and user account balances are updated after the 
+			transaction. If a deposit leaves a previously empty cache  populated then the cache is marked as owned.}
+		\funcreq
 			{Cache Placement Cost}
-			{When placing a cache, a user must spend a number of points from 
-			their account.}
+			{When placing a cache, a number of points are deducted from the user's account balance.}
 			{1}{Account Balance, Cache Placement}
 			{A user attempts to place a cache.}
 			{The server will check to see if the user has enough points in 
@@ -248,7 +261,7 @@
 			{Successful Attack}
 			{If the attacker wins, the ownership of the cache passes to them. 
 			All defending points are lost, and the surviving attacking points 
-			are transferred to the cache.}
+			are transferred to the balance of the cache.}
 			{1}{Cache Attacking}
 			{N/A}
 			{N/A}
@@ -272,15 +285,14 @@
 			{The point allocation system will use a user's current cache 
 			number, the events of recent battles involving the user, and other 
 			relevant data.}
-			{N/A}
+			{The server will use the given information to decide how many points to give the user.}
 			{Each user will receive points based on their performance in the 
 			game.}
 		\funcreq
 			{Administrator Placed Caches}
 			{It shall be possible for administrators to place caches without 
-			needing to be at the location. These caches behave as normal. The 
-			administrator can place the cache with as many points in the cache 
-			balance as they wish, including none.}
+			needing to be at the location. These caches behave as normal, and the 
+			administrator can place it with as many points in them as they wish, including none.}
 			{2}{Cache Attacking}
 			{Administrators will specify the longitude and latitude of a new 
 			cache to place, along with how many points will be stored there.}
@@ -341,6 +353,20 @@
 			{When a user claims the reward, the value is credited directly to 
 			their point balance. The special event area is removed after the 
 			reward has been claimed by the allowed number of users.}
+		\funcreq
+			{Administrator Cache Deletion}
+			{Administrators shall have the ability to delete any cache from the system.}
+			{2}{Administrator Accounts}
+			{An administrator will select a cache that they wish to remove from the system.}
+			{The server will check that the selected cache exists and has not already been removed.}
+			{The selected cache will be deleted from the server and will no longer be visible to users.}
+		\funcreq
+			{Account Deletion Cache Removal}
+			{When a player account is removed from the system, all caches owned by them shall also be deleted.}
+			{2}{Cache Ownership, Account Removal}
+			{The process will be triggered by a user account being removed}
+			{The server will find all caches owned by that account.}
+			{All caches owned by the deleted player will be removed from the system.}
 	\subsection{Application}
 		\funcreq
 			{Display Location}
@@ -349,8 +375,8 @@
 			{1}{Find Location}
 			{The user will navigate to part of the application which displays 
 			a may of the nearby area.}
-			{An error message will be shown if the user has no internet 
-			connection, asking them to connect to the internet.}
+			{An error message will be shown if the user has no Internet 
+			connection, asking them to connect to the Internet.}
 			{The application will show the user's location on a map provided 
 			by the Google Maps API.}
 		\funcreq
@@ -362,7 +388,7 @@
 			information sent from the server which describes where the nearest 
 			caches are.}
 			{The application will check that the device's GPS sensor is 
-			enabled and there is internet connectivity.}
+			enabled and there is Internet connectivity.}
 			{The application with mark on the map provided by the Google Maps 
 			API each cache within a defined radius of the user's device.}
 		\funcreq
@@ -396,5 +422,33 @@
 			{The application will send a cache placement request to the 
 			central server, and if it is successful all users will be able to 
 			see the new cache.}
-
+	\subsection{Peripheral Functionality}
+		\funcreq
+			{User Communication}
+			{Users will be able to send messages to other users.}
+			{3}{User Accounts}
+			{An authenticated user will specify the message subject, and the message to send.}
+			{The server will check that the subject and message body are not empty.}
+			{A message will be created which is visible to all intended recipients.}
+		\funcreq
+			{Communication Reporting}
+			{Users will have the ability to report communications sent between users as being inappropriate. Administrators will be alerted to the reported communication.}
+			{3}{User Communication}
+			{The user will specify which message to report.}
+			{N/A}
+			{An administrator will be alerted to the reported message, including the sender, message content and who reported it.}
+		\funcreq
+			{Activity Recording}
+			{Any game activity performed by a registered user will be recorded and can be viewed by that user when requested. Users will also be able to view activities by other users which have a direct effect on them.}
+			{2}{User Accounts}
+			{A user can request the activities that have occurred since a specified time and date.}
+			{The server will locate all activities related to that user since they time they gave.}
+			{Any activities that occurred since the given time and date will be displayed to the user.}
+		\funcreq
+			{Website}
+			{There will be a a website where users may authenticate themselves and view messages and game information.}
+			{3}{User Accounts}
+			{N/A}
+			{N/A}
+			{A website, accessible through web browsers, will be created to supply more information about the game to authorised users.}
 \renewcommand{\arraystretch}{1}
