@@ -1,8 +1,15 @@
 \section{Hardware and Software}
-	The main product shall take the form of an ``Android app'' - a self contained program running on an Android mobile device. This is what the user will directly interact with. Our product will also require a central server in order to function. The Android app shall be able to transfer information to and from this sever.
+	The main product shall take the form of an ``Android app'' - a self 
+	contained program running on an Android mobile device. This is what the 
+	user will directly interact with. Our product will also require a central 
+	server in order to function. The Android app shall be able to transfer 
+	information to and from this sever.
 	\subsection{Android Application}
 		\subsubsection{Hardware}
-			The device provided for testing the Android app is a HTC Desire C, and the application should perform well on similar devices. The relevant hardware capabilities of the Desire C are listed below\cite{htcdesirex}:
+			The device provided for testing the Android app is a HTC Desire C, 
+			and the application should perform well on similar devices. The 
+			relevant hardware capabilities of the Desire C are listed
+			below\cite{htcdesirex}:
 
 			\begin{itemize}
 				\item Screen Resolution: 320 x 480 pixels
@@ -14,13 +21,48 @@
 			\end{itemize}
 
 			\noindent
-			The app is unlikely to require more capable hardware than what is provided by the device because any intensive processing of data can be offset to the central server. The most that the device will need to handle is some trivial real-time graphical operations, and for that the hardware is more than adequate. Memory should not be a concern because the device has a relatively large amount for a hand-held device, and this product will not require excessive amounts of data to be stored. The app should not exhaust the battery supply of the device to a prohibitive extent, and some effort should be made during development to limit the usage of battery draining resources. The product requires the ability to find its current position using a GPS system, which is an ability of the testing device.
+			The app is unlikely to require more capable hardware than what is 
+			provided by the device because any intensive processing of data 
+			can be offset to the central server. The most that the device will 
+			need to handle is some trivial real-time graphical operations, and 
+			for that the hardware is more than adequate. Memory should not be 
+			a concern because the device has a relatively large amount for a 
+			hand-held device, and this product will not require excessive 
+			amounts of data to be stored. The app should not exhaust the 
+			battery supply of the device to a prohibitive extent, and some 
+			effort should be made during development to limit the usage of 
+			battery draining resources. The product requires the ability to 
+			find its current position using a GPS system, which is an ability 
+			of the testing device.
 		\subsubsection{Software}
-			The application will be written in the programming language Java using the development environment Eclipse, and will target the Android operating system version 4.0 as a minimum as specified by the client.
+			The application will be written in the programming language Java 
+			using the development environment Eclipse, and will target the 
+			Android operating system version 4.0 as a minimum as specified by 
+			the client.
 
-			Java will be used because it is the language the application developers are most proficient in, and Eclipse was chosen for its superior support for developing Android applications.
+			Java will be used because it is the language the application 
+			developers are most proficient in, and Eclipse was chosen for its 
+			superior support for developing Android applications.
 	\subsection{Central Server}
 		\subsubsection{Hardware}
-			The central server program will reside on a conventional computer, and because this one machine will handle all client requests it will need much more advanced hardware than the mobile devices. This server shall have internet connectivity in order to communicate with the Android app clients. The server will also need to be almost constantly active, with downtime only occurring at times of the day when few clients will want to connect. The machine running the server requires a large upload bandwidth in order to service many clients in a small time frame, and this should be complemented by a high enough CPU and memory access speed to reduce the processing time of client requests. A lower bandwidth can be compensated for by reducing the size of data being sent to clients. The server should have enough free storage space to allow for expansion of the product to cover more area of the world.
+			The central server program will reside on a conventional computer, 
+			and because this one machine will handle all client requests it 
+			will need much more advanced hardware than the mobile devices. 
+			This server shall have internet connectivity in order to 
+			communicate with the Android app clients. The server will also 
+			need to be almost constantly active, with downtime only occurring 
+			at times of the day when few clients will want to connect. The 
+			machine running the server requires a large upload bandwidth in 
+			order to service many clients in a small time frame, and this 
+			should be complemented by a high enough CPU and memory access 
+			speed to reduce the processing time of client requests. A lower 
+			bandwidth can be compensated for by reducing the size of data 
+			being sent to clients. The server should have enough free storage 
+			space to allow for expansion of the product to cover more area of 
+			the world.
 		\subsubsection{Software}
-			The server will be written in the programming language C$\sharp$, and built on the .NET Framework version 4.5 using the Visual Studio 2012 development environment. C$\sharp$ was chosen for its superior performance relative to Java, and because it is the language the primary server developer is most experienced with. 
+			The server will be written in the programming language C$\sharp$, 
+			and built on the .NET Framework version 4.5 using the Visual 
+			Studio 2012 development environment. C$\sharp$ was chosen for its 
+			superior performance relative to Java, and because it is the 
+			language the primary server developer is most experienced with. 
