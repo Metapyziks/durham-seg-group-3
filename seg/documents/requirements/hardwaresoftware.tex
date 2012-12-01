@@ -33,7 +33,10 @@
 			effort should be made during development to limit the usage of 
 			battery draining resources. The product requires the ability to 
 			find its current position using a GPS system, which is an ability 
-			of the testing device.
+			of the testing device. This device is considered a very basic
+			model, and the majority of handsets in circulation are at least as
+			capable. If an application functions well on the Desire C, it will
+			function well on most devices.
 		\subsubsection{Software}
 			The application will be written in the programming language Java 
 			using the development environment Eclipse, and will target the 
@@ -42,7 +45,8 @@
 
 			Java will be used because it is the language the application 
 			developers are most proficient in, and Eclipse was chosen for its 
-			superior support for developing Android applications.
+			superior support for developing Android applications using the
+			Android Developer Tools plugin.
 	\subsection{Central Server}
 		\subsubsection{Hardware}
 			The central server program will reside on a conventional computer, 
@@ -59,10 +63,35 @@
 			bandwidth can be compensated for by reducing the size of data 
 			being sent to clients. The server should have enough free storage 
 			space to allow for expansion of the product to cover more area of 
-			the world.
+			the world. At a minimum, the server must have at least two
+			processor cores to utilize multi-threading in the server software,
+			2 GB of memory to be able to process a lot of data simultaneously 
+			and also support the operating system, 16GB of available storage
+			space to hold account and game data.
+
 		\subsubsection{Software}
 			The server will be written in the programming language C$\sharp$, 
 			and built on the .NET Framework version 4.5 using the Visual 
 			Studio 2012 development environment. C$\sharp$ was chosen for its 
 			superior performance relative to Java, and because it is the 
-			language the primary server developer is most experienced with. 
+			language the primary server developer is most experienced with.
+			Visual Studio 2012 will be used for its support of .NET Framework
+			4.5, and many tools to aid development.
+
+	\subsection{Website}
+		\subsubsection{Hardware}
+			The web server will need to be hosted on the same machine as the
+			game server to allow rapid transferral of data between them. This
+			means the server will need the same hardware capabilities.
+
+		\subsubsection{Software}
+			The web server software will need to serve HTML pages with dynamic
+			content pulled from the game server's data. Because the game server
+			is also servicing HTML requests, they should be merged into one
+			program. This means the software requirements are the same as for
+			the central server.
+
+			For clients accessing the website, they will need a web browser
+			that supports the HTML 5 Canvas element. This includes the latest
+			versions of Chromium, Firefox, Opera, Safari and Internet Explorer.
+			We will be using Canvas to draw game related graphics.
