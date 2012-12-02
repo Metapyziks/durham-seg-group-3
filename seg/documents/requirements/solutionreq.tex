@@ -142,17 +142,80 @@
 			making the request is an authenticated administrator.}
 			{The selected account will be removed from the system.}
 		\funcreq
-			{Password Recovery}
-			{A user must be able to have their password sent to their email 
-			address.}
+			{Password Reset}
+			{A user should be able to request to reset their password. They do
+			not need to be authenticated to do so. Upon initiating the request,
+			an email will be sent to confirm the action and allow them to 
+			choose a new password.}
 			{3}{Account Registration}
 			{The user will enter their email address.}
 			{The given email address will be checked to see if it is 
 			registered to a user account.}
 			{If the email address does not match an account, the user is
 			informed with a message. Otherwise, an email will be sent to the
-			given email address containing the corresponding account's username
-			and password.}
+			given email address containing a link to reset their password.}
+		\nonfuncreq
+			{Creating Accounts}
+			{A user new to the application must be able to create an account in 
+			5 minutes or less, excluding activation time.}
+		\nonfuncreq
+			{Identifying Invalid Account Creation}
+			{Should the information provided by a new user when creating an
+			account be invalid, they must be able to identify the exact reason
+			why their input was incorrect without assistance.}
+		\nonfuncreq
+			{Activation Email}
+			{After creating an account or requesting an activation email to be
+			resent, an activation email must have been sent to them within a
+			minute.}
+		\nonfuncreq
+			{Activating Accounts}
+			{A user with an inactive account, when clicking the link on a valid
+			activation email, must have their account become active within a
+			minute.}
+		\nonfuncreq
+			{Ease of Account Creation}
+			{A user with no experience of the system but with at least basic
+			knowledge of operating a computer must be able to create an account
+			including activation unassisted.}
+		\nonfuncreq
+			{Authentication Response}
+			{Assuming a user has an internet connection and they give the
+			username and password that corresponds to their existing account,
+			they must be able to authenticate themselves in under 30 seconds
+			after submitting their credentials.}
+		\nonfuncreq
+			{Identifying Authentication Failure Cause}
+			{Should authentication fail due to incorrect credentials, a user
+			new to the system should be able to identify the reason why without
+			assistance.}
+		\nonfuncreq
+			{Account Removal Email}
+			{When a user requests for their account to be removed, an email to
+			confirm the action must be sent to them within a minute.}
+		\nonfuncreq
+			{Account Removal Confirmation}
+			{Upon the confirmation of a account removal email, a user's account
+			and all information associated with it must be removed within a
+			minute.}
+		\nonfuncreq
+			{Administrator Account Removal}
+			{When an administrator requests for the removal of a user's
+			account, that account must be removed along with all information
+			related to that account within a minute.}
+		\nonfuncreq
+			{Password Reset Confirmation}
+			{When a user requests for their password to be reset, a
+			confirmation email will be sent to them within a minute.}
+		\nonfuncreq
+			{Identifying Password Reset Failure Cause}
+			{Should the new password entered by a user be invalid, or should
+			the server be unable to update the password, a new user must be
+			able to identify the reason without assistance.}
+		\nonfuncreq
+			{Password Reset Updating}
+			{When a user has chosen a new password, the new password will
+			become the active password of the account within 10 seconds.}
 	\subsection{Game Mechanics}
 		\funcreq
 			{Account Balance}
@@ -294,6 +357,29 @@
 			{The surviving defenders remain in the cache, which remains owned 
 			by the defending user.}
 		\funcreq
+			{Battle Breakdown}
+			{After an attack on a cache, the attacking user will be able to
+			view a breakdown of the results of the attack.}
+			{3}{Cache Attacking}
+			{An attack on a cache has concluded.}
+			{The server will provide information such as the number of units
+			lost by each side, and the reward for winning if the attacker was
+			victorious.}
+			{A breakdown of the results of the battle will be displayed to the
+			attacking user.}
+		\funcreq
+			{Cache Operation Chronology}
+			{All operations operations on a given cache (transactions, attacks
+			and deletions) must occur in chronological order in respect to when
+			they were received by the server.}
+			{1}{Cache Transactions, Cache Attacking}
+			{An operation on a cache performed by a user or administrator.}
+			{The server will only process one request concerning operations on
+			a cache at time.}
+			{An operation will not be initiated until all
+			previously received requests concerning operations on that cache
+			have been completed.}
+		\funcreq
 			{Point Generation}
 			{Points must be periodically supplied to each user based on their 
 			current performance in the game.}
@@ -346,6 +432,22 @@
 			{The attacking player will receive a point reward directly to 
 			their account if they are deemed to have won the battle, and the 
 			point balance in the cache will be reset.}
+		\funcreq
+			{Scouting Non-Player Caches}
+			{If a user that has attacked a non-player cache and the minimum
+			delay between attacks on a non-player cache has not elapsed for
+			that cache, the	user will not be allowed to scout (and by
+			extension, attack) the cache.}
+			{2}{Attacking Non-Player Caches}
+			{A user attempts to scout a non-player cache that they attacked a
+			period of time ago that is less than the minimum amount of time
+			that they must wait in between attacking non-player caches.}
+			{The server will check the amount of time since that user last
+			attacked the cache (if at all).}
+			{If the user has never attacked that cache, or the time since the
+			last attack is greater than the amount of time a user must wait
+			between attacks on a non-player cache, they are able to scout the
+			cache as normal. Otherwise they cannot.}
 		\funcreq
 			{Special Event Placement}
 			{It should be possible for administrators to define areas by the 
@@ -405,6 +507,126 @@
 			{The server will find all caches owned by that account.}
 			{All caches owned by the deleted player will be removed from the
 			system.}
+		\nonfuncreq
+			{Identifying Point Balance}
+			{A new user, once authenticated into an activated account, must be
+			able to identify their account balance without assistance.}
+		\nonfuncreq
+			{Account Transactions}
+			{Transactions that occur on a user's account balance must take
+			effect within 5 seconds of the transaction request being received
+			by the server.}
+		\nonfuncreq
+			{Cache Ownership Request}
+			{When requested, the owner of a cache must be displayed within 20
+			seconds.}
+		\nonfuncreq
+			{Identifying Cache Ownership}
+			{A new user authenticated into an active account must be able to
+			identify the owner of a displayed cache without assistance.}
+		\nonfuncreq
+			{Identifying Classification of Caches}
+			{A new user must be able to identify what classification of cache
+			(user owned, self owned, unowned or non-player) a cache is within
+			10 seconds of viewing a cache on the map.}
+		\nonfuncreq
+			{Identifying Point Balance}
+			{A new user, once authenticated into an activated account, must be
+			able to identify the point balance of a cache that they are
+			authorised to view without assistance.}
+		\nonfuncreq
+			{Point Balance Response}
+			{Upon an authorised request by an authenticated user to view the
+			point balance of a cache, the cache balance must be displayed
+			within 20 seconds.}
+		\nonfuncreq
+			{Cache Transactions}
+			{Transactions that occur on a cache's point balance must take
+			effect within 5 seconds of the transaction request being received
+			by the server.}
+		\nonfuncreq
+			{Identifying Cache Transaction Limits}
+			{When attempting to withdrawing or deposit points at a cache that
+			they own, a new user who is authenticated into an activated account
+			will be able to identify how many points they can withdraw or
+			deposit without assistance.}
+		\nonfuncreq
+			{Identifying Cache Transaction Failure Causes}
+			{In all cache transactions, if a new user or administrator exceeds
+			the number of points they are allowed to enter, they must be able
+			to identify the reason why the transaction has not occurred without
+			assistance.}
+		\nonfuncreq
+			{Identifying Cache Placement Cost}
+			{When selecting a location for a new cache to be placed, an 
+			authorised new user must be able to identify the cost of the 
+			placement without assistance.}
+		\nonfuncreq
+			{Identifying Defending Points}
+			{Upon an authorised request to scout a cache, a new user will be
+			able to identify how many points are stored in the cache without
+			assistance.}
+		\nonfuncreq
+			{Identifying Ability to Attack}
+			{A new user who makes an authorised request to scout a cache will
+			be able to identify how to initiate an attack on that cache without
+			assistance.}
+		\nonfuncreq
+			{Identify Maximum Attacking Points}
+			{When attempting to attack a scouted cache, a new user must be able
+			to identify the maximum number of points that they can attack with
+			without assistance.}
+		\nonfuncreq
+			{Selecting Attacking Points}
+			{When attempting to attack a scouted cache, a new user must be able
+			to input an exact number of points to attack with within 5
+			seconds.}
+		\nonfuncreq
+			{Displaying Attack Result}
+			{After an attack, the result of the battle must be displayed to the
+			attacking user within 20 seconds.}
+		\nonfuncreq
+			{Updating Attack Effects}
+			{After an attack, the resulting effects such as removal of
+			defending points and/or transferral of ownership of the	attacked
+			cache must be registered on the server within 5 seconds.}
+		\nonfuncreq
+			{Identifying Points Lost}
+			{After attacking a cache, a new user must be able to identify how
+			many points they and their opponent lost in the attack without
+			assistance.}
+		\nonfuncreq
+			{Identifying Victory Points}
+			{After attacking a cache and being victorious, a new user must be
+			able to identify how many points they received without assistance.}
+		\nonfuncreq
+			{Administrator Cache Placement}
+			{An administrator placed cache must be stored on the server ready
+			to be viewed by users in under 10 seconds.}
+		\nonfuncreq
+			{Identifying Cache Proximity}
+			{A new user should be able to identify when they are close enough
+			to a cache to interact with it without assistance.}
+		\nonfuncreq
+			{Identifying Administrator Cache Limits}
+			{A new administrator must be able to identify the minimum number of
+			points they can assign to a new administrator placed cache when
+			attempting to place an administrator placed cache without
+			assistance.}
+		\nonfuncreq
+			{Identifying Attack Net Profit}
+			{After attacking a cache, a new user must be able to identify their
+			total point gains or losses without assistance.}
+		\nonfuncreq
+			{Identifying Non-Player Cache Scouting Failure Cause}
+			{When a new user attempts to attack a non-player cache before the
+			minimum delay between attacks since their last attack has elapsed,
+			they must be able to identify the reason why the attack did not
+			occur without assistance.}
+		\nonfuncreq
+			{Special Event Placement}
+			{A special event placement definition must be stored on the server
+			in under 10 seconds.}
 	\subsection{Application}
 		\funcreq
 			{Display Location}
