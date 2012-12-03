@@ -65,7 +65,8 @@
 			{The user will give a username, email address and password.}
 			{The server will check that the username and password conform 
 			to any length and composition restraints, the email is structured 
-			correctly, and that the username and email address are both unique.}
+			correctly, and that the username and email address are both unique.
+			}
 			{If the given information is valid, a new account with the details 
 			entered by the user will be stored.}
 		\funcreq
@@ -138,8 +139,8 @@
 			any non-administrator account.}
 			{2}{Administrator Accounts}
 			{The administrator will select which account they wish to delete.}
-			{The server will check that the selected account exists and the user
-			making the request is an authenticated administrator.}
+			{The server will check that the selected account exists and the
+			user making the request is an authenticated administrator.}
 			{The selected account will be removed from the system.}
 		\funcreq
 			{Password Reset}
@@ -285,11 +286,11 @@
 			then the cache is marked as unowned.}
 		\funcreq
 			{Cache Depositing}
-			{When they physically visit the location of a cache that is owned by
-			them or does not have an owned, a user must be able to transfer 
+			{When they physically visit the location of a cache that is owned
+			by them or does not have an owned, a user must be able to transfer 
 			points to the cache from their account. After transferring one or 
-			more points to an unowned cache, the unowned cache will become owned
-			by the user.}
+			more points to an unowned cache, the unowned cache will become
+			owned by the user.}
 		    {1}{Account Balance, Cache Balance}
 			{The user will specify how many points to deposit.}
 			{The server will check to see if the user performing the 
@@ -338,9 +339,9 @@
 			that user with the specified number of points.}
 		\funcreq
 			{Successful Attack}
-			{If the attacker wins, the ownership of the cache must pass to them. 
-			All defending points will be lost, and the surviving attacking points 
-			will transferred to the balance of the cache.}
+			{If the attacker wins, the ownership of the cache must pass to
+			them. All defending points will be lost, and the surviving
+			attacking points will transferred to the balance of the cache.}
 			{1}{Cache Attacking}
 			{N/A}
 			{N/A}
@@ -627,12 +628,34 @@
 			{Special Event Placement}
 			{A special event placement definition must be stored on the server
 			in under 10 seconds.}
+		\nonfuncreq
+			{Special Event Reward Claiming}
+			{When a user claims a special event reward, the point value of the
+			reward should be added to their account balance in less than 10
+			seconds.}
+		\nonfuncreq
+			{Special Event Visibility}
+			{A new user with the mobile application active must be able to
+			recognise if they are in the effective range of a wireless network
+			that is currently the host of a special event without assistance.}
+		\nonfuncreq
+			{Cache Reporting}
+			{When a cache has been reported by a user, an alert must be
+			visible to administrators in less than 30 seconds.}
+		\nonfuncreq
+			{Administrator Cache Removal}
+			{When an administrator deletes a cache, the cache must be removed
+			from the server within 10 seconds.}
+		\nonfuncreq
+			{Automatic Cache Removal}
+			{When an account is removed from the server, all caches owned by
+			that account must be removed within 10 seconds.}
 	\subsection{Application}
 		\funcreq
 			{Display Location}
-			{The application must allow the user to have displayed to them their
-			current location in the context of a map provided by the Google Maps
-			API.}
+			{The application must allow the user to have displayed to them
+			their current location in the context of a map provided by the
+			Google Maps API.}
 			{1}{Find Location}
 			{The user will request for the Google Maps API powered map to 
 			navigate to their current location.}
@@ -649,10 +672,10 @@
 			{The user will request to see the locations of caches near to
 			a specified position.}
 			{The application will check that the device's GPS antenna is 
-			enabled and there is Internet connectivity. If there is a connection
-			and the antenna is enabled, the application will send a request to 
-			the Server for a list of coordinates of caches near to the specified
-			position.}
+			enabled and there is Internet connectivity. If there is a
+			connection and the antenna is enabled, the application will send a
+			request to the Server for a list of coordinates of caches near to
+			the specified position.}
 			{The application will mark on the map, provided by the Google Maps 
 			API, all caches near to the specified position.}
 		\funcreq
@@ -712,10 +735,10 @@
 			reported it.}
 		\funcreq
 			{Activity Recording}
-			{Any game activity performed by a registered user should be recorded
-			and can be viewed by that user when requested. Users will also be
-			able to view activities by other users which have a direct effect
-			on them.}
+			{Any game activity performed by a registered user should be
+			recorded and can be viewed by that user when requested. Users will
+			also be able to view activities by other users which have a direct
+			effect on them.}
 			{2}{User Accounts}
 			{A user can request the activities that have occurred since a
 			specified time and date.}
