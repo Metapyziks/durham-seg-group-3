@@ -2,14 +2,18 @@
 	The main product shall take the form of an ``Android app'' - a self 
 	contained program running on an Android mobile device. This is what the 
 	user will directly interact with. Our product will also require a central 
-	server in order to function. The Android app shall be able to transfer 
-	information to and from this sever.
+	server in order to function, and a web server to support a website with
+	additional functionality. The Android app must be able to transfer 
+	information to and from the central sever.
 	\subsection{Android Application}
 		\subsubsection{Hardware}
 			The device provided for testing the Android app is a HTC Desire C, 
-			and the application should perform well on similar devices. The 
-			relevant hardware capabilities of the Desire C are listed
-			below\cite{htcdesirex}:
+			and the application should perform well on similar devices. This
+			device is considered a very basic model, and the majority of
+			handsets that we are targeting are at least as capable. If an
+			application functions well on the Desire C, it will function well
+			on most devices. The relevant hardware capabilities of the Desire C
+			are listed below\cite{htcdesirex}:
 
 			\begin{itemize}
 				\item Screen Resolution: 320 x 480 pixels
@@ -33,20 +37,15 @@
 			effort should be made during development to limit the usage of 
 			battery draining resources. The product requires the ability to 
 			find its current position using a GPS system, which is an ability 
-			of the testing device. This device is considered a very basic
-			model, and the majority of handsets in circulation are at least as
-			capable. If an application functions well on the Desire C, it will
-			function well on most devices.
+			of the testing device. 
 		\subsubsection{Software}
 			The application will be written in the programming language Java 
 			using the development environment Eclipse, and will target the 
 			Android operating system version 4.0 as a minimum as specified by 
-			the client.
-
-			Java will be used because it is the language the application 
-			developers are most proficient in, and Eclipse was chosen for its 
-			superior support for developing Android applications using the
-			Android Developer Tools plugin.
+			the client. Java will be used because it is the language the
+			application developers are most proficient in, and Eclipse was
+			chosen for its superior support for developing Android applications
+			using the Android Developer Tools plugin.
 	\subsection{Central Server}
 		\subsubsection{Hardware}
 			The central server program will reside on a conventional computer, 
@@ -75,8 +74,8 @@
 			Studio 2012 development environment. C$\sharp$ was chosen for its 
 			superior performance relative to Java, and because it is the 
 			language the primary server developer is most experienced with.
-			Visual Studio 2012 will be used for its support of .NET Framework
-			4.5, and many tools to aid development.
+			Visual Studio 2012 will be used for its support of both the .NET
+			Framework 4.5 and many tools to aid development.
 
 	\subsection{Website}
 		\subsubsection{Hardware}
@@ -87,11 +86,11 @@
 		\subsubsection{Software}
 			The web server software will need to serve HTML pages with dynamic
 			content pulled from the game server's data. Because the game server
-			is also servicing HTML requests, they should be merged into one
+			is also servicing HTML requests, they may be merged into one
 			program. This means the software requirements are the same as for
-			the central server.
-
-			For clients accessing the website, they will need a web browser
-			that supports the HTML 5 Canvas element. This includes the latest
-			versions of Chromium, Firefox, Opera, Safari and Internet Explorer.
-			We will be using Canvas to draw game related graphics.
+			the central server. The dynamic portion of the server will be
+			written in C$\sharp$, using the same development environment as the
+			central server. For clients accessing the website, they will need a
+			web browser that supports the HTML 5 Canvas element. This includes
+			the latest versions of Chromium, Firefox, Opera, Safari and
+			Internet Explorer.
