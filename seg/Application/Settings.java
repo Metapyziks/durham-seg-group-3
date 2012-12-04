@@ -1,24 +1,21 @@
 import java.util.Properties;
 import java.io.FileInputStream;
 
+//Static class to allow all classes in the application
+//to access settings from the config ini file.
 public class Settings
 {
     private static final String settingsFile = "Settings.ini";
-    private static final Messenger messenger = new Messenger();
-    private Properties settings;
+    private static Properties settings = new Properties();
 
     ///////
     //
     //Constructor
     //
-    //Initiallises vairables and reads in all settings from the settings
-    //ini file.
-    //
     ////////
     public Settings()
     {
-	settings = new Properties();
-        readSettings();
+
     }
 
     ////////
@@ -28,7 +25,7 @@ public class Settings
     //Reads in the settings file that is an INI file.
     //
     ////////
-    private void readSettings()
+    public static void readSettings()
     {
 	try
 	{
@@ -36,33 +33,41 @@ public class Settings
 	}
 	catch(Exception e)
 	{
-            messenger.printError("Error When Reading Settings ini File: " + e.toString());
+            Messenger.printError("Error When Reading Settings ini File: " + e.toString());
 	}
     }
 
     ////////
     //
-    //updateSettings
-    //
-    //Pretty irrelevant method, but the method name makes more sense when called
-    //after the class has been initialised.
-    //
-    ////////
-    public void updateSettings()
-    {
-        readSettings();
-    }
-
-    ////////
-    //
-    //getSettings
+    //getAllSettings
     //
     //returns all of the settings that were last read from the ini file.
     //
     ////////
-    public Properties getAllSettings()
+    public static Properties getAllSettings()
     {
         return settings;
+    }
+
+    ////////
+    //
+    //getSetting
+    //
+    //Can be used to access any setting value from the settings file,
+    //but it is better to use the individual accessors should the
+    //name of the key change.
+    //
+    ////////
+    public static String getSetting(String settingName)
+    {
+        if(settings.containsKey(settingName))
+	{
+            return settings.getProperty(settingName);
+	}
+	else
+	{
+            return null;
+	}
     }
 
     ////////
@@ -72,21 +77,15 @@ public class Settings
     //returns the Server IP that setting that was last read from the ini file.
     //
     ////////
-    public String getServerIP()
+    public static String getServerIP()
     {
-        return settings.getProperty("ServerIP");
-    }
-
-    ////////
-    //
-    //main
-    //
-    //Main method for testing this class.
-    //
-    ////////
-    public static void main(String args[])
-    {
-        Settings s = new Settings();
-	System.out.println(s.getServerIP());
+	if(settings.containsKey("ServerIP"))
+	{
+            return settings.getProperty("ServerIP");
+	}
+	else
+	{
+            return null;
+	}
     }
 }

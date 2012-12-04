@@ -1,10 +1,9 @@
+//Class to deal with outputting messages to the user
 public class Messenger
 {
     ////////
     //
     //Constructor
-    //
-    //
     //
     ////////
     public Messenger()
@@ -21,7 +20,7 @@ public class Messenger
     //and then closing the application in a suitable manner.
     //
     ////////
-    public void printError(String message)
+    public static void printError(String message)
     {
 	printMessage(message);
 	System.exit(1);
@@ -35,7 +34,7 @@ public class Messenger
     //in the same way. This may be a GUI message box or something similar.
     //
     ////////
-    public void printMessage(String message)
+    public static void printMessage(String message)
     {
         System.out.println(message);
     }
