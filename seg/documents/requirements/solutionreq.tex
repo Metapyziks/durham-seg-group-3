@@ -156,9 +156,8 @@
 			given email address containing a link to reset their password.}
 		\nonfuncreq % 1.9
 			{Activation Email Delay}
-			{After creating an account or requesting an activation email to be
-			resent, an activation email must have been sent to them within a
-			minute.}
+			{After a user requests an activation email or password reset email,
+			the email must have been sent to them within a minute.}
 		\nonfuncreq % 1.10
 			{Ease of Account Creation}
 			{A user with no experience of the system but with at least basic
@@ -461,19 +460,35 @@
 			system.}
 		\nonfuncreq % 2.25
 			{Distinguishing Cache Owners}
-			{It must be obvious to a new user which caches are owned by
+			{A new user must be able to identify which caches are owned by
 			themselves, which are owned by opponents, and which have no owners
-			at all.}
+			at all without assistance.}
 		\nonfuncreq % 2.26
 			{Difficulty Curve}
-			{It must be relatively easy for a new player to expand their
-			territory (own new caches), and get progressively more difficult to
-			do so as they own a larger amount of caches.}
+			{It should be relatively easy for a player with a small amount of
+			caches to expand their territory (own new caches), and get
+			progressively more difficult to protect them as they own a larger
+			amount of caches.}
 		\nonfuncreq % 2.27
 			{New Player Protection}
 			{There must be some form of protection for new players to deter
 			older ones from easily eliminating them, or a disincentive to make
 			preying on new players unprofitable.}
+		\nonfuncreq % 2.28
+			{Cache Action Delay}
+			{Any action performed by an administrator or user on a cache (such
+			as placement, transactions or an attack) must take effect within 10
+			seconds.}
+		\nonfuncreq % 2.29
+			{Anti-Cheating Measures}
+			{It should be almost impossible for someone without knowledge of
+			the internal workings of the application to fake their position to
+			the server and be able to perform location dependent actions
+			without actually being at the required location.}
+		\nonfuncreq % 2.30
+			{Data Usage}
+			{The application should, while in active use, transfer on average
+			less than 5MB an hour with the server.}
 	\subsection{Application} % 3
 		\funcreq % 3.1
 			{Display Location}
@@ -562,6 +577,15 @@
 			{Interface Feedback Delay}
 			{The user interface should provide feedback of some form for all
 			user actions that require a response within 0.25 seconds.}
+		\nonfuncreq % 3.10
+			{Start-up Time}
+			{The application should, on average, be ready for user input in
+			less than 10 seconds after starting.}
+		\nonfuncreq % 3.11
+			{Battery Usage}
+			{The application should be optimised such that, when started on a
+			device with a full battery, it can be active for at least 4 hours
+			without completely depleting the host device's battery.}
 	\subsection{Peripheral Functionality} % 4
 		\funcreq % 4.1
 			{User Communication}
@@ -663,7 +687,7 @@
 		\nonfuncreq % 4.9
 			{Page Request Response Time}
 			{The server must, on average, take less than 2 seconds to produce
-			a requested web page.}
+			a requested web page after receiving a request.}
 		\nonfuncreq % 4.10
 			{Ease of Navigation}
 			{It must be possible to travel between any two pages in no more
