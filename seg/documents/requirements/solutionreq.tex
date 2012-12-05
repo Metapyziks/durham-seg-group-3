@@ -460,32 +460,38 @@
 			{The server will find all caches owned by that account.}
 			{All caches owned by the deleted player will be removed from the
 			system.}
-		\nonfuncreq % 2.25
+		\funcreq % 2.25
+			{Anti-Cheating Measures}
+			{The system must include a method of ensuring that a user is at
+			the location they claim they are when they perform a location
+			dependent action.}
+			{2}{None}
+			{The user makes a request that requires the user to be at the
+			location they claim to be.}
+			{The server performs some validation to ensure the user is
+			where they are claiming to be.}
+			{If the request passes the server's validation, the request
+			is performed.}
+		\nonfuncreq % 2.26
 			{Distinguishing Cache Owners}
 			{A new user must be able to identify which caches are owned by
 			themselves, which are owned by opponents, and which have no owners
 			at all without assistance.}
-		\nonfuncreq % 2.26
+		\nonfuncreq % 2.27
 			{Difficulty Curve}
 			{There should be an inverse relationship between the ease with which 
 			a user can expand their territory (own new caches) and the number
 			of caches that they own.}
-		\nonfuncreq % 2.27
+		\nonfuncreq % 2.28
 			{New Player Protection}
 			{There must be some form of protection for new players to deter
 			older ones from easily eliminating them, or a disincentive to make
 			preying on new players unprofitable.}
-		\nonfuncreq % 2.28
+		\nonfuncreq % 2.29
 			{Cache Action Delay}
 			{Any action performed by an administrator or user on a cache (such
 			as placement, transactions or an attack) must take effect within 10
 			seconds.}
-		\nonfuncreq % 2.29
-			{Anti-Cheating Measures}
-			{It should be almost impossible for someone without knowledge of
-			the internal workings of the application to fake their position to
-			the server and be able to perform location dependent actions
-			without actually being at the required location.}
 		\nonfuncreq % 2.30
 			{Data Usage}
 			{The application should, while in active use, transfer on average
