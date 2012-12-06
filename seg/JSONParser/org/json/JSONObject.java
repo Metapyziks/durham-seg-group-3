@@ -1,9 +1,22 @@
+import java.util.HashMap;
+
 package org.json;
 
 public class JSONObject
 {
-	public JSONObject get( String identifier )
+	private HashMap<String, JSONValue> _children;
+
+	public JSONObject( InputStream stream )
 	{
-		
+		_children = new HashMap<String, JSONValue>();
+	}
+
+	@Override
+	public JSONValue get( String identifier )
+	{
+		if( _children.containsKey( identifier ) )
+			return _children.get( identifier );
+
+		return null;
 	}
 }
