@@ -18,5 +18,4 @@ seg/TestServer/TestServer/config.ini
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
 seg/documents/requirements/*.out
-seg/documents/requirements/*.txt
 seg/documents/requirements/*.toc

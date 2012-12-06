@@ -1,0 +1,54 @@
+Account
+-------
+	A virtual entity assigned to an individual user. Contains profile
+	information for that user and is used to check what actions the owning user
+	is authorised to perform.
+
+Administrator
+-------------
+	An administrator is a user with additional authorisation to perform
+	maintenance and punish malicious users.
+
+App(lication)
+-------------
+	A term used in the context of this document to refer to a mobile
+	application - a program designed to be executed on mobile devices such as
+	smartphones and tablets.
+
+Credentials
+-----------
+	The information supplied by a user in order to be authenticated into a user
+	account. Usually a username-password pair.
+
+Eclipse
+-------
+	A popular Integrated Development Environment (IDE) for developing and
+	debugging software. Is commonly used for Java development, although it also
+	supports several other languages.
+
+Google Maps API
+---------------
+	An Application Programming Interface (a set of routines, protocols and
+	tools) for building software applications using Google Maps.
+
+Google Directions API
+---------------
+	An Application Programming Interface provided by Google for finding routes
+	between real world locations by road, public transport, or on foot.
+
+MAC Address
+-----------
+	A Media Access Control address is unique identifier assigned to a device
+	which interfaces with a network.
+
+Multi-threading
+---------------
+	A programming model that allows a software process to perform several
+	actions simultaneously, such as a server handling the requests of multiple
+	clients at the same time.
+
+Profile
+-------
+	The personal information of a specific user stored in a software system.
+	Each item of information may be only visible to the owner or publicly
+	visible to all.
