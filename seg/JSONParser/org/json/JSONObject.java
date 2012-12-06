@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.io.InputStream;
 
 package org.json;
 

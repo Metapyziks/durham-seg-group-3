@@ -1,4 +1,5 @@
 package org.json;
+import java.io.InputStream;
 
 public class JSONParser
 {

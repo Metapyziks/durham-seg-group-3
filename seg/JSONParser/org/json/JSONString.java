@@ -1,10 +1,11 @@
 package org.json;
+import java.io.InputStream;
 
 public class JSONString extends JSONValue
 {
 	public final String value;
 
-	public JSONString( String str )
+	public JSONString( InputStream stream )
 	{
 		value = str;
 	}
