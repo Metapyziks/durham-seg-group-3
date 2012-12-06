@@ -13,6 +13,7 @@ namespace TestServer
 {
     class Program
     {
+        public static int LocalPort = 80;
         public static String ServerAddress = null;
 
         static bool stActive;
@@ -26,10 +27,11 @@ namespace TestServer
             else
             {
                 IniDocument ini = new IniDocument( "config.ini" );
+                IniSection general = ini.Sections["general"];
+                ServerAddress = general.GetValue( "address" );
+                int.TryParse( general.GetValue( "localport" ), out LocalPort );
 
-                ServerAddress = ini.Sections[ "general" ].GetValue( "address" );
-
-                EmailManager.CreateClient( ini.Sections[ "smtp" ] );
+                EmailManager.CreateClient( ini.Sections["smtp"] );
             }
 
             DatabaseManager.Connect();
@@ -37,7 +39,7 @@ namespace TestServer
             Thread clientThread = new Thread( async () =>
             {
                 HttpListener listener = new HttpListener();
-                listener.Prefixes.Add( "http://+:8080/" );
+                listener.Prefixes.Add( "http://+:" + LocalPort + "/" );
                 listener.Start();
 
                 Console.WriteLine( "Http server started and ready for requests" );
@@ -54,13 +56,14 @@ namespace TestServer
                     ProcessRequest( await ctxTask );
                 }
             } );
+
             clientThread.Start();
 
             while ( stActive )
             {
                 String[] line = Console.ReadLine().Split( new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries );
                 if ( line.Length > 0 )
-                    ProcessCommand( line[ 0 ].ToLower(), line.Where( ( x, i ) => i > 0 ).ToArray() );
+                    ProcessCommand( line[0].ToLower(), line.Where( ( x, i ) => i > 0 ).ToArray() );
             }
 
             clientThread.Abort();
@@ -128,7 +131,7 @@ namespace TestServer
                     }
                 }
             }
-            catch( Exception e )
+            catch ( Exception e )
             {
                 Console.WriteLine( e.GetType().Name + " thrown" );
             }
