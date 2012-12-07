@@ -69,7 +69,6 @@ public class JSONObject extends JSONValue
 				ctx.error( "Expected a value" );
 
 			_children.put( ident, val );
-			System.out.println( "\"" + ident + "\" : " + val.toString() );
 		}
 		ctx.next(); // read past '}'
 	}
