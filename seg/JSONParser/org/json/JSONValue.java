@@ -1,6 +1,6 @@
 package org.json;
 
-public class JSONValue
+public abstract class JSONValue
 {
 	public JSONValue get( String identifier )
 	{

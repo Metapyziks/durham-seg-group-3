@@ -1,18 +1,24 @@
 package org.json;
-import java.io.InputStream;
 
 public class JSONString extends JSONValue
 {
 	public final String value;
 
-	public JSONString( InputStream stream )
+	JSONString( ParseContext ctx )
+		throws JSONParserException
 	{
-		value = str;
+		value = ctx.nextString();
 	}
 
 	@Override
 	public String asString()
 	{
 		return value;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "\"" + value + "\"";
 	}
 }
