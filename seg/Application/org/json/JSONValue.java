@@ -25,4 +25,14 @@ public abstract class JSONValue
 	{
 		return Double.NaN;
 	}
+
+	public JSONValue[] asArray()
+	{
+		return null;
+	}
+
+	public int length()
+	{
+		return -1;
+	}
 }

@@ -42,6 +42,18 @@ public class JSONArray extends JSONValue
 	}
 
 	@Override
+	public JSONValue[] asArray()
+	{
+		return _values;
+	}
+
+	@Override
+	public int length()
+	{
+		return _values.length;
+	}
+
+	@Override
 	public String toString()
 	{
 		return "[]"; // TODO: make this good
