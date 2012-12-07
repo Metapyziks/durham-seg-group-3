@@ -29,6 +29,12 @@ public class JSONBoolean extends JSONValue
 	}
 
 	@Override
+	public boolean asBoolean()
+	{
+		return _value;
+	}
+
+	@Override
 	public String toString()
 	{
 		return asString();

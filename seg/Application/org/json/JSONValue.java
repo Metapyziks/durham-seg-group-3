@@ -26,6 +26,11 @@ public abstract class JSONValue
 		return Double.NaN;
 	}
 
+	public boolean asBoolean()
+	{
+		return false;
+	}
+
 	public JSONValue[] asArray()
 	{
 		return null;
