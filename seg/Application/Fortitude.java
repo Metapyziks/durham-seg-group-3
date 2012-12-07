@@ -21,7 +21,7 @@ public class Fortitude
     public void runApplication()
     {
         Settings.readSettings();
-	ServerRequests.echoMessage("Hello There I Am Fortitude");
+	System.out.println(ServerRequests.echoMessage("Hello There I Am Fortitude"));
     }
 
     ////////

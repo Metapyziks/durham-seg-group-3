@@ -4,6 +4,7 @@ import java.lang.StringBuilder;
 import java.net.URLEncoder;
 import java.net.ConnectException;
 import org.json.*;
+import java.util.ArrayList;
 
 //A class that handles all requests to the server through static methods.
 public class ServerRequests
@@ -16,6 +17,68 @@ public class ServerRequests
     public ServerRequests()
     {
 
+    }
+
+    ////////
+    //
+    //getUserInfo
+    //
+    //used to retrieve the user info of one or more users, returns an arraylist
+    //of the User class with the fields filled from the returned JSON.
+    //The "usernames" parameter is a list of usernames separated by commas.
+    //
+    ////////
+    public static ArrayList<User> getUserInfo(String usernames)
+    {
+        try
+	{
+            String ServerIP = Settings.getServerIP();
+	    if(ServerIP == null)
+	    {
+		Messenger.printMessage("Unable To Retrieve Setting 'getServerIP'");
+                return null;
+	    }
+            JSONObject response = makeGetRequest("http://" + ServerIP + "/api/userinfo?uname=" + usernames);
+	    if(response != null)
+	    {
+                if(response.get("users") != null)
+		{
+	            ArrayList<User> users = new ArrayList<User>();
+                    for(int i = 0; i < response.get("users").length(); i++)
+		    {
+			String accountid = Integer.toString(response.get("users").get(i).get("accountid").asInteger());
+			String uname = response.get("users").get(i).get("uname").asString();
+			String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
+			String rank = response.get("users").get(i).get("rank").asString();
+                        User u = new User(accountid, uname, joindate, rank);
+			users.add(u);
+		    }
+		    return users;
+		}
+		else
+		{
+                    if(response.get("error") != null)
+		    {
+                        Messenger.printMessage("Unable To Get User Info: " + response.get("error"));
+			return null;
+		    }
+		    else
+		    {
+                         Messenger.printMessage("Unable To Get User Info: No response from server...");
+			 return null;
+		    }
+		}
+	    }
+	    else
+	    {
+                return null;
+	    }
+	}
+	catch(Exception e)
+	{
+	    Messenger.printMessage("Unable To Get User Info: " + e);
+            return null;
+	}
     }
 
     ////////

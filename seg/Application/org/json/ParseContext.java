@@ -109,7 +109,7 @@ class ParseContext
 		if( length - str.length() < 0 )
 			return false;
 
-		for( int i = 0; i < str.length(); + i )
+		for( int i = 0; i < str.length(); ++i )
 			if( str.charAt( i ) != _chars[offset + i] )
 				return false;
 
