@@ -1,10 +1,9 @@
 import java.net.URL;
 import java.net.URLConnection;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
 import java.lang.StringBuilder;
 import java.net.URLEncoder;
 import java.net.ConnectException;
+import org.json.*;
 
 //A class that handles all requests to the server through static methods.
 public class ServerRequests
@@ -17,6 +16,55 @@ public class ServerRequests
     public ServerRequests()
     {
 
+    }
+
+    ////////
+    //
+    //registerUser
+    //
+    //Registers a new account, if it is successful then an activation email
+    //is sent by the server. This method will return true if it successfully
+    //registered and false if it did not.
+    //
+    ////////
+    public static boolean registerUser(String uname, String phash, String email)
+    {
+        try
+	{
+            String ServerIP = Settings.getServerIP();
+	    if(ServerIP == null)
+	    {
+                Messenger.printMessage("Unable To Retrieve Setting 'getServerIP'");
+		return false;
+	    }
+	    JSONObject response = makeGetRequest("http://" + ServerIP + "/api/register?uname=" + uname + "&phash=" + phash + "&email=" + email);
+	    if(response != null)
+	    {
+                if(response.get("success") != null)
+		{
+                    return response.get("success").asBoolean();
+		}
+		else
+		{
+                    if(response.get("error") != null)
+		    {
+                        Messenger.printMessage("Unable To Register User: " + response.get("error"));
+			return false;
+		    }
+		    else
+		    {
+                         Messenger.printMessage("Unable To Register User: No response from server...");
+			 return false;
+		    }
+		}
+	    }
+	    return false;
+	}
+	catch(Exception e)
+	{
+            Messenger.printMessage("Unable To Register User: " + e);
+	    return false;
+        }
     }
 
     ////////
@@ -34,21 +82,67 @@ public class ServerRequests
             String ServerIP = Settings.getServerIP();
        	    if(ServerIP == null)
 	    {
-                Messenger.printMessage("Unable to retrieve setting 'getServerIP'");
+                Messenger.printMessage("Unable To Retrieve Setting 'getServerIP'");
 	        return null;
 	    }
-            String response = makeGetRequest("http://" + ServerIP + "/api/echo?msg=" + URLEncoder.encode(message,"ISO-8859-1"));
+            JSONObject response = makeGetRequest("http://" + ServerIP + "/api/echo?msg=" + URLEncoder.encode(message,"ISO-8859-1"));
 	    if(response != null)
 	    {
-	        System.out.println(response);
+		if(response.get("msg") != null)
+		{
+                    return processJSONStringArray(response.get("msg"));
+		}
+		else
+		{
+                    if(response.get("error") != null)
+		    {
+                        Messenger.printMessage("Unable To Echo Message: " + response.get("error"));
+			return null;
+		    }
+		    else
+		    {
+                        Messenger.printMessage("Unable To Echo Message: No response from server...");
+			return null;
+		    }
+		}
 	    }
-	    return response;
+	    return null;
 	}
 	catch(Exception e)
 	{
-            Messenger.printMessage("Unable to echo Message");
+            Messenger.printMessage("Unable To Echo Message: " + e);
 	    return null;
 	}
+    }
+
+    ////////
+    //
+    //processJSONStringArray
+    //
+    //Takes a JSONArray made of strings returned by the server and returns 
+    //the string inside.
+    //
+    ////////
+    private static String processJSONStringArray(JSONValue x)
+    {
+        StringBuilder sb = new StringBuilder();
+	String nextWord = "";
+        for(int i = 0; i < x.length(); i++)
+	{
+	    if(i != x.length() - 1)
+	    {
+                nextWord = x.get(i).asString();
+	        nextWord = nextWord.substring(0, nextWord.length());
+	        sb.append(nextWord + " ");
+	    }
+	    else
+	    {
+                nextWord = x.get(x.length() - 1).asString();
+                nextWord = nextWord.substring(0, nextWord.length());
+		sb.append(nextWord);
+	    }
+	}
+	return sb.toString();
     }
 
     ////////
@@ -59,7 +153,7 @@ public class ServerRequests
     //response.
     //
     ////////
-    public static String makeGetRequest(String request)
+    public static JSONObject makeGetRequest(String request)
     {
 	StringBuilder sb = new StringBuilder();
         try
@@ -67,11 +161,14 @@ public class ServerRequests
             String serverIP = Settings.getServerIP();
 	    URL url = new URL(request);
 	    URLConnection connection = url.openConnection();
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	    String line;
-	    while((line = br.readLine()) != null)
+	    try
 	    {
-                sb.append(line);
+                return JSONObject.parseStream(connection.getInputStream());
+	    }
+	    catch(JSONParserException e)
+	    {
+                Messenger.printMessage("Error Making Request: " + e);
+                return null;
 	    }
 	}
 	catch(ConnectException e)
@@ -81,9 +178,8 @@ public class ServerRequests
 	}
 	catch(Exception e)
 	{
-            Messenger.printMessage("'makeGetrequest' Unable to make request: " + e);
+            Messenger.printMessage("'makeGetrequest' Unable To Make Request: " + e);
 	    return null;
 	}
-	return sb.toString();
     }
 }
