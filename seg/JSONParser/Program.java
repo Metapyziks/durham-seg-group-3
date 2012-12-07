@@ -19,6 +19,11 @@ public class Program
 			String arrays = obj.get( "arrays" ).get( 2 ).get( 2 ).asString();
 
 			System.out.println( "arrays = " + arrays );
+
+			int integer = obj.get( "numbers?" ).asInteger();
+			double doub = obj.get( "decimals" ).asDouble();
+
+			System.out.println( "numbers = " + integer + ", " + doub );
 		}
 		catch( FileNotFoundException e )
 		{

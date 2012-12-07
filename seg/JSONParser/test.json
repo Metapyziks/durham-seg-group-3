@@ -16,5 +16,7 @@
 		[ "arrays", "in", "arrays?!?" ],
 		"and",
 		{ "objects" : "too??" }
-	]
+	],
+	"numbers?" : 1337,
+	"decimals" : 46.234
 }

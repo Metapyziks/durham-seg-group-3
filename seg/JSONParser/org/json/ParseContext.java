@@ -197,9 +197,43 @@ class ParseContext
 		return str.toString();
 	}
 
+	boolean isNextNumber()
+	{
+		skipWhitespace();
+		return Character.isDigit( peek() );
+	}
+
+	double nextNumber()
+	{
+		if( !isNextNumber() )
+			return Double.NaN;
+
+		StringBuilder str = new StringBuilder();
+
+		boolean dp = false;
+		while( hasNext() )
+		{
+			char nxt = peek();
+			if( Character.isDigit( nxt ) )
+				str.append( next() );
+			else if( nxt == '.' && !dp )
+			{
+				str.append( next() );
+				dp = true;
+			}
+			else
+				break;
+		}
+
+		return Double.parseDouble( str.toString() );
+	}
+
 	JSONValue nextValue()
 		throws JSONParserException
 	{
+		if( isNextNumber() )
+			return new JSONNumber( this );
+
 		if( isNextString() )
 			return new JSONString( this );
 

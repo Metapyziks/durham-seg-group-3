@@ -15,4 +15,14 @@ public abstract class JSONValue
 	{
 		return null;
 	}
+
+	public int asInteger()
+	{
+		return 0;
+	}
+
+	public double asDouble()
+	{
+		return Double.NaN;
+	}
 }
