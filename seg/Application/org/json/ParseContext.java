@@ -104,6 +104,18 @@ class ParseContext
 			next();
 	}
 
+	boolean isNext( String str )
+	{
+		if( length - str.length() < 0 )
+			return false;
+
+		for( int i = 0; i < str.length(); + i )
+			if( str.charAt( i ) != _chars[offset + i] )
+				return false;
+
+		return true;
+	}
+
 	boolean isNextWhitespace()
 	{
 		return Character.isWhitespace( peek() );
@@ -230,10 +242,25 @@ class ParseContext
 
 	boolean isNextBoolean()
 	{
-		return false;
+		skipWhitespace();
+		return isNext( "true" ) | isNext( "false" );
+	}
 
-		//skipWhitespace();
-		//return isNext( "true" ) | isNext( "false" );
+	boolean nextBoolean()
+	{
+		if ( !isNextBoolean() )
+			return false;
+
+		if( peek() == 'f' )
+		{
+			offset += 5;
+			return false;
+		}
+		else
+		{
+			offset += 4;
+			return true;
+		}
 	}
 
 	JSONValue nextValue()
@@ -250,6 +277,9 @@ class ParseContext
 
 		if( isNextArrayStart() )
 			return new JSONArray( this );
+
+		if( isNextBoolean() )
+			return new JSONBoolean( this );
 
 		return null;
 	}
