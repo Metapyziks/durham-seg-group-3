@@ -21,6 +21,60 @@ public class ServerRequests
 
     ////////
     //
+    //createSession
+    //
+    //Creates a session on the server and returns the session hash.
+    //This hash will be able to be used as a means of authentication with
+    //the server so the user doesn't have to keep logging in for every
+    //action that requires authentication. This method effectively be
+    //viewed as a 'Log in' method...
+    //
+    ////////
+    public static String createSession(String uname, String phash)
+    {
+        try
+	{
+            String ServerIP = Settings.getServerIP();
+	    if(ServerIP == null)
+	    {
+                Messenger.printMessage("Unable To Retrieve Setting 'getServerIP'");
+		return null;
+	    }
+	    JSONObject response = makeGetRequest("http://" + ServerIP + "/api/session?uname=" + uname + "&phash=" + phash);
+            if(response != null)
+	    {
+                if(response.get("code") != null)
+		{
+		    return response.get("code").asString();
+		}
+		else
+		{
+                    if(response.get("error") != null)
+		    {
+                        Messenger.printMessage("Unable To Log In: " + response.get("error"));
+			return null;
+		    }
+		    else
+		    {
+                         Messenger.printMessage("Unable To Get Log In:w: No response from server...");
+			 return null;
+		    }
+		}
+	    }
+	    else
+	    {
+                return null;
+	    }
+	}
+	catch(Exception e)
+	{
+            Messenger.printMessage("Unable To Log In: " + e);
+	    return null;
+	}
+    }
+
+    ////////
+    //
     //getUserInfo
     //
     //used to retrieve the user info of one or more users, returns an arraylist
@@ -38,7 +92,7 @@ public class ServerRequests
 		Messenger.printMessage("Unable To Retrieve Setting 'getServerIP'");
                 return null;
 	    }
-            JSONObject response = makeGetRequest("http://" + ServerIP + "/api/userinfo?uname=" + usernames);
+            JSONObject response = makeGetRequest("http://" + ServerIP + "/api/userinfo?unames=" + usernames);
 	    if(response != null)
 	    {
                 if(response.get("users") != null)
@@ -218,7 +272,6 @@ public class ServerRequests
     ////////
     public static JSONObject makeGetRequest(String request)
     {
-	StringBuilder sb = new StringBuilder();
         try
 	{
             String serverIP = Settings.getServerIP();
