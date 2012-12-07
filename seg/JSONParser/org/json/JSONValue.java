@@ -6,6 +6,10 @@ public abstract class JSONValue
 	{
 		return null;
 	}
+	public JSONValue get( int index )
+	{
+		return null;
+	}
 
 	public String asString()
 	{

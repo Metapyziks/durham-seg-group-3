@@ -15,6 +15,10 @@ public class Program
 				.get( "oh lawdy" ).asString();
 
 			System.out.println( "indeed = " + lawdy );
+
+			String arrays = obj.get( "arrays" ).get( 2 ).get( 2 ).asString();
+
+			System.out.println( "arrays = " + arrays );
 		}
 		catch( FileNotFoundException e )
 		{

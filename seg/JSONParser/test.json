@@ -1,17 +1,20 @@
-{"testing":"engaged",
-	
-	"nesting":{"optimal":"true"		,
-
-
-				"inception" 	:{"oh lawdy"		  	 :"indeed"}},
-	
-
-		"nice" 	
-
-		: 
-			
-
-
-					"job" 
-
-		     }
+{
+	"testing" : "engaged",	
+	"nesting" :
+	{
+		"optimal" : "true",
+		"inception" :
+		{
+			"oh lawdy" : "indeed"
+		}
+	},
+	"nice" : "job",
+	"arrays" :
+	[
+		"yes",
+		"please",
+		[ "arrays", "in", "arrays?!?" ],
+		"and",
+		{ "objects" : "too??" }
+	]
+}

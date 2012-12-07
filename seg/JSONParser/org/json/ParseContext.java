@@ -121,6 +121,18 @@ class ParseContext
 		return peek() == '}';
 	}
 
+	boolean isNextArrayStart()
+	{
+		skipWhitespace();
+		return peek() == '[';
+	}
+
+	boolean isNextArrayEnd()
+	{
+		skipWhitespace();
+		return peek() == ']';
+	}
+
 	boolean isNextColon()
 	{
 		skipWhitespace();
@@ -193,6 +205,9 @@ class ParseContext
 
 		if( isNextObjectStart() )
 			return new JSONObject( this );
+
+		if( isNextArrayStart() )
+			return new JSONArray( this );
 
 		return null;
 	}
