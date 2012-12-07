@@ -75,10 +75,13 @@ class ParseContext
 					break;
 				case '\t':
 					num += 4;
+					break;
 				case '\n':
 					num = 0;
+					break;
 				default:
 					++num;
+					break;
 			}
 		}
 		return num + 1;
