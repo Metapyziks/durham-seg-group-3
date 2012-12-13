@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 namespace TestServer.Responses
 {
     [Serializable]
-    class EchoResponse
+    class EchoResponse : AcknowledgeResponse
     {
         [Serialize( "msg" )]
         public readonly String[] Message;
 
         public EchoResponse( String message )
+            : base( true )
         {
             Message = message.Split();
         }

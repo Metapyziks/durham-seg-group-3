@@ -9,12 +9,13 @@ using TestServer.Entities;
 namespace TestServer.Responses
 {
     [Serializable]
-    class UserInfoResponse
+    class UserInfoResponse : AcknowledgeResponse
     {
         [Serialize( "users" )]
         public readonly Account[] Users;
 
         public UserInfoResponse( Account[] users )
+            : base( true )
         {
             Users = users;
         }
