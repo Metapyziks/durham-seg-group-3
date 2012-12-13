@@ -12,7 +12,7 @@ namespace TestServer.Requests
     [RequestTypeName( "activate" )]
     class ActivationRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             String email = args[ "email" ];
             String code = args[ "code" ];
@@ -45,7 +45,7 @@ namespace TestServer.Requests
             accounts[ 0 ].Rank = Rank.Verified;
             DatabaseManager.Update( accounts[ 0 ] );
 
-            return new Responses.AcknowledgeResponse( true );
+            return new Responses.Response( true );
         }
     }
 }

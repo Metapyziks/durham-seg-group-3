@@ -12,15 +12,16 @@ namespace TestServer.Requests
     [RequestTypeName( "session" )]
     class StartSessionRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             Account account;
-            Object error;
+            Responses.ErrorResponse error;
 
             if ( CheckAuth( args, out account, out error, false ) )
             {
                 AuthSession sess = AuthSession.Create( account );
-                return new KeyValuePair<String, Object>( "code", new String( sess.SessionCode ) );
+                return new Responses.SessionInfoResponse(
+                    new String( sess.SessionCode ) );
             }
 
             return error;

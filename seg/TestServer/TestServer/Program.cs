@@ -90,8 +90,11 @@ namespace TestServer
 
             StreamWriter writer = new StreamWriter( context.Response.OutputStream );
 
+#if DEBUG
+#else
             try
             {
+#endif
                 if ( context.Request.HttpMethod == "GET" )
                 {
                     String url = context.Request.RawUrl;
@@ -130,6 +133,8 @@ namespace TestServer
                         writer.WriteLine( file );
                     }
                 }
+#if DEBUG
+#else
             }
             catch ( Exception e )
             {
@@ -137,9 +142,13 @@ namespace TestServer
             }
             finally
             {
+#endif
                 writer.Flush();
                 context.Response.OutputStream.Close();
+#if DEBUG
+#else
             }
+#endif
         }
     }
 }

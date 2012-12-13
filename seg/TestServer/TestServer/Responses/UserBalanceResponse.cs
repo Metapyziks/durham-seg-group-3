@@ -9,15 +9,15 @@ using TestServer.Entities;
 namespace TestServer.Responses
 {
     [Serializable]
-    class UserInfoResponse : Response
+    class UserBalanceResponse : Response
     {
-        [Serialize( "users" )]
-        public readonly Account[] Users;
+        [Serialize( "balance" )]
+        public readonly int Balance;
 
-        public UserInfoResponse( Account[] users )
+        public UserBalanceResponse( Player ply )
             : base( true )
         {
-            Users = users;
+            Balance = ply.Balance;
         }
     }
 }

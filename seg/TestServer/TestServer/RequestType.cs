@@ -68,7 +68,8 @@ namespace TestServer
             }
         }
 
-        public bool CheckAuth( NameValueCollection args, out Account account, out Object error, bool acceptSession = true )
+        public bool CheckAuth( NameValueCollection args, out Account account,
+            out Responses.ErrorResponse error, bool acceptSession = true )
         {
             error = new Responses.ErrorResponse( "auth error" );
             account = null;
@@ -91,7 +92,7 @@ namespace TestServer
 
             if ( acceptSession && sessionCode != null && sessionCode.Length > 0 )
             {
-                if ( AuthSession.IsCodeValid( sessionCode ) )
+                if ( !AuthSession.IsCodeValid( sessionCode ) )
                 {
                     error = new Responses.ErrorResponse( "auth error: invalid session code" );
                     return false;
@@ -137,11 +138,8 @@ namespace TestServer
 
                 if ( sess == null || !sessionCode.EqualsCharArray( sess.SessionCode ) )
                 {
-                    if ( !passwordHash.EqualsCharArray( accounts[ 0 ].PasswordHash ) )
-                    {
-                        error = new Responses.ErrorResponse( "auth error: incorrect or expired session code" );
-                        return false;
-                    }
+                    error = new Responses.ErrorResponse( "auth error: incorrect or expired session code" );
+                    return false;
                 }
 
                 sess.Refresh();
@@ -151,6 +149,6 @@ namespace TestServer
             return true;
         }
 
-        public abstract Object Respond( NameValueCollection args );
+        public abstract Responses.Response Respond( NameValueCollection args );
     }
 }

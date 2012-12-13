@@ -16,7 +16,7 @@ namespace TestServer.Entities
     }
 
     [Serializable]
-    [DatabaseEntity( "Account", Account.Fields.AccountID,
+    [DatabaseEntity( "Account", Account.Fields.AccountID, true,
         Account.Fields.AccountID,
         Account.Fields.Username,
         Account.Fields.PasswordHash,

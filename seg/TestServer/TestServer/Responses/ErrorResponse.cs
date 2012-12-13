@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TestServer.Responses
 {
     [Serializable]
-    class ErrorResponse : AcknowledgeResponse
+    class ErrorResponse : Response
     {
         [Serialize( "error" )]
         public readonly String Message;

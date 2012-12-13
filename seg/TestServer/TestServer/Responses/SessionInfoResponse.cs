@@ -4,20 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using TestServer.Entities;
-
 namespace TestServer.Responses
 {
     [Serializable]
-    class UserInfoResponse : Response
+    class SessionInfoResponse : Response
     {
-        [Serialize( "users" )]
-        public readonly Account[] Users;
+        [Serialize( "code" )]
+        public readonly String Code;
 
-        public UserInfoResponse( Account[] users )
+        public SessionInfoResponse( String code )
             : base( true )
         {
-            Users = users;
+            Code = code;
         }
     }
 }

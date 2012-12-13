@@ -10,7 +10,7 @@ namespace TestServer.Requests
     [RequestTypeName( "echo" )]
     class EchoRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             if ( args[ "msg" ] != null )
                 return new Responses.EchoResponse( args[ "msg" ] );

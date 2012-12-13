@@ -12,7 +12,7 @@ namespace TestServer.Requests
     [RequestTypeName( "register" )]
     class RegisterRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             String uname = args[ "uname" ];
             String phash = args[ "phash" ].ToLower();
@@ -61,7 +61,7 @@ namespace TestServer.Requests
             account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
             VerificationCode.Create( account ).SendEmail( account );
 
-            return new Responses.AcknowledgeResponse( true );
+            return new Responses.Response( true );
         }
     }
 }

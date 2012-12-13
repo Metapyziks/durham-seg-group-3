@@ -12,7 +12,7 @@ namespace TestServer.Requests
     [RequestTypeName( "userinfo" )]
     class UserInfoRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             String[] usernames = null;
 

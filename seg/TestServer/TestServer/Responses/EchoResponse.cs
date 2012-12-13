@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TestServer.Responses
 {
     [Serializable]
-    class EchoResponse : AcknowledgeResponse
+    class EchoResponse : Response
     {
         [Serialize( "msg" )]
         public readonly String[] Message;

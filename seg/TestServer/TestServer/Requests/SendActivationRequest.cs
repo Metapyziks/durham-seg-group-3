@@ -12,7 +12,7 @@ namespace TestServer.Requests
     [RequestTypeName( "sendverify" )]
     class SendActivationRequest : RequestType
     {
-        public override Object Respond( NameValueCollection args )
+        public override Responses.Response Respond( NameValueCollection args )
         {
             String email = args[ "email" ];
 
@@ -33,7 +33,7 @@ namespace TestServer.Requests
 
             VerificationCode.Create( accounts[ 0 ] ).SendEmail( accounts[ 0 ] );
 
-            return new Responses.AcknowledgeResponse( true );
+            return new Responses.Response( true );
         }
     }
 }

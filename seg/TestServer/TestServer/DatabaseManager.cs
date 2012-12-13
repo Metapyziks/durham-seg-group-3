@@ -22,14 +22,16 @@ namespace TestServer
     class DatabaseEntityAttribute : Attribute
     {
         public readonly String EntityName;
+        public readonly bool AutoAssignKey;
         public readonly String PrimaryKey;
         public readonly String[] FieldNames;
 
-        public DatabaseEntityAttribute( String entityName, String publicKey,
+        public DatabaseEntityAttribute( String entityName, String publicKey, bool autoAssignKey,
             params String[] fieldNames )
         {
             EntityName = entityName;
             PrimaryKey = publicKey;
+            AutoAssignKey = autoAssignKey;
             FieldNames = fieldNames;
         }
     }
@@ -99,7 +101,7 @@ namespace TestServer
             Dictionary<String, String> fieldDict = new Dictionary<String, String>();
             foreach ( String field in entAttrib.FieldNames )
             {
-                if( field == entAttrib.PrimaryKey )
+                if( entAttrib.AutoAssignKey && field == entAttrib.PrimaryKey )
                     continue;
 
                 fieldDict.Add( field, entity.GetField( field ) );
