@@ -1,5 +1,6 @@
 package com.example.fortitude;
 
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.widget.Space;
 import android.util.TypedValue;
+import android.view.View;
 
 public class GUI
 {   
@@ -76,6 +78,26 @@ public class GUI
         //return Fortitude.getFortitude().getResources().getDimensionPixelSize(tv.resourceId);
     	return 0;
     }
+    
+	////////
+	//
+	//killAll
+	//
+	//removes all GUI elements
+	//
+	////////
+	public static void killAll(View v)
+	{
+		if(v instanceof ViewGroup)
+		{
+		    ViewGroup vg = ((ViewGroup) v);
+		    int z = vg.getChildCount();
+		    for(int i = 0; i < z; i++)
+		    {
+			    vg.removeAllViews();
+		    }
+		}
+	}
     
     ////////
     //

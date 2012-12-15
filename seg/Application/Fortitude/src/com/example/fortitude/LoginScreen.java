@@ -73,7 +73,8 @@ public class LoginScreen extends GridLayout
     
     private void signIn()
     {
-    	MessageBox mb = MessageBox.newMsgBox("Connecting", false);
+    	//MessageBox mb = MessageBox.newMsgBox("Connecting", false);
+        GUI.killAll(Fortitude.getFortitude().getWindow().getDecorView());
     }
     
     ////////
