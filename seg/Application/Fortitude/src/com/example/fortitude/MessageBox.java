@@ -11,6 +11,8 @@ import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View;
+import android.graphics.Paint;
+import java.lang.Math;
 
 //Class to display a message box on the screen that is capable
 //of displaying 20-40 characters of text.
@@ -41,6 +43,8 @@ public class MessageBox extends GridLayout
     private static MessageBox iExist = null;//a static variable to store whether an instance of this class currrently exists or not.
     
     private Boolean haveOkButton = true;
+    
+    private Space positionalSpace = null;
     
     ////////
     //
@@ -159,14 +163,20 @@ public class MessageBox extends GridLayout
         
         LayoutParams row2col1Layout = new LayoutParams(row2, col1); //Middle Left Space
         row2col1Layout.width = (windowWidth / 10);
-        row2col1Layout.height = windowHeight / 10;
         Space row2col1 = new Space(msgBox.getContext());
         row2col1.setLayoutParams(row2col1Layout);
         msgBox.addView(row2col1, row2col1Layout);
         
         LayoutParams row2TextLayout = new LayoutParams(row2, textAreaBoxCol); //Middle middle TEXT GOES HERE!!!
-        row2TextLayout.width = ((windowWidth / 10) * 6);
-        row2TextLayout.height = windowHeight / 5;
+        Paint mPaint = new Paint();
+        mPaint.setTextSize(14);
+        row2TextLayout.width = ((windowWidth / 10) * 6); //TIDY ME UP YOU FOOL!!!!
+        row2TextLayout.height = ((int)((float)(Math.ceil(mPaint.measureText(messageToDisplay, 0, messageToDisplay.length()) / row2TextLayout.width)))) * 16;
+        if((row2TextLayout.height + ((windowWidth / 10) * 2.5)) > windowWidth) //If the height of the variable height message box goes below the screen then we don't want the ok button hidden so just set the height of the messagebox to the maximum height that is visible
+        {
+        	row2TextLayout.height = windowHeight - positionalSpace.getLayoutParams().height - ((int)((float)Math.ceil((windowHeight / 10) * 2.5)));
+        	messageToDisplay = "walrus";
+        }
         TextView messageCell = new TextView(msgBox.getContext());
         messageCell.setLayoutParams(row2TextLayout);
         messageCell.setText(messageToDisplay);
@@ -176,7 +186,6 @@ public class MessageBox extends GridLayout
         
         LayoutParams row2col5Layout = new LayoutParams(row2, col5); //Middle right
         row2col5Layout.width = (windowWidth / 10);
-        row2col5Layout.height = windowHeight / 10;
         Space row2col5 = new Space(msgBox.getContext());
         row2col5.setLayoutParams(row2col5Layout);
         msgBox.addView(row2col5, row2col5Layout);
@@ -286,9 +295,9 @@ public class MessageBox extends GridLayout
         LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
         spaceLayout.width = windowWidth / 10;
         spaceLayout.height = windowHeight / 4;
-        Space space = new Space(Fortitude.getFortitude());
-        space.setLayoutParams(spaceLayout);
-        addView(space, spaceLayout);
+        positionalSpace = new Space(Fortitude.getFortitude());
+        positionalSpace.setLayoutParams(spaceLayout);
+        addView(positionalSpace, spaceLayout);
 	}
 	
 	////////

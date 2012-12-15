@@ -74,9 +74,6 @@ public class LoginScreen extends GridLayout
     private void signIn()
     {
     	MessageBox mb = MessageBox.newMsgBox("Connecting", false);
-    	RequestThread rt = new RequestThread("createUser");
-    	rt.start();
-    	
     }
     
     ////////
