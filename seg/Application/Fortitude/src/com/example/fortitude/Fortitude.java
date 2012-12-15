@@ -25,12 +25,27 @@ public class Fortitude extends Activity
         return true;
     }
     
+    ////////
+    //
+    //runApp
+    //
+    //main method that is run when the activity is created
+    //
+    ////////
     private void runApp()
     {
         //new LoginScreen();
     	MessageBox.newMsgBox("catcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcatcat", true);
     }
     
+    ////////
+    //
+    //getFortitude
+    //
+    //returns the instance of the activity. This is primarily used for gui methods as all
+    //gui elements are children of this activity.
+    //
+    ////////
     public static Fortitude getFortitude()
     {
         return fortitude;	
