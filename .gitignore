@@ -21,3 +21,5 @@ seg/documents/requirements/*.out
 seg/documents/requirements/*.toc
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
+seg/GPSTestThing/gen/com/meta/gpstestthing/BuildConfig.java
+seg/GPSTestThing/gen/com/meta/gpstestthing/R.java
