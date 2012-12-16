@@ -12,6 +12,7 @@ seg/GPSTestThing/bin/
 *.suo
 *.exe
 *.pdb
+*.exe.manifest
 
 seg/TestServer/TestServer/bin
 seg/TestServer/TestServer/obj

@@ -51,12 +51,29 @@ namespace TestServer
             InitializeDirectory( _sContentDirectory );
 
             _watcher = new FileSystemWatcher( _sContentDirectory );
+            _watcher.Created += ( sender, e ) =>
+            {
+                Console.WriteLine( "Content created" );
+                UpdateFile( e.FullPath );
+            };
             _watcher.Changed += ( sender, e ) =>
             {
-                Console.Write( "Content update: " );
-                InitializeFile( e.FullPath );
+                Console.WriteLine( "Content updated" );
+                UpdateFile( e.FullPath );
             };
-            _watcher.NotifyFilter = NotifyFilters.LastWrite;
+            _watcher.Renamed += ( sender, e ) =>
+            {
+                Console.WriteLine( "Content renamed" );
+                UpdateFile( e.OldFullPath );
+                UpdateFile( e.FullPath );
+            };
+            _watcher.Deleted += ( sender, e ) =>
+            {
+                Console.WriteLine( "Content removed" );
+                UpdateFile( e.FullPath );
+            };
+            _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            _watcher.IncludeSubdirectories = true;
             _watcher.EnableRaisingEvents = true;
         }
 
@@ -66,7 +83,7 @@ namespace TestServer
             Console.WriteLine( dirName );
 
             foreach ( String file in Directory.EnumerateFiles( dir ) )
-                InitializeFile( file, depth + 1 );
+                UpdateFile( file, depth + 1 );
 
             foreach ( String subDir in Directory.EnumerateDirectories( dir ) )
                 InitializeDirectory( subDir, depth + 1 );
@@ -77,53 +94,93 @@ namespace TestServer
             return path.Substring( _sContentDirectory.Length ).Replace( '\\', '/' );
         }
 
-        private static void InitializeFile( String path, int depth = 0 )
+        private static void UpdateFile( String path, int depth = 0 )
         {
             String ext = Path.GetExtension( path ).ToLower();
             if ( ext == ".html" )
-                InitializePage( path, depth );
+                UpdatePage( path, depth );
             else if ( _sAllowedExtensions.Contains( ext ) )
-                InitializeContent( path, depth );
+                UpdateContent( path, depth );
         }
 
-        private static void InitializePage( String path, int depth = 0 )
+        private static void UpdatePage( String path, int depth = 0 )
         {
-            String fileName = Path.GetFileName( path );
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine( fileName.PadLeft( fileName.Length + depth * 2 ) );
-            Console.ForegroundColor = ConsoleColor.Gray;
-
             String formatted = FormatPath( path );
+
             if ( !_sPages.ContainsKey( formatted ) )
+            {
                 _sPages.Add( formatted, new ScriptedPage( File.ReadAllText( path ) ) );
+                Console.Write( "+ ".PadLeft( 2 + depth * 2 ) );
+            }
             else
             {
-                DateTime start = DateTime.Now;
-                while ( ( DateTime.Now - start ).TotalSeconds < 1.0 )
+                if ( File.Exists( path ) )
                 {
-                    try
+                    Console.Write( "= ".PadLeft( 2 + depth * 2 ) );
+                    DateTime start = DateTime.Now;
+                    while ( ( DateTime.Now - start ).TotalSeconds < 1.0 )
                     {
-                        _sPages[formatted].Update( File.ReadAllText( path ) );
-                        break;
-                    }
-                    catch ( IOException e )
-                    {
-                        Thread.Sleep( 10 );
+                        try
+                        {
+                            _sPages[formatted].Update( File.ReadAllText( path ) );
+                            break;
+                        }
+                        catch ( IOException e )
+                        {
+                            Thread.Sleep( 10 );
+                        }
                     }
                 }
+                else
+                {
+                    Console.Write( "- ".PadLeft( 2 + depth * 2 ) );
+                    _sPages.Remove( formatted );
+                }
             }
+
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine( formatted );
+            Console.ForegroundColor = ConsoleColor.Gray;
         }
 
-        private static void InitializeContent( String path, int depth = 0 )
+        private static void UpdateContent( String path, int depth = 0 )
         {
-            String fileName = Path.GetFileName( path );
+            String formatted = FormatPath( path );
+
+            if ( !_sContent.ContainsKey( formatted ) )
+            {
+                _sContent.Add( formatted, File.ReadAllBytes( path ) );
+                Console.Write( "+ ".PadLeft( 2 + depth * 2 ) );
+            }
+            else
+            {
+                if ( File.Exists( path ) )
+                {
+                    Console.Write( "= ".PadLeft( 2 + depth * 2 ) );
+                    DateTime start = DateTime.Now;
+                    while ( ( DateTime.Now - start ).TotalSeconds < 1.0 )
+                    {
+                        try
+                        {
+                            _sContent[formatted] = File.ReadAllBytes( path );
+                            break;
+                        }
+                        catch ( IOException e )
+                        {
+                            Thread.Sleep( 10 );
+                        }
+                    }
+                }
+                else
+                {
+                    Console.Write( "- ".PadLeft( 2 + depth * 2 ) );
+                    _sContent.Remove( formatted );
+                }
+            }
 
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine( fileName.PadLeft( fileName.Length + depth * 2 ) );
+            Console.WriteLine( formatted );
             Console.ForegroundColor = ConsoleColor.Gray;
-
-            _sContent.Add( FormatPath( path ), File.ReadAllBytes( path ) );
         }
 
         public static void ServeRequest( String request, Stream stream )
