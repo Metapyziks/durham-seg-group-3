@@ -32,272 +32,47 @@ public class ServerRequests
 	//viewed as a 'Log in' method...
 	//
 	////////
-	public static String createSession(String uname, String phash)
+	public static void createSession(String uname, String phash)
 	{
-		try
-		{
-			String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
-			if(ServerIP == null)
-			{
-				MessageBox.newMsgBox("Unable To Retrieve Setting 'getServerIP'", true);
-				return null;
-			}
-			JSONObject response = makeGetRequest("http://" + ServerIP + "/api/session?uname=" + uname + "&phash=" + phash);
-			if(response != null)
-			{
-				if(response.get("code") != null)
-				{
-					return response.get("code").asString();
-				}
-				else
-				{
-					if(response.get("error") != null)
-					{
-						MessageBox.newMsgBox("Unable To Log In: " + response.get("error"), true);
-						return null;
-					}
-					else
-					{
-						MessageBox.newMsgBox("Unable To Get Log In:w: No response from server...", true);
-						return null;
-					}
-				}
-			}
-			else
-			{
-				return null;
-			}
-		}
-		catch(Exception e)
-		{
-			MessageBox.newMsgBox("Unable To Log In: " + e, true);
-			return null;
-		}
-	}
+		MessageBox mb = MessageBox.newMsgBox("Connecting", false);
+		
+		String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
 
-	////////
-	//
-	//getUserInfo
-	//
-	//used to retrieve the user info of one or more users, returns an arraylist
-	//of the User class with the fields filled from the returned JSON.
-	//The "usernames" parameter is a list of usernames separated by commas.
-	//
-	////////
-	public static ArrayList<User> getUserInfo(String usernames)
-	{
-		try
+		if(ServerIP == null)
 		{
-			String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
-			if(ServerIP == null)
-			{
-				MessageBox.newMsgBox("Unable To Retrieve Setting 'getServerIP'", true);
-				return null;
-			}
-			JSONObject response = makeGetRequest("http://" + ServerIP + "/api/userinfo?unames=" + usernames);
-			if(response != null)
-			{
-				if(response.get("users") != null)
-				{
-					ArrayList<User> users = new ArrayList<User>();
-					for(int i = 0; i < response.get("users").length(); i++)
-					{
-						String accountid = Integer.toString(response.get("users").get(i).get("accountid").asInteger());
-						String uname = response.get("users").get(i).get("uname").asString();
-						String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
-						String rank = response.get("users").get(i).get("rank").asString();
-						User u = new User(accountid, uname, joindate, rank);
-						users.add(u);
-					}
-					return users;
-				}
-				else
-				{
-					if(response.get("error") != null)
-					{
-						MessageBox.newMsgBox("Unable To Get User Info: " + response.get("error"), true);
-						return null;
-					}
-					else
-					{
-						MessageBox.newMsgBox("Unable To Get User Info: No response from server...", true);
-						return null;
-					}
-				}
-			}
-			else
-			{
-				return null;
-			}
+			mb.killMe();
+			mb = MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true);
+			return;
 		}
-		catch(Exception e)
-		{
-			MessageBox.newMsgBox("Unable To Get User Info: " + e, true);
-			return null;
-		}
-	}
 
-	////////
-	//
-	//registerUser
-	//
-	//Registers a new account, if it is successful then an activation email
-	//is sent by the server. This method will return true if it successfully
-	//registered and false if it did not.
-	//
-	////////
-	public static boolean registerUser(String uname, String phash, String email)
-	{
-		try
-		{
-			String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
-			if(ServerIP == null)
-			{
-				MessageBox.newMsgBox("Unable To Retrieve Setting 'getServerIP'", true);
-				return false;
-			}
-			JSONObject response = makeGetRequest("http://" + ServerIP + "/api/register?uname=" + uname + "&phash=" + phash + "&email=" + email);
-			if(response != null)
-			{
-				if(response.get("success") != null)
-				{
-					return response.get("success").asBoolean();
-				}
-				else
-				{
-					if(response.get("error") != null)
-					{
-						MessageBox.newMsgBox("Unable To Register User: " + response.get("error"), true);
-						return false;
-					}
-					else
-					{
-						MessageBox.newMsgBox("Unable To Register User: No response from server...", true);
-						return false;
-					}
-				}
-			}
-			return false;
-		}
-		catch(Exception e)
-		{
-			MessageBox.newMsgBox("Unable To Register User: " + e, true);
-			return false;
-		}
-	}
+		RequestThread rt = new RequestThread() {
 
-	////////
-	//
-	//echoMessage
-	//
-	//Really a test method, makes a request and returns the message that was
-	//sent back, which is the same as the message that was sent.
-	//
-	////////
-	public static String echoMessage(String message)
-	{
-		try
-		{
-			String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
-			if(ServerIP == null)
+			public void processResponse(JSONObject response) throws Exception
 			{
-				MessageBox.newMsgBox("Unable To Retrieve Setting 'getServerIP'", true);
-				return null;
+                if(response.get("error") != null)
+                {
+                	this.setOutputMessage(response.get("error").asString());
+                	this.setSuccess("1");
+                	return;
+                }
+                this.setOutputMessage("Success");
+                this.setSuccess("2");
 			}
-			JSONObject response = makeGetRequest("http://" + ServerIP + "/api/echo?msg=" + URLEncoder.encode(message,"ISO-8859-1"));
-			if(response != null)
-			{
-				if(response.get("msg") != null)
-				{
-					return processJSONStringArray(response.get("msg"));
-				}
-				else
-				{
-					if(response.get("error") != null)
-					{
-						MessageBox.newMsgBox("Unable To Echo Message: " + response.get("error"), true);
-						return null;
-					}
-					else
-					{
-						MessageBox.newMsgBox("Unable To Echo Message: No response from server...", true);
-						return null;
-					}
-				}
-			}
-			return null;
-		}
-		catch(Exception e)
-		{
-			MessageBox.newMsgBox("Unable To Echo Message: " + e, true);
-			return null;
-		}
-	}
 
-	////////
-	//
-	//processJSONStringArray
-	//
-	//Takes a JSONArray made of strings returned by the server and returns 
-	//the string inside.
-	//
-	////////
-	private static String processJSONStringArray(JSONValue x)
-	{
-		StringBuilder sb = new StringBuilder();
-		String nextWord = "";
-		for(int i = 0; i < x.length(); i++)
+		};
+		rt.setURL("http://" + ServerIP + "/api/session?uname=" + uname + "&phash=" + phash);
+		Thread thread = new Thread(rt);
+		thread.start();
+		boolean connecting = false;
+		while(connecting == false)
 		{
-			if(i != x.length() - 1)
+			if(!(rt.getSuccess().equals("0")))
 			{
-				nextWord = x.get(i).asString();
-				nextWord = nextWord.substring(0, nextWord.length());
-				sb.append(nextWord + " ");
+				mb.killMe();
+				mb = MessageBox.newMsgBox(rt.getOutputMessage(), true);
+				connecting = true;
 			}
-			else
-			{
-				nextWord = x.get(x.length() - 1).asString();
-				nextWord = nextWord.substring(0, nextWord.length());
-				sb.append(nextWord);
-			}
-		}
-		return sb.toString();
-	}
-
-	////////
-	//
-	//makeGetRequest
-	//
-	//Generic method to make a get request to the server and return the 
-	//response.
-	//
-	////////
-	public static JSONObject makeGetRequest(String request)
-	{
-		try
-		{
-			URL url = new URL(request);
-			URLConnection connection = url.openConnection();
-			try
-			{
-				return JSONObject.parseStream(connection.getInputStream());
-			}
-			catch(JSONParserException e)
-			{
-				MessageBox.newMsgBox("Error Making Request: " + e, true);
-				return null;
-			}
-		}
-		catch(ConnectException e)
-		{
-			MessageBox.newMsgBox("Unable To Contact Server!", true);
-			return null;
-		}
-		catch(Exception e)
-		{
-			MessageBox.newMsgBox("'makeGetrequest' Unable To Make Request: " + e, true);
-			return null;
-		}
+	    }
 	}
 }
 

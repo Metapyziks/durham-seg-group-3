@@ -29,16 +29,17 @@ public class Login
 	////////
 	public static User getUser(String uname)
 	{
-		ArrayList<User> users = ServerRequests.getUserInfo(uname); 
-		if(users == null)
-		{
-			return null;
-		}
-		if(users.size() != 1)
-		{
-			return null;
-		}
-		return users.get(0);
+		//ArrayList<User> users = ServerRequests.getUserInfo(uname); 
+		//if(users == null)
+		//{
+		//	return null;
+		//}
+		//if(users.size() != 1)
+		//{
+		//	return null;
+		//}
+		//return users.get(0);
+		return null;
 	}
 
 	////////
@@ -48,10 +49,10 @@ public class Login
 	//method to log in and retrieve a session ID
 	//
 	////////
-	public static String logIn(String uname, String password)
+	public static void logIn(String uname, String password)
 	{
 		password = hashPassword(password);
-		return ServerRequests.createSession(uname, password);
+		ServerRequests.createSession(uname, password);
 	}  
 
 	////////
@@ -65,8 +66,9 @@ public class Login
 	////////
 	public static boolean createUser(String uname, String password, String email)
 	{
-		password = hashPassword(password);
-		return ServerRequests.registerUser(uname, password, email);
+		//password = hashPassword(password);
+		//return ServerRequests.registerUser(uname, password, email);
+		return false;
 	}
 
 	////////
