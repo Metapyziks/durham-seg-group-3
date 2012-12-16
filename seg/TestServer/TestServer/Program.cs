@@ -163,7 +163,7 @@ namespace TestServer
                     }
                     else
                     {
-                        ContentManager.ServeRequest( context.Request.RawUrl, context.Response.OutputStream );
+                        ContentManager.ServeRequest( context );
                     }
                 }
 #if DEBUG

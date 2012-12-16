@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,18 +12,39 @@ namespace TestServer
 {
     static class ContentManager
     {
-        private class ScriptedPage
+        private abstract class Page
         {
-            public String Content { get; private set; }
-
-            public ScriptedPage( String content )
+            protected Page( String content )
             {
                 Update( content );
             }
 
-            public void Update( String content )
+            public void ServeRequest( HttpListenerContext context )
+            {
+                StreamWriter writer = new StreamWriter( context.Response.OutputStream );
+                WriteContent( writer );
+                writer.Flush();
+            }
+
+            public abstract void Update( String content );
+            public abstract void WriteContent( StreamWriter writer );
+        }
+
+        private class StaticPage : Page
+        {
+            public String Content { get; private set; }
+
+            public StaticPage( String content )
+                : base( content ) { }
+
+            public override void Update( String content )
             {
                 Content = content;
+            }
+
+            public override void WriteContent( StreamWriter writer )
+            {
+                writer.Write( Content );
             }
         }
 
@@ -31,12 +53,12 @@ namespace TestServer
 
         private static FileSystemWatcher _watcher;
 
-        private static Dictionary<String, ScriptedPage> _sPages;
+        private static Dictionary<String, Page> _sPages;
         private static Dictionary<String, byte[]> _sContent;
 
         public static void Initialize( IniSection ini )
         {
-            _sPages = new Dictionary<string, ScriptedPage>();
+            _sPages = new Dictionary<string, Page>();
             _sContent = new Dictionary<string, byte[]>();
 
 
@@ -109,7 +131,7 @@ namespace TestServer
 
             if ( !_sPages.ContainsKey( formatted ) )
             {
-                _sPages.Add( formatted, new ScriptedPage( File.ReadAllText( path ) ) );
+                _sPages.Add( formatted, new StaticPage( File.ReadAllText( path ) ) );
                 Console.Write( "+ ".PadLeft( 2 + depth * 2 ) );
             }
             else
@@ -183,16 +205,16 @@ namespace TestServer
             Console.ForegroundColor = ConsoleColor.Gray;
         }
 
-        public static void ServeRequest( String request, Stream stream )
+        public static void ServeRequest( HttpListenerContext context )
         {
-            String path = request;
+            String path = context.Request.RawUrl;
             int pathEnd = path.IndexOf( '?' );
             if ( pathEnd == -1 )
                 pathEnd = path.Length;
             path = path.Substring( 0, pathEnd );
 
-            if ( path.Length == 0 )
-                path = "index.html";
+            if ( path.Length == 1 )
+                path = "/index.html";
 
             if ( !path.Contains( '.' ) )
                 path += ".html";
@@ -201,23 +223,19 @@ namespace TestServer
             {
                 if ( _sPages.ContainsKey( path ) )
                 {
-                    StreamWriter writer = new StreamWriter( stream );
-                    writer.WriteLine( _sPages[path].Content );
-                    writer.Flush();
-
+                    _sPages[path].ServeRequest( context );
                     return;
                 }
             }
-
-            if ( _sContent.ContainsKey( path ) )
+            else if ( _sContent.ContainsKey( path ) )
             {
                 byte[] content = _sContent[path];
-                stream.Write( content, 0, content.Length );
+                context.Response.OutputStream.Write( content, 0, content.Length );
                 return;
             }
-            
-            if ( request != "404.html" )
-                ServeRequest( "404.html", stream );
+
+            if ( _sPages.ContainsKey( "/404.html" ) )
+                context.Response.Redirect( "/404.html" );
         }
     }
 }
