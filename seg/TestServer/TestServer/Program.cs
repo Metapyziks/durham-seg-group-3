@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 using Nini.Ini;
 
+using TestServer.Entities;
+
 namespace TestServer
 {
     class Program
@@ -65,7 +67,24 @@ namespace TestServer
             {
                 String[] line = Console.ReadLine().Split( new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries );
                 if ( line.Length > 0 )
-                    ProcessCommand( line[0].ToLower(), line.Where( ( x, i ) => i > 0 ).ToArray() );
+                {
+#if DEBUG
+#else
+                    try
+                    {
+#endif
+                        ProcessCommand( line[0].ToLower(), line.Where( ( x, i ) => i > 0 ).ToArray() );
+#if DEBUG
+#else
+                    }
+                    catch ( Exception e )
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine( e.GetType().Name + " thrown: " + e.Message );
+                        Console.ForegroundColor = ConsoleColor.Gray;
+                    }
+#endif
+                }
             }
 
             clientThread.Abort();
@@ -82,6 +101,29 @@ namespace TestServer
             {
                 case "stop":
                     stActive = false;
+                    break;
+                case "activate":
+                    if ( args.Length == 0 )
+                        throw new ArgumentException( "Expected a user name" );
+
+                    String username = args[0];
+
+                    Account[] accounts = DatabaseManager.Select<Account>( null,
+                        String.Format( "Username = '{0}'", username ) );
+
+                    if ( accounts.Length == 0 )
+                        throw new Exception( "username not recognised" );
+
+                    if ( accounts[ 0 ].IsVerified )
+                        throw new Exception( "account already activated" );
+
+                    VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
+                    
+                    if( request != null )
+                        request.Remove();
+
+                    accounts[ 0 ].Rank = Rank.Verified;
+                    DatabaseManager.Update( accounts[ 0 ] );
                     break;
             }
         }
@@ -129,7 +171,9 @@ namespace TestServer
             }
             catch ( Exception e )
             {
-                Console.WriteLine( e.GetType().Name + " thrown" );
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine( e.GetType().Name + " thrown: " + e.Message );
+                Console.ForegroundColor = ConsoleColor.Gray;
             }
             finally
             {
