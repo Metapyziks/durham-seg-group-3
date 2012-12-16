@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Nini.Ini;
 
 using TestServer.Entities;
+using TestServer.Requests;
 
 namespace TestServer
 {
@@ -139,32 +140,10 @@ namespace TestServer
 #endif
                 if ( context.Request.HttpMethod == "GET" )
                 {
-                    String url = context.Request.RawUrl;
-                    int pathEnd = url.IndexOf( '?' );
-                    if ( pathEnd == -1 )
-                        pathEnd = url.Length;
-
-                    String requestTypeString = url.Substring( 1, pathEnd - 1 );
-
-                    if ( requestTypeString.StartsWith( "api/" ) )
-                    {
-                        requestTypeString = requestTypeString.Substring( 4 );
-                        RequestType requestType = RequestType.Get( requestTypeString );
-                        object response;
-                        if ( requestType != null )
-                            response = requestType.Respond( context.Request.QueryString );
-                        else
-                            response = new Responses.ErrorResponse( "invalid request type (" + requestTypeString + ")" );
-
-                        String obj = JSONSerializer.Serialize( response );
-                        StreamWriter writer = new StreamWriter( context.Response.OutputStream );
-                        writer.WriteLine( obj );
-                        writer.Flush();
-                    }
+                    if ( context.Request.RawUrl.StartsWith( "/api/" ) )
+                        APIManager.ServeRequest( context );
                     else
-                    {
                         ContentManager.ServeRequest( context );
-                    }
                 }
 #if DEBUG
 #else

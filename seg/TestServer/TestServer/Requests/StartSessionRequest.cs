@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "session" )]
-    class StartSessionRequest : RequestType
+    class StartSessionRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

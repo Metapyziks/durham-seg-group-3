@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "register" )]
-    class RegisterRequest : RequestType
+    class RegisterRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

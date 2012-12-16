@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TestServer.Requests
 {
     [RequestTypeName( "echo" )]
-    class EchoRequest : RequestType
+    class EchoRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

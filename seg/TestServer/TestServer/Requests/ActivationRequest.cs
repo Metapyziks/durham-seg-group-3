@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "activate" )]
-    class ActivationRequest : RequestType
+    class ActivationRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

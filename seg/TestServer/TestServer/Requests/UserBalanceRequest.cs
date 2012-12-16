@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "balance" )]
-    class UserBalanceRequest : RequestType
+    class UserBalanceRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

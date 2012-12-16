@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "userinfo" )]
-    class UserInfoRequest : RequestType
+    class UserInfoRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {

@@ -10,7 +10,7 @@ using TestServer.Entities;
 namespace TestServer.Requests
 {
     [RequestTypeName( "sendverify" )]
-    class SendActivationRequest : RequestType
+    class SendActivationRequest : Request
     {
         public override Responses.Response Respond( NameValueCollection args )
         {
