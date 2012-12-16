@@ -16,6 +16,10 @@ public class ServerRequests
 	private static String staticPhash = null;
 	private static String staticEmail = null;
 	private static String staticOutputMessage = null;
+	private static ArrayList<User> staticUserInfo = null;
+	private static boolean getUserInfoComplete = false;
+	private static boolean getUserInfoSuccess = false;
+	private static String usersToGet = null;
 	
 	////////
 	//
@@ -60,6 +64,36 @@ public class ServerRequests
 	public static String getStaticEmail()
 	{
 	    return staticEmail;
+	}
+	
+	public static ArrayList<User> getStaticUserInfo()
+	{
+		return staticUserInfo;
+	}
+	
+	public static boolean getGetUserInfoComplete()
+	{
+		return getUserInfoComplete;
+	}
+	
+	public static String getUsersToGet()
+	{
+		return usersToGet;
+	}
+	
+	public static void setGetUserInfoComplete(boolean x)
+	{
+		getUserInfoComplete = x;
+	}
+	
+	public static boolean getGetUserInfoSuccess()
+	{
+		return getUserInfoSuccess;
+	}
+	
+	public static void setGetUserInfoSuccess(boolean x)
+	{
+		getUserInfoSuccess = x;
 	}
 	
 	////////
@@ -245,6 +279,124 @@ public class ServerRequests
 							}
 						});
 						connecting = true;
+					}
+				}
+			}
+		};
+		Thread thread = new Thread(runnable);
+		thread.start();
+	}
+	
+	////////
+	//
+	//getUserInfo
+	//
+	//creates a static arraylist of Users from a given list of users usernames
+	//
+	////////
+	public static void getUserInfo(String users)
+	{
+		getUserInfoComplete = false;
+		getUserInfoSuccess = false;
+		
+		theMessageBox = MessageBox.newMsgBox("Connecting To Server...", false);
+
+		usersToGet = users;
+		staticUserInfo = new ArrayList<User>();
+		
+		Runnable runnable = new Runnable() {
+
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ServerRequests.getTheMessageBox().killMe();
+					        ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get User Info");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get User Info");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success").asString().equals("false"))
+						{
+							this.setOutputMessage("Failed To Get User Info");
+							this.setSuccess("1");
+							return;
+						}
+						for(int i = 0; i < response.get("users").length(); i++)
+						{
+							String accountid = Integer.toString(response.get("users").get(i).get("accountid").asInteger());
+							String uname = response.get("users").get(i).get("uname").asString();
+							String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
+							String rank = response.get("users").get(i).get("rank").asString();
+							User u = new User(accountid, uname, joindate, rank);
+							ServerRequests.getStaticUserInfo().add(u);
+						}
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+						        ServerRequests.getTheMessageBox().killMe();
+						        ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						connecting = true;
+						ServerRequests.setGetUserInfoComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+						        ServerRequests.getTheMessageBox().killMe();
+							}
+						});
+						while(MessageBox.doYouExist())
+						{
+							//wait till the connecting to server message has gone!
+						}
+					    connecting = true;
+						ServerRequests.setGetUserInfoSuccess(true);
+						ServerRequests.setGetUserInfoComplete(true);
 					}
 				}
 			}
