@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-
 using Nini.Ini;
 
 namespace TestServer
@@ -13,9 +13,14 @@ namespace TestServer
     {
         private class ScriptedPage
         {
-            public readonly String Content;
+            public String Content { get; private set; }
 
             public ScriptedPage( String content )
+            {
+                Update( content );
+            }
+
+            public void Update( String content )
             {
                 Content = content;
             }
@@ -48,36 +53,37 @@ namespace TestServer
             _watcher = new FileSystemWatcher( _sContentDirectory );
             _watcher.Changed += ( sender, e ) =>
             {
-                String path = e.FullPath.Substring( _sContentDirectory.Length );
-                Console.WriteLine( "Change to: " + path );
+                Console.Write( "Content update: " );
+                InitializeFile( e.FullPath );
             };
-            _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            _watcher.NotifyFilter = NotifyFilters.LastWrite;
             _watcher.EnableRaisingEvents = true;
         }
 
         private static void InitializeDirectory( string dir, int depth = 0 )
         {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine( "- {0}", dir );
+            String dirName = "Content" + dir.Substring( _sContentDirectory.Length );
+            Console.WriteLine( dirName );
 
             foreach ( String file in Directory.EnumerateFiles( dir ) )
-            {
-                String ext = Path.GetExtension( file ).ToLower();
-                if ( ext == ".html" )
-                    InitializePage( file, depth + 1 );
-                else if ( _sAllowedExtensions.Contains( ext ) )
-                    InitializeContent( file, depth + 1 );
-            }
+                InitializeFile( file, depth + 1 );
 
             foreach ( String subDir in Directory.EnumerateDirectories( dir ) )
                 InitializeDirectory( subDir, depth + 1 );
-
-            Console.ForegroundColor = ConsoleColor.Gray;
         }
 
         private static String FormatPath( String path )
         {
             return path.Substring( _sContentDirectory.Length ).Replace( '\\', '/' );
+        }
+
+        private static void InitializeFile( String path, int depth = 0 )
+        {
+            String ext = Path.GetExtension( path ).ToLower();
+            if ( ext == ".html" )
+                InitializePage( path, depth );
+            else if ( _sAllowedExtensions.Contains( ext ) )
+                InitializeContent( path, depth );
         }
 
         private static void InitializePage( String path, int depth = 0 )
@@ -86,8 +92,27 @@ namespace TestServer
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine( fileName.PadLeft( fileName.Length + depth * 2 ) );
+            Console.ForegroundColor = ConsoleColor.Gray;
 
-            _sPages.Add( FormatPath( path ), new ScriptedPage( File.ReadAllText( path ) ) );
+            String formatted = FormatPath( path );
+            if ( !_sPages.ContainsKey( formatted ) )
+                _sPages.Add( formatted, new ScriptedPage( File.ReadAllText( path ) ) );
+            else
+            {
+                DateTime start = DateTime.Now;
+                while ( ( DateTime.Now - start ).TotalSeconds < 1.0 )
+                {
+                    try
+                    {
+                        _sPages[formatted].Update( File.ReadAllText( path ) );
+                        break;
+                    }
+                    catch ( IOException e )
+                    {
+                        Thread.Sleep( 10 );
+                    }
+                }
+            }
         }
 
         private static void InitializeContent( String path, int depth = 0 )
@@ -96,6 +121,7 @@ namespace TestServer
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine( fileName.PadLeft( fileName.Length + depth * 2 ) );
+            Console.ForegroundColor = ConsoleColor.Gray;
 
             _sContent.Add( FormatPath( path ), File.ReadAllBytes( path ) );
         }
