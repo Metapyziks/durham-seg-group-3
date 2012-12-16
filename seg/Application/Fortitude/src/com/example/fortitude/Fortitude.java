@@ -34,9 +34,40 @@ public class Fortitude extends Activity
     ////////
     private void runApp()
     {
+        /////////////////////////////////////////////// Create Login Screen Example
         //new LoginScreen();
-    	Login.createUser("marypoppins", "sugar", "marypoppins@london.com");
-    	//Login.logIn("MaryPoppins", "sugar");
+        ///////////////////////////////////////////////
+    	
+        /////////////////////////////////////////////// Create User Example
+    	//Login.createUser("marypoppins", "sugar", "marypoppins@london.com");
+        ///////////////////////////////////////////////
+    	
+        /////////////////////////////////////////////// Log User In Example
+    	//Login.logIn("MaryPoppins", "sugar"); 
+        ///////////////////////////////////////////////
+    	
+    	/////////////////////////////////////////////// Get User Info Example
+    	//ServerRequests.getUserInfo("marypoppins"); 
+    	//Thread thread = new Thread(new Runnable() {
+    	//	public void run()
+    	//	{
+    	//		while(!(ServerRequests.getGetUserInfoComplete()))
+    	//		{
+    	//			
+    	//		}
+    	//		if(ServerRequests.getGetUserInfoSuccess())
+    	//		{
+    	//			Fortitude.getFortitude().runOnUiThread(new Runnable() {
+    	//				public void run()
+    	//				{
+    	//					MessageBox.newMsgBox(ServerRequests.getStaticUserInfo().get(0).getUserName(), true);
+    	//				}
+    	//			});
+    	//		}
+    	//	}
+    	//});
+    	//thread.start();
+        /////////////////////////////////////////////// 
     }
     
     ////////

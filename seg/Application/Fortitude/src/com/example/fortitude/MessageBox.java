@@ -46,6 +46,18 @@ public class MessageBox extends GridLayout
     
     private Space positionalSpace = null;
     
+    public static boolean doYouExist()
+    {
+    	if(iExist == null)
+    	{
+    		return false;
+    	}
+    	else
+    	{
+    		return true;
+    	}
+    }
+    
     ////////
     //
     //newMsgBox
