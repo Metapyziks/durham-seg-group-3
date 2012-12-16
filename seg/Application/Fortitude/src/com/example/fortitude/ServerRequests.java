@@ -11,6 +11,11 @@ import java.util.ArrayList;
 //A class that handles all requests to the server through static methods.
 public class ServerRequests
 {
+	private static MessageBox theMessageBox = null;
+	private static String staticUname = null;
+	private static String staticPhash = null;
+	private static String staticOutputMessage = null;
+	
 	////////
 	//
 	//Constructor
@@ -21,6 +26,31 @@ public class ServerRequests
 
 	}
 
+	public static MessageBox getTheMessageBox()
+	{
+		return theMessageBox;
+	}
+	
+	public static void setTheMessageBox(MessageBox x)
+	{
+		theMessageBox = x;
+	}
+	
+	public static String getStaticUname()
+	{
+		return staticUname;
+	}
+	
+	public static String getStaticPhash()
+	{
+		return staticPhash;
+	}
+	
+	public static String getStaticOutputMessage()
+	{
+		return staticOutputMessage;
+	}
+	
 	////////
 	//
 	//createSession
@@ -34,45 +64,67 @@ public class ServerRequests
 	////////
 	public static void createSession(String uname, String phash)
 	{
-		MessageBox mb = MessageBox.newMsgBox("Connecting", false);
+		theMessageBox = MessageBox.newMsgBox("Connecting", false);
+
+		staticUname = uname;
+		staticPhash = phash;
 		
-		String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+		Runnable runnable = new Runnable() {
 
-		if(ServerIP == null)
-		{
-			mb.killMe();
-			mb = MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true);
-			return;
-		}
-
-		RequestThread rt = new RequestThread() {
-
-			public void processResponse(JSONObject response) throws Exception
+			public void run()
 			{
-                if(response.get("error") != null)
-                {
-                	this.setOutputMessage(response.get("error").asString());
-                	this.setSuccess("1");
-                	return;
-                }
-                this.setOutputMessage("Success");
-                this.setSuccess("2");
-			}
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
 
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ServerRequests.getTheMessageBox().killMe();
+					        ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("Success");
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://" + ServerIP + "/api/session?uname=" + ServerRequests.getStaticUname() + "&phash=" + ServerRequests.getStaticPhash());
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(!(rt.getSuccess().equals("0")))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+						        ServerRequests.getTheMessageBox().killMe();
+						        ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						connecting = true;
+					}
+				}
+			}
 		};
-		rt.setURL("http://" + ServerIP + "/api/session?uname=" + uname + "&phash=" + phash);
-		Thread thread = new Thread(rt);
+		Thread thread = new Thread(runnable);
 		thread.start();
-		boolean connecting = false;
-		while(connecting == false)
-		{
-			if(!(rt.getSuccess().equals("0")))
-			{
-				mb.killMe();
-				mb = MessageBox.newMsgBox(rt.getOutputMessage(), true);
-				connecting = true;
-			}
-	    }
 	}
 }
 
