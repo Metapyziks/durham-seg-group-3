@@ -1,0 +1,9 @@
+<resources>
+
+    <string name="app_name">Fortitude</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_fortitude">Fortitude</string>
+    <string name="ServerIP">192.168.33.2</string>
+
+</resources>

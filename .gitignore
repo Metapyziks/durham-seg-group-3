@@ -22,3 +22,5 @@ seg/documents/requirements/*.toc
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
 *Thumbs.db
+seg/GPSTestThing/gen/com/meta/gpstestthing/BuildConfig.java
+seg/GPSTestThing/gen/com/meta/gpstestthing/R.java

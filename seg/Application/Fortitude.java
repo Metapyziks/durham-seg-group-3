@@ -21,20 +21,8 @@ public class Fortitude
     public void runApplication()
     {
         Settings.readSettings();
-	System.out.println(ServerRequests.echoMessage("Hello There I Am Fortitude"));
-	System.out.println("New User Created: " + Login.createUser("asdkgf", "oinkypig123", "asdg@cat.co.uk"));
-	try
-	{
-	    Thread.sleep(1000);
-	}
-	catch(Exception e)
-	{
-            System.out.println("error");
-            return;
-	}
-	System.out.println("Log in hash: " + Login.logIn("MissPiggy", "oinkypig123"));
-	User theUser = Login.getUser("james_camden");
-	System.out.println("User is verified: " + theUser.isVerified());
+	System.out.println(Login.createUser("Kris", "Kris", "k.a.s.ayre@durham.ac.uk"));
+
     }
 
     ////////
