@@ -32,6 +32,8 @@ namespace TestServer
                 int.TryParse( general.GetValue( "localport" ), out LocalPort );
 
                 EmailManager.CreateClient( ini.Sections["smtp"] );
+
+                ContentManager.Initialize( ini.Sections["webserver"] );
             }
 
             DatabaseManager.Connect();
@@ -88,8 +90,6 @@ namespace TestServer
         {
             Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.Address.MapToIPv4().ToString() + " : " + context.Request.RawUrl );
 
-            StreamWriter writer = new StreamWriter( context.Response.OutputStream );
-
 #if DEBUG
 #else
             try
@@ -115,22 +115,13 @@ namespace TestServer
                             response = new Responses.ErrorResponse( "invalid request type (" + requestTypeString + ")" );
 
                         String obj = JSONSerializer.Serialize( response );
-
+                        StreamWriter writer = new StreamWriter( context.Response.OutputStream );
                         writer.WriteLine( obj );
+                        writer.Flush();
                     }
                     else
                     {
-                        String path = "Content" + context.Request.RawUrl;
-
-                        if ( requestTypeString.Length == 0 )
-                            path = "Content/index.html";
-
-                        if ( !File.Exists( path ) )
-                            path = "Content/404.html";
-
-                        String file = File.ReadAllText( path );
-
-                        writer.WriteLine( file );
+                        ContentManager.ServeRequest( context.Request.RawUrl, context.Response.OutputStream );
                     }
                 }
 #if DEBUG
@@ -143,7 +134,6 @@ namespace TestServer
             finally
             {
 #endif
-                writer.Flush();
                 context.Response.OutputStream.Close();
 #if DEBUG
 #else

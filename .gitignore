@@ -21,3 +21,4 @@ seg/documents/requirements/*.out
 seg/documents/requirements/*.toc
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
+*Thumbs.db

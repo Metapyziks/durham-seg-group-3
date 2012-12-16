@@ -40,12 +40,12 @@ namespace TestServer
     {
         public static CultureInfo CultureInfo = new CultureInfo( "en-US" );
 
-        private static SqlCeConnection stConnection;
+        private static SqlCeConnection _sConnection;
 
         public static void Connect()
         {
-            stConnection = new SqlCeConnection( "Data Source=Database.sdf" );
-            stConnection.Open();
+            _sConnection = new SqlCeConnection( "Data Source=Database.sdf" );
+            _sConnection.Open();
         }
 
         public static T[] Select<T>( String[] fields = null, String condition = null )
@@ -67,7 +67,7 @@ namespace TestServer
             else
                 query = String.Format( "SELECT {0} FROM {1}", fieldString, entityName );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
             SqlCeDataReader reader = cmd.ExecuteReader();
 
             List<T> entities = new List<T>();
@@ -110,7 +110,7 @@ namespace TestServer
             String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
                 String.Join( ", ", fieldDict.Keys ), String.Join( "', '", fieldDict.Values ) );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
@@ -137,7 +137,7 @@ namespace TestServer
             String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
                 String.Join( ", ", fieldSets ), entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
@@ -193,13 +193,13 @@ namespace TestServer
 
             String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, stConnection );
+            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
         public static void Disconnect()
         {
-            stConnection.Close();
+            _sConnection.Close();
         }
     }
 }
