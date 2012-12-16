@@ -34,7 +34,9 @@ public class Fortitude extends Activity
     ////////
     private void runApp()
     {
-        new LoginScreen();
+        //new LoginScreen();
+    	Login.createUser("marypoppins", "sugar", "marypoppins@london.com");
+    	//Login.logIn("MaryPoppins", "sugar");
     }
     
     ////////

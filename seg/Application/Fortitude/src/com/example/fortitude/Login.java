@@ -64,11 +64,10 @@ public class Login
 	//assumes that the username, password and email have been validated.
 	//
 	////////
-	public static boolean createUser(String uname, String password, String email)
+	public static void createUser(String uname, String password, String email)
 	{
-		//password = hashPassword(password);
-		//return ServerRequests.registerUser(uname, password, email);
-		return false;
+		password = hashPassword(password);
+		ServerRequests.registerUser(uname, password, email);
 	}
 
 	////////
