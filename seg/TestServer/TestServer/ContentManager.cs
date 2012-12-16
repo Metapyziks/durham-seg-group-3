@@ -24,6 +24,8 @@ namespace TestServer
         private static String _sContentDirectory;
         private static List<String> _sAllowedExtensions;
 
+        private static FileSystemWatcher _watcher;
+
         private static Dictionary<String, ScriptedPage> _sPages;
         private static Dictionary<String, byte[]> _sContent;
 
@@ -32,7 +34,8 @@ namespace TestServer
             _sPages = new Dictionary<string, ScriptedPage>();
             _sContent = new Dictionary<string, byte[]>();
 
-            _sContentDirectory = ini.GetValue( "pagesdir" ) ?? "Content";
+
+            _sContentDirectory = Path.GetFullPath( ini.GetValue( "pagesdir" ) ?? "Content" );
             _sAllowedExtensions = ( ini.GetValue( "allowedext" ) ?? "" ).Split( ',' ).ToList();
 
             for ( int i = 0; i < _sAllowedExtensions.Count; ++i )
@@ -41,6 +44,15 @@ namespace TestServer
             Console.WriteLine( "Initializing content..." );
 
             InitializeDirectory( _sContentDirectory );
+
+            _watcher = new FileSystemWatcher( _sContentDirectory );
+            _watcher.Changed += ( sender, e ) =>
+            {
+                String path = e.FullPath.Substring( _sContentDirectory.Length );
+                Console.WriteLine( "Change to: " + path );
+            };
+            _watcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName;
+            _watcher.EnableRaisingEvents = true;
         }
 
         private static void InitializeDirectory( string dir, int depth = 0 )
@@ -65,7 +77,7 @@ namespace TestServer
 
         private static String FormatPath( String path )
         {
-            return path.Substring( _sContentDirectory.Length + 1 ).Replace( '\\', '/' );
+            return path.Substring( _sContentDirectory.Length ).Replace( '\\', '/' );
         }
 
         private static void InitializePage( String path, int depth = 0 )
@@ -90,7 +102,17 @@ namespace TestServer
 
         public static void ServeRequest( String request, Stream stream )
         {
-            String path = request.TrimStart( '/' );
+            String path = request;
+            int pathEnd = path.IndexOf( '?' );
+            if ( pathEnd == -1 )
+                pathEnd = path.Length;
+            path = path.Substring( 0, pathEnd );
+
+            if ( path.Length == 0 )
+                path = "index.html";
+
+            if ( !path.Contains( '.' ) )
+                path += ".html";
 
             if ( path.EndsWith( ".html" ) )
             {
@@ -99,9 +121,9 @@ namespace TestServer
                     StreamWriter writer = new StreamWriter( stream );
                     writer.WriteLine( _sPages[path].Content );
                     writer.Flush();
-                }
 
-                return;
+                    return;
+                }
             }
 
             if ( _sContent.ContainsKey( path ) )

@@ -1,5 +1,6 @@
 *.class
 *.*~
+*Thumbs.db
 
 # Package Files #
 *.jar
@@ -9,6 +10,8 @@
 seg/GPSTestThing/bin/
 
 *.suo
+*.exe
+*.pdb
 
 seg/TestServer/TestServer/bin
 seg/TestServer/TestServer/obj
@@ -19,8 +22,11 @@ seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
 seg/documents/requirements/*.out
 seg/documents/requirements/*.toc
+
+seg/GPSTestThing/bin
+seg/GPSTestThing/gen
+
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
-*Thumbs.db
-seg/GPSTestThing/gen/com/meta/gpstestthing/BuildConfig.java
-seg/GPSTestThing/gen/com/meta/gpstestthing/R.java
+seg/Application/bin
+seg/Application/gen
