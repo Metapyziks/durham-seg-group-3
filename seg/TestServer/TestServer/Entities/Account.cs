@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TestServer.Entities
 {
-    enum Rank : byte
+    public enum Rank : byte
     {
         Unverified = 0,
         Verified = 1,
@@ -24,7 +24,7 @@ namespace TestServer.Entities
         Account.Fields.RegistrationDate,
         Account.Fields.Rank
     )]
-    class Account : IDatabaseEntity
+    public class Account : IDatabaseEntity
     {
         public struct Fields
         {

@@ -8,7 +8,7 @@ using TestServer.Entities;
 
 namespace TestServer
 {
-    class VerificationCode
+    public class VerificationCode
     {
         public const double ExpirationTime = 60.0 * 60.0 * 24.0;
 

@@ -8,7 +8,7 @@ using TestServer.Entities;
 
 namespace TestServer
 {
-    class AuthSession
+    public class AuthSession
     {
         public const double ExpirationTime = 60.0 * 15.0;
 

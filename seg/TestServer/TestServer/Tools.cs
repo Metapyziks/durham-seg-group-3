@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace TestServer
 {
-    static class Tools
+    public static class Tools
     {
         private static Random stRand = new Random();
 

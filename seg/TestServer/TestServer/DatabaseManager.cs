@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace TestServer
 {
-    interface IDatabaseEntity
+    public interface IDatabaseEntity
     {
         String GetField( String fieldName );
         void SetField( String fieldName, Object value );
     }
 
     [AttributeUsage( AttributeTargets.Class )]
-    class DatabaseEntityAttribute : Attribute
+    public class DatabaseEntityAttribute : Attribute
     {
         public readonly String EntityName;
         public readonly bool AutoAssignKey;
@@ -36,7 +36,7 @@ namespace TestServer
         }
     }
 
-    static class DatabaseManager
+    public static class DatabaseManager
     {
         public static CultureInfo CultureInfo = new CultureInfo( "en-US" );
 

@@ -10,7 +10,7 @@ namespace TestServer.Entities
     [DatabaseEntity( "Player", Player.Fields.AccountID, false,
         Player.Fields.AccountID,
         Player.Fields.Balance)]
-    class Player : IDatabaseEntity
+    public class Player : IDatabaseEntity
     {
         public struct Fields
         {

@@ -60,14 +60,23 @@ namespace TestServer
         {
             #region Template
             private static readonly String _sTemplate = @"
+using System;
+using System.Net;
+using System.IO;
+
+using TestServer;
+using TestServer.Entities;
+using TestServer.Requests;
+using TestServer.Responses;
+
 public static class {0}
 {
-    public static void ServeRequest( System.Net.HttpListenerContext context )
+    public static void ServeRequest( HttpListenerContext context )
     {
-        System.Net.HttpListenerRequest request = context.Request;
-        System.Net.HttpListenerResponse response = context.Response;
+        HttpListenerRequest request = context.Request;
+        HttpListenerResponse response = context.Response;
 
-        System.IO.StreamWriter writer = new System.IO.StreamWriter( response.OutputStream );        
+        StreamWriter writer = new StreamWriter( response.OutputStream );        
 
         writer.Write( ""{1}"" );
         writer.Flush();
@@ -296,10 +305,7 @@ public static class {0}
 
             if ( !_sPages.ContainsKey( formatted ) )
             {
-                if( path.EndsWith( ".cs.html" ) )
-                    _sPages.Add( formatted, new ScriptedPage( formatted, File.ReadAllText( path ) ) );
-                else
-                    _sPages.Add( formatted, new StaticPage( formatted, File.ReadAllText( path ) ) );
+                _sPages.Add( formatted, new ScriptedPage( formatted, File.ReadAllText( path ) ) );
                 Console.Write( "+ ".PadLeft( 2 + depth * 2 ) );
             }
             else
