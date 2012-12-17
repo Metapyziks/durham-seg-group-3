@@ -17,6 +17,7 @@ namespace TestServer
     using DBConnection = System.Data.SqlServerCe.SqlCeConnection;
     using DBCommand = System.Data.SqlServerCe.SqlCeCommand;
     using DBDataReader = System.Data.SqlServerCe.SqlCeDataReader;
+    using DBEngine = System.Data.SqlServerCe.SqlCeEngine;
 #endif
 
     public interface IDatabaseEntity
@@ -67,8 +68,13 @@ namespace TestServer
 
         private static void CreateDatabase( String connStrFormat, params String[] args )
         {
+#if LINUX
+#else
+            DBEngine engine = new DBEngine( String.Format( connStrFormat, args ) );
+            engine.CreateDatabase();
+            engine.Dispose();
+#endif
             Connect( connStrFormat, args );
-
 #if LINUX
             String ddl = @"CREATE TABLE Account
             (
@@ -82,12 +88,12 @@ namespace TestServer
 #else
             String ddl = @"CREATE TABLE Account
             (
-                AccountID INT(4) NOT NULL UNIQUE PRIMARY KEY IDENTITY (0,1),
+                AccountID INTEGER IDENTITY(0,1) PRIMARY KEY,
                 Username NVARCHAR(32) NOT NULL UNIQUE,
                 PasswordHash NCHAR(32) NOT NULL,
                 Email NVARCHAR(64) NOT NULL UNIQUE,
-                RegistrationDate DATE NOT NULL,
-                RANK INT(1) NOT NULL DEFAULT 0
+                RegistrationDate DATETIME NOT NULL,
+                RANK TINYINT NOT NULL DEFAULT 0
             )";
 #endif
             DBCommand cmd = new DBCommand( ddl, _sConnection );
