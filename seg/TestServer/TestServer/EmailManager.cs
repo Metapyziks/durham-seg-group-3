@@ -37,6 +37,8 @@ namespace TestServer
                 Credentials = new NetworkCredential( username, password ),
                 EnableSsl = true
             };
+            ServicePointManager.ServerCertificateValidationCallback =
+                ( s, certificate, chain, sslPolicyErrors ) => true;
         }
 
         public static void Send( String to, String subject, String message )
