@@ -35,10 +35,10 @@ namespace TestServer.Requests
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
 
-            List<Account> clashes = DatabaseManager.Query<Account>( "select * from Account where "
-                + String.Format( "Username='{0}' OR Email='{1}'", uname, email ) );
+            Account[] clashes = DatabaseManager.Select<Account>( null,
+                String.Format( "Username='{0}' OR Email='{1}'", uname, email ) );
 
-            if ( clashes.Count > 0 )
+            if ( clashes.Length > 0 )
             {
                 if ( clashes[ 0 ].Username == uname )
                     return new Responses.ErrorResponse( "username already in use" );
@@ -57,7 +57,7 @@ namespace TestServer.Requests
 
             DatabaseManager.Insert( account );
 
-            account = DatabaseManager.Get<Account>( x => x.Email == account.Email );
+            account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
             VerificationCode.Create( account ).SendEmail( account );
 
             return new Responses.Response( true );

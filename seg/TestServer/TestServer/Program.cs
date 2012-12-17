@@ -40,7 +40,7 @@ namespace TestServer
                 ContentManager.Initialize( ini.Sections["webserver"] );
             }
 
-            DatabaseManager.Connect();
+            DatabaseManager.ConnectLocal();
 
             Thread clientThread = new Thread( () =>
             {
@@ -103,21 +103,22 @@ namespace TestServer
 
                     String username = args[0];
 
-                    Account account = DatabaseManager.Get<Account>( x => x.Username == username );
+                    Account[] accounts = DatabaseManager.Select<Account>( null,
+                        String.Format( "Username = '{0}'", username ) );
 
-                    if ( account != null )
+                    if ( accounts.Length == 0 )
                         throw new Exception( "username not recognised" );
 
-                    if ( account.IsVerified )
+                    if ( accounts[ 0 ].IsVerified )
                         throw new Exception( "account already activated" );
 
-                    VerificationCode request = VerificationCode.Get( account );
+                    VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
                     
                     if( request != null )
                         request.Remove();
 
-                    account.Rank = Rank.Verified;
-                    DatabaseManager.Update( account );
+                    accounts[ 0 ].Rank = Rank.Verified;
+                    DatabaseManager.Update( accounts[ 0 ] );
                     break;
             }
         }

@@ -11,9 +11,9 @@ namespace TestServer.Responses
     class UserInfoResponse : Response
     {
         [Serialize( "users" )]
-        public readonly IEnumerable<Account> Users;
+        public readonly Account[] Users;
 
-        public UserInfoResponse( IEnumerable<Account> users )
+        public UserInfoResponse( Account[] users )
             : base( true )
         {
             Users = users;

@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-using SQLite;
-
 namespace TestServer.Entities
 {
     public enum Rank : byte
@@ -17,8 +15,26 @@ namespace TestServer.Entities
     }
 
     [Serializable]
-    public class Account
+    [DatabaseEntity( "Account", Account.Fields.AccountID, true,
+        Account.Fields.AccountID,
+        Account.Fields.Username,
+        Account.Fields.PasswordHash,
+        Account.Fields.Email,
+        Account.Fields.RegistrationDate,
+        Account.Fields.Rank
+    )]
+    public class Account : IDatabaseEntity
     {
+        public struct Fields
+        {
+            public const String AccountID = "AccountID";
+            public const String Username = "Username";
+            public const String PasswordHash = "PasswordHash";
+            public const String Email = "Email";
+            public const String RegistrationDate = "RegistrationDate";
+            public const String Rank = "Rank";
+        }
+
         private static readonly Regex stUsernameRegex;
         private static readonly Regex stEmailRegex;
         private static readonly Regex stPasswordHashRegex;
@@ -49,14 +65,10 @@ namespace TestServer.Entities
         }
 
         [Serialize( "accountid" )]
-        [PrimaryKey, AutoIncrement]
-        public int AccountID { get; set; }
+        public int AccountID { get; private set; }
         [Serialize( "uname" )]
-        [MaxLength(32), Unique]
         public String Username { get; set; }
-        [MaxLength(32)]
         public char[] PasswordHash { get; set; }
-        [MaxLength(64), Unique]
         public String Email { get; set; }
         [Serialize( "joindate" )]
         public DateTime RegistrationDate { get; set; }
@@ -76,6 +88,46 @@ namespace TestServer.Entities
         public bool IsOwner
         {
             get { return ( Rank & Rank.Owner ) != 0; }
+        }
+
+        public string GetField( string fieldName )
+        {
+            switch ( fieldName )
+            {
+                case Fields.AccountID:
+                    return AccountID.ToString();
+                case Fields.Username:
+                    return Username;
+                case Fields.PasswordHash:
+                    return new String( PasswordHash );
+                case Fields.Email:
+                    return Email;
+                case Fields.RegistrationDate:
+                    return RegistrationDate.Ticks.ToString();
+                case Fields.Rank:
+                    return ( (byte) Rank ).ToString();
+                default:
+                    return "";
+            }
+        }
+
+        public void SetField( string fieldName, object value )
+        {
+            switch ( fieldName )
+            {
+                case Fields.AccountID:
+                    AccountID = Convert.ToInt32( value ); break;
+                case Fields.Username:
+                    Username = Convert.ToString( value ); break;
+                case Fields.PasswordHash:
+                    PasswordHash = Convert.ToString( value ).ToCharArray(); break;
+                case Fields.Email:
+                    Email = Convert.ToString( value ); break;
+                case Fields.RegistrationDate:
+                    RegistrationDate = new DateTime( Convert.ToInt64( value ) ); break;
+                case Fields.Rank:
+                    Rank = (Rank) Convert.ToByte( value ); break;
+            }
         }
     }
 }

@@ -115,9 +115,9 @@ namespace TestServer.Requests
                 return false;
             }
 
-            account = DatabaseManager.Get<Account>( x => x.Username == username );
+            Account[] accounts = DatabaseManager.Select<Account>( null, String.Format( "Username='{0}'", username ) );
 
-            if ( account != null )
+            if ( accounts.Length == 0 )
             {
                 error = new Responses.ErrorResponse( "auth error: unrecognised username" );
                 return false;
@@ -125,7 +125,7 @@ namespace TestServer.Requests
 
             if ( passwordHash != null && passwordHash.Length != 0 )
             {
-                if ( !passwordHash.EqualsCharArray( account.PasswordHash ) )
+                if ( !passwordHash.EqualsCharArray( accounts[ 0 ].PasswordHash ) )
                 {
                     error = new Responses.ErrorResponse( "auth error: incorrect password hash" );
                     return false;
@@ -133,7 +133,7 @@ namespace TestServer.Requests
             }
             else
             {
-                AuthSession sess = AuthSession.Get( account );
+                AuthSession sess = AuthSession.Get( accounts[ 0 ] );
 
                 if ( sess == null || !sessionCode.EqualsCharArray( sess.SessionCode ) )
                 {
@@ -144,6 +144,7 @@ namespace TestServer.Requests
                 sess.Refresh();
             }
 
+            account = accounts[ 0 ];
             return true;
         }
 

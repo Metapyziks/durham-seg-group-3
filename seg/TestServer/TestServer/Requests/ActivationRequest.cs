@@ -25,23 +25,24 @@ namespace TestServer.Requests
             if(  !Account.IsPasswordHashValid( code ) )
                 return new Responses.ErrorResponse( "invalid activation code" );
 
-            Account account = DatabaseManager.Get<Account>( x => x.Email == email );
+            Account[] accounts = DatabaseManager.Select<Account>( null,
+                String.Format( "Email = '{0}'", email ) );
 
-            if ( account == null )
+            if ( accounts.Length == 0 )
                 return new Responses.ErrorResponse( "email address not recognised" );
 
-            if ( account.IsVerified )
+            if ( accounts[ 0 ].IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerificationCode request = VerificationCode.Get( account );
+            VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
 
             if ( request == null || !code.EqualsCharArray( request.Code ) )
                 return new Responses.ErrorResponse( "incorrect activation code" );
 
             request.Remove();
 
-            account.Rank = Rank.Verified;
-            DatabaseManager.Update( account );
+            accounts[ 0 ].Rank = Rank.Verified;
+            DatabaseManager.Update( accounts[ 0 ] );
 
             return new Responses.Response( true );
         }

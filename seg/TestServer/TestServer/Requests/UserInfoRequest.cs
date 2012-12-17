@@ -34,8 +34,9 @@ namespace TestServer.Requests
                 usernames[ i ] = String.Format( "Username = '{0}'", usernames[ i ] );
             }
 
-            List<Account> users = DatabaseManager.Query<Account>( "select * from Account where "
-                + String.Join( " OR ", usernames ) );
+            Account[] users = DatabaseManager.Select<Account>(
+                null, String.Join( " OR ", usernames ) );
+
             return new Responses.UserInfoResponse( users );
         }
     }
