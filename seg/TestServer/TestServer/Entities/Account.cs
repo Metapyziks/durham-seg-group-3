@@ -103,7 +103,7 @@ namespace TestServer.Entities
                 case Fields.Email:
                     return Email;
                 case Fields.RegistrationDate:
-                    return RegistrationDate.ToString( DatabaseManager.CultureInfo );
+                    return RegistrationDate.Ticks.ToString();
                 case Fields.Rank:
                     return ( (byte) Rank ).ToString();
                 default:
@@ -124,7 +124,7 @@ namespace TestServer.Entities
                 case Fields.Email:
                     Email = Convert.ToString( value ); break;
                 case Fields.RegistrationDate:
-                    RegistrationDate = Convert.ToDateTime( value, DatabaseManager.CultureInfo ); break;
+                    RegistrationDate = new DateTime( Convert.ToInt64( value ) ); break;
                 case Fields.Rank:
                     Rank = (Rank) Convert.ToByte( value ); break;
             }

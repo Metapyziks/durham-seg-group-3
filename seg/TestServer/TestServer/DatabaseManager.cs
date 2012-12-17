@@ -61,9 +61,9 @@ namespace TestServer
         public static void ConnectLocal()
         {
             if( !File.Exists( _sFileName ) )
-                CreateDatabase( "Data Source={0}", _sFileName );
+                CreateDatabase( "Data Source={0}; DateTimeFormat={1}", _sFileName, "Ticks" );
             else
-                Connect( "Data Source={0}", _sFileName );
+                Connect( "Data Source={0}; DateTimeFormat={1}", _sFileName, "Ticks" );
         }
 
         private static void CreateDatabase( String connStrFormat, params String[] args )
@@ -82,7 +82,7 @@ namespace TestServer
                 Username NVARCHAR(32) NOT NULL UNIQUE,
                 PasswordHash NCHAR(32) NOT NULL,
                 Email NVARCHAR(64) NOT NULL UNIQUE,
-                RegistrationDate DATE NOT NULL,
+                RegistrationDate INTEGER(8) NOT NULL,
                 RANK INTEGER(1) NOT NULL DEFAULT 0
             )";
 #else
@@ -92,7 +92,7 @@ namespace TestServer
                 Username NVARCHAR(32) NOT NULL UNIQUE,
                 PasswordHash NCHAR(32) NOT NULL,
                 Email NVARCHAR(64) NOT NULL UNIQUE,
-                RegistrationDate DATETIME NOT NULL,
+                RegistrationDate BIGINT NOT NULL,
                 RANK TINYINT NOT NULL DEFAULT 0
             )";
 #endif
@@ -204,7 +204,7 @@ namespace TestServer
 
             DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
 
-            return Delete<T>( String.Format( "{0} = '{1}'", entAttrib.PrimaryKey,
+            return Delete<T>( String.Format( "{0}='{1}'", entAttrib.PrimaryKey,
                 entity.GetField( entAttrib.PrimaryKey ) ) );
         }
 
