@@ -23,6 +23,8 @@ namespace TestServer
 
         static void Main( String[] args )
         {
+            Console.Title = "Fortitude Server Prototype";
+
             stActive = true;
 
             if ( !File.Exists( "config.ini" ) )
