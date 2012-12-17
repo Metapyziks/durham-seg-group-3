@@ -177,18 +177,30 @@ public static class {0}
                 _generatedCode = GenerateCode( content );
 
                 CompilerResults results = _compiler.CompileAssemblyFromSource( _compParams, _generatedCode );
+                bool borked = false;
                 if ( results.Errors.Count > 0 )
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine( "Encountered {0} error{1} while compiling {2}:", results.Errors.Count,
-                        results.Errors.Count != 1 ? "s" : "", Path );
+                    Console.WriteLine( "Encountered {0} error{1} or warning{1} while compiling {2}:",
+                        results.Errors.Count,  results.Errors.Count != 1 ? "s" : "", Path );
 
                     foreach ( CompilerError error in results.Errors )
+                    {
+                        if ( error.IsWarning )
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            borked = true;
+                        }
+
                         Console.WriteLine( error.ErrorText );
+                    }
 
                     Console.ForegroundColor = ConsoleColor.Gray;
-                    return;
                 }
+
+                if ( borked )
+                    return;
 
                 _assembly = results.CompiledAssembly;
                 Type type = _assembly.GetType( _className );
