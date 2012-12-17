@@ -1,11 +1,16 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Microsoft.CSharp;
+
 using Nini.Ini;
 
 namespace TestServer
@@ -14,12 +19,15 @@ namespace TestServer
     {
         private abstract class Page
         {
-            protected Page( String content )
+            public readonly String Path;
+
+            protected Page( String path, String content )
             {
+                Path = path;
                 Update( content );
             }
 
-            public void ServeRequest( HttpListenerContext context )
+            public virtual void ServeRequest( HttpListenerContext context )
             {
                 StreamWriter writer = new StreamWriter( context.Response.OutputStream );
                 WriteContent( writer );
@@ -34,8 +42,8 @@ namespace TestServer
         {
             public String Content { get; private set; }
 
-            public StaticPage( String content )
-                : base( content ) { }
+            public StaticPage( String path, String content )
+                : base( path, content ) { }
 
             public override void Update( String content )
             {
@@ -45,6 +53,163 @@ namespace TestServer
             public override void WriteContent( StreamWriter writer )
             {
                 writer.Write( Content );
+            }
+        }
+
+        private class ScriptedPage : Page
+        {
+            #region Template
+            private static readonly String _sTemplate = @"
+public static class {0}
+{
+    public static void ServeRequest( System.Net.HttpListenerContext context )
+    {
+        System.Net.HttpListenerRequest request = context.Request;
+        System.Net.HttpListenerResponse response = context.Response;
+
+        System.IO.StreamWriter writer = new System.IO.StreamWriter( response.OutputStream );        
+
+        writer.Write( ""{1}"" );
+        writer.Flush();
+    }
+}
+";
+            #endregion
+
+            private static CompilerParameters _compParams;
+            private static CodeDomProvider _compiler;
+
+            static ScriptedPage()
+            {
+                _compParams = new CompilerParameters();
+
+                String[] allowedAssemblies = new String[]
+                {
+                    Assembly.GetAssembly( typeof( Math ) ).Location,
+                    Assembly.GetAssembly( typeof( HttpListener ) ).Location,
+                    Assembly.GetAssembly( typeof( ScriptedPage ) ).Location
+                };
+
+                _compParams.ReferencedAssemblies.AddRange( allowedAssemblies );
+
+                _compParams.GenerateExecutable = false;
+                _compParams.GenerateInMemory = true;
+
+                Dictionary<String, String> providerOptions = new Dictionary<string, string>()
+                {
+                    { "CompilerVersion", "v4.0" }
+                };
+
+                _compiler = new CSharpCodeProvider( providerOptions );
+            }
+
+            private String _className;
+            private String _generatedCode;
+            private Assembly _assembly;
+            private MethodInfo _serveMethod;
+
+            public ScriptedPage( String path, String content )
+                : base( path, content ) { }
+
+            private String FormatHTMLBlock( String block )
+            {
+                return block.Replace( "\\", "\\\\" ).Replace( "\r", "\\r" ).Replace( "\n", "\\n" )
+                    .Replace( "\t", "\\t" ).Replace( "\"", "\\\"" );
+            }
+
+            private String GenerateCode( String content )
+            {
+                StringBuilder builder = new StringBuilder();
+                int j = 0;
+                int i = 0;
+                bool script = false;
+                while ( i < content.Length )
+                {
+                    if ( !script )
+                    {
+                        if ( content[i] == '<' && i < content.Length - 1 && content[i + 1] == '?' )
+                        {
+                            builder.Append( FormatHTMLBlock( content.Substring( j, i - j ) ) );
+                            builder.Append( "\");" );
+                            i += 2;
+                            j = i;
+                            script = true;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if ( content[i] == '?' && i < content.Length - 1 && content[i + 1] == '>' )
+                        {
+                            builder.Append( content.Substring( j, i - j ) );
+                            builder.Append( "writer.Write(\"" );
+                            i += 2;
+                            j = i;
+                            script = false;
+                            continue;
+                        }
+                    }
+
+                    if ( content[i] == '"' )
+                        while ( ++i < content.Length && content[i] != '"' ) ;
+                    else if ( content[i] == '\'' )
+                        while ( ++i < content.Length && content[i] != '\'' ) ;
+                    
+                    ++i;
+                }
+                builder.Append( FormatHTMLBlock( content.Substring( j, i - j ) ) );
+
+                _className = "PageScript" + Path.Replace( '/', '_' ).Substring( 0, Path.IndexOf( '.' ) );
+                
+                return _sTemplate.Replace( "{0}", _className ).Replace( "{1}", builder.ToString() );
+            }
+
+            public override void Update( String content )
+            {
+                _generatedCode = GenerateCode( content );
+
+                CompilerResults results = _compiler.CompileAssemblyFromSource( _compParams, _generatedCode );
+                if ( results.Errors.Count > 0 )
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine( "Encountered {0} error{1} while compiling {2}:", results.Errors.Count,
+                        results.Errors.Count != 1 ? "s" : "", Path );
+
+                    foreach ( CompilerError error in results.Errors )
+                        Console.WriteLine( error.ErrorText );
+
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    return;
+                }
+
+                _assembly = results.CompiledAssembly;
+                Type type = _assembly.GetType( _className );
+                if ( type != null )
+                    _serveMethod = type.GetMethod( "ServeRequest", BindingFlags.Static | BindingFlags.Public );
+            }
+
+            public override void ServeRequest( HttpListenerContext context )
+            {
+                if ( _serveMethod != null )
+                {
+                    try
+                    {
+                        _serveMethod.Invoke( null, new object[] { context } );
+                        return;
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                StreamWriter writer = new StreamWriter( context.Response.OutputStream );
+                writer.WriteLine( "Internal server error :(" );
+                writer.Flush();
+            }
+
+            public override void WriteContent( StreamWriter writer )
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -131,7 +296,10 @@ namespace TestServer
 
             if ( !_sPages.ContainsKey( formatted ) )
             {
-                _sPages.Add( formatted, new StaticPage( File.ReadAllText( path ) ) );
+                if( path.EndsWith( ".cs.html" ) )
+                    _sPages.Add( formatted, new ScriptedPage( formatted, File.ReadAllText( path ) ) );
+                else
+                    _sPages.Add( formatted, new StaticPage( formatted, File.ReadAllText( path ) ) );
                 Console.Write( "+ ".PadLeft( 2 + depth * 2 ) );
             }
             else
