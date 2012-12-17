@@ -7,7 +7,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.CSharp;
 
@@ -278,10 +277,10 @@ public static class {0}
             String dirName = "Content" + dir.Substring( _sContentDirectory.Length );
             Console.WriteLine( dirName );
 
-            foreach ( String file in Directory.EnumerateFiles( dir ) )
+            foreach ( String file in Directory.GetFiles( dir ) )
                 UpdateFile( file, depth + 1 );
 
-            foreach ( String subDir in Directory.EnumerateDirectories( dir ) )
+            foreach ( String subDir in Directory.GetDirectories( dir ) )
                 InitializeDirectory( subDir, depth + 1 );
         }
 
@@ -321,7 +320,7 @@ public static class {0}
                             _sPages[formatted].Update( File.ReadAllText( path ) );
                             break;
                         }
-                        catch ( IOException e )
+                        catch ( IOException )
                         {
                             Thread.Sleep( 10 );
                         }
@@ -361,7 +360,7 @@ public static class {0}
                             _sContent[formatted] = File.ReadAllBytes( path );
                             break;
                         }
-                        catch ( IOException e )
+                        catch ( IOException )
                         {
                             Thread.Sleep( 10 );
                         }

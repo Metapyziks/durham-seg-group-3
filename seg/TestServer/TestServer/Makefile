@@ -1,2 +1,9 @@
 TestServer.exe: 
-	mcs *.cs Entities/*.cs Properties/*.cs Requests/*.cs Responses/*.cs
+	gmcs *.cs Entities/*.cs Properties/*.cs Requests/*.cs Responses/*.cs \
+		-r:System.Data.dll,Mono.Data.Sqlite.dll,Nini.dll \
+		-d:LINUX \
+		-main:TestServer.Program \
+		-out:TestServer.exe
+
+clean:
+	rm TestServer.exe Database.db

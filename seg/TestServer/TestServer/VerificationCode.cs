@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 using TestServer.Entities;
 
@@ -81,7 +80,7 @@ namespace TestServer
 
 To finish the registration process just click this link: {1}api/activate?email={2}&code={3}
 
-Have fun!", account.Username, Program.ServerAddress, account.Email, String.Join( "", Code ) ) );
+Have fun!", account.Username, Program.ServerAddress, account.Email, new String( Code ) ) );
         }
     }
 }

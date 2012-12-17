@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace TestServer.Entities
 {
@@ -78,17 +77,17 @@ namespace TestServer.Entities
 
         public bool IsVerified
         {
-            get { return Rank.HasFlag( Rank.Verified ); }
+            get { return ( Rank & Rank.Verified ) != 0; }
         }
 
         public bool IsAdmin
         {
-            get { return Rank.HasFlag( Rank.Admin ); }
+            get { return ( Rank & Rank.Admin ) != 0; }
         }
 
         public bool IsOwner
         {
-            get { return Rank.HasFlag( Rank.Owner ); }
+            get { return ( Rank & Rank.Owner ) != 0; }
         }
 
         public string GetField( string fieldName )
@@ -100,7 +99,7 @@ namespace TestServer.Entities
                 case Fields.Username:
                     return Username;
                 case Fields.PasswordHash:
-                    return String.Join( "", PasswordHash );
+                    return new String( PasswordHash );
                 case Fields.Email:
                     return Email;
                 case Fields.RegistrationDate:

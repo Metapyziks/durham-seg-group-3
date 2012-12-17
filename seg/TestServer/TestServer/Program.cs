@@ -13,7 +13,7 @@ using TestServer.Requests;
 
 namespace TestServer
 {
-    class Program
+    public class Program
     {
         public static int LocalPort = 80;
         public static String ServerAddress = null;
@@ -40,7 +40,7 @@ namespace TestServer
                 ContentManager.Initialize( ini.Sections["webserver"] );
             }
 
-            DatabaseManager.Connect();
+            DatabaseManager.ConnectLocal();
 
             Thread clientThread = new Thread( () =>
             {

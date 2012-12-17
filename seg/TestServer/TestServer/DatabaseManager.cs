@@ -1,17 +1,24 @@
-﻿
-using System;
+﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Data.SqlServerCe;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace TestServer
 {
+#if LINUX
+    using DBConnection = Mono.Data.Sqlite.SqliteConnection;
+    using DBCommand = Mono.Data.Sqlite.SqliteCommand;
+    using DBDataReader = Mono.Data.Sqlite.SqliteDataReader;
+#else
+    using DBConnection = System.Data.SqlServerCe.SqlCeConnection;
+    using DBCommand = System.Data.SqlServerCe.SqlCeCommand;
+    using DBDataReader = System.Data.SqlServerCe.SqlCeDataReader;
+#endif
+
     public interface IDatabaseEntity
     {
         String GetField( String fieldName );
@@ -40,12 +47,51 @@ namespace TestServer
     {
         public static CultureInfo CultureInfo = new CultureInfo( "en-US" );
 
-        private static SqlCeConnection _sConnection;
+        private static readonly String _sFileName = "Database.db";
+        private static DBConnection _sConnection;
 
-        public static void Connect()
+        public static void Connect( String connStrFormat, params String[] args )
         {
-            _sConnection = new SqlCeConnection( "Data Source=Database.sdf" );
+            String connectionString = String.Format( connStrFormat, args );
+            _sConnection = new DBConnection( connectionString );
             _sConnection.Open();
+        }
+
+        public static void ConnectLocal()
+        {
+            if( !File.Exists( _sFileName ) )
+                CreateDatabase( "Data Source={0}", _sFileName );
+            else
+                Connect( "Data Source={0}", _sFileName );
+        }
+
+        private static void CreateDatabase( String connStrFormat, params String[] args )
+        {
+            Connect( connStrFormat, args );
+
+#if LINUX
+            String ddl = @"CREATE TABLE Account
+            (
+                AccountID INTEGER NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,
+                Username NVARCHAR(32) NOT NULL UNIQUE,
+                PasswordHash NCHAR(32) NOT NULL,
+                Email NVARCHAR(64) NOT NULL UNIQUE,
+                RegistrationDate DATE NOT NULL,
+                RANK INTEGER(1) NOT NULL DEFAULT 0
+            )";
+#else
+            String ddl = @"CREATE TABLE Account
+            (
+                AccountID INT(4) NOT NULL UNIQUE PRIMARY KEY IDENTITY (0,1),
+                Username NVARCHAR(32) NOT NULL UNIQUE,
+                PasswordHash NCHAR(32) NOT NULL,
+                Email NVARCHAR(64) NOT NULL UNIQUE,
+                RegistrationDate DATE NOT NULL,
+                RANK INT(1) NOT NULL DEFAULT 0
+            )";
+#endif
+            DBCommand cmd = new DBCommand( ddl, _sConnection );
+            cmd.ExecuteNonQuery();
         }
 
         public static T[] Select<T>( String[] fields = null, String condition = null )
@@ -67,8 +113,8 @@ namespace TestServer
             else
                 query = String.Format( "SELECT {0} FROM {1}", fieldString, entityName );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
-            SqlCeDataReader reader = cmd.ExecuteReader();
+            DBCommand cmd = new DBCommand( query, _sConnection );
+            DBDataReader reader = cmd.ExecuteReader();
 
             List<T> entities = new List<T>();
 
@@ -108,9 +154,9 @@ namespace TestServer
             }
 
             String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
-                String.Join( ", ", fieldDict.Keys ), String.Join( "', '", fieldDict.Values ) );
+                String.Join( ", ", fieldDict.Keys.ToArray() ), String.Join( "', '", fieldDict.Values.ToArray() ) );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
+            DBCommand cmd = new DBCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
@@ -135,9 +181,10 @@ namespace TestServer
             }
 
             String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
-                String.Join( ", ", fieldSets ), entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
+                String.Join( ", ", fieldSets.ToArray() ), entAttrib.PrimaryKey,
+                entity.GetField( entAttrib.PrimaryKey ) );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
+            DBCommand cmd = new DBCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
@@ -193,7 +240,7 @@ namespace TestServer
 
             String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
 
-            SqlCeCommand cmd = new SqlCeCommand( query, _sConnection );
+            DBCommand cmd = new DBCommand( query, _sConnection );
             return cmd.ExecuteNonQuery();
         }
 
