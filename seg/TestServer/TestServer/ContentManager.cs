@@ -84,12 +84,11 @@ public static class {0}
 ";
             #endregion
 
-            private static CompilerParameters _compParams;
             private static CodeDomProvider _compiler;
 
-            static ScriptedPage()
+            private static CompilerParameters CreateCompilerPatameters()
             {
-                _compParams = new CompilerParameters();
+                CompilerParameters compParams = new CompilerParameters();
 
                 String[] allowedAssemblies = new String[]
                 {
@@ -98,11 +97,16 @@ public static class {0}
                     Assembly.GetAssembly( typeof( ScriptedPage ) ).Location
                 };
 
-                _compParams.ReferencedAssemblies.AddRange( allowedAssemblies );
+                compParams.ReferencedAssemblies.AddRange( allowedAssemblies );
 
-                _compParams.GenerateExecutable = false;
-                _compParams.GenerateInMemory = true;
+                compParams.GenerateExecutable = false;
+                compParams.GenerateInMemory = true;
 
+                return compParams;
+            }
+
+            static ScriptedPage()
+            {
                 Dictionary<String, String> providerOptions = new Dictionary<string, string>()
                 {
                     { "CompilerVersion", "v4.0" }
@@ -176,7 +180,9 @@ public static class {0}
             {
                 _generatedCode = GenerateCode( content );
 
-                CompilerResults results = _compiler.CompileAssemblyFromSource( _compParams, _generatedCode );
+                CompilerResults results = _compiler.CompileAssemblyFromSource(
+                    CreateCompilerPatameters(), _generatedCode );
+                
                 bool borked = false;
                 if ( results.Errors.Count > 0 )
                 {
