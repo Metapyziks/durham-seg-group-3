@@ -75,7 +75,7 @@ namespace TestServer
             }
 
             Type type = obj.GetType();
-            if ( type.IsDefined( typeof( SerializableAttribute ) ) )
+            if ( type.IsDefined( typeof( SerializableAttribute ), true ) )
             {
                 builder.Append( "{" );
                 bool first = true;
@@ -91,7 +91,7 @@ namespace TestServer
                         builder.AppendFormat( "\"{0}\":", attrib.KeyName );
                         Object val = ( member is FieldInfo ) ?
                             ( (FieldInfo) member ).GetValue( obj ) :
-                            ( (PropertyInfo) member ).GetValue( obj );
+                            ( (PropertyInfo) member ).GetValue( obj, null );
                         Serialize( val, builder );
                     }
                 }

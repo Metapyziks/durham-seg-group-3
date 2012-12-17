@@ -13,6 +13,7 @@ seg/GPSTestThing/bin/
 *.exe
 *.pdb
 *.exe.manifest
+*.config
 
 seg/TestServer/TestServer/bin
 seg/TestServer/TestServer/obj
