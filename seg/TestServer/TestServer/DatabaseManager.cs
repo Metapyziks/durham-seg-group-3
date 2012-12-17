@@ -88,7 +88,7 @@ namespace TestServer
 #else
             String ddl = @"CREATE TABLE Account
             (
-                AccountID INTEGER IDENTITY(0,1) PRIMARY KEY,
+                AccountID INTEGER IDENTITY(1,1) PRIMARY KEY,
                 Username NVARCHAR(32) NOT NULL UNIQUE,
                 PasswordHash NCHAR(32) NOT NULL,
                 Email NVARCHAR(64) NOT NULL UNIQUE,
