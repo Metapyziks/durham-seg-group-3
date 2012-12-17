@@ -61,9 +61,9 @@ namespace TestServer
         public static void ConnectLocal()
         {
             if( !File.Exists( _sFileName ) )
-                CreateDatabase( "Data Source={0}; DateTimeFormat={1}", _sFileName, "Ticks" );
+                CreateDatabase( "Data Source={0};", _sFileName );
             else
-                Connect( "Data Source={0}; DateTimeFormat={1}", _sFileName, "Ticks" );
+                Connect( "Data Source={0};", _sFileName );
         }
 
         private static void CreateDatabase( String connStrFormat, params String[] args )
