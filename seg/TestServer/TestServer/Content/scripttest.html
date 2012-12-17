@@ -16,7 +16,7 @@
 				<th>Join Date</th>
 			</tr>
 			<?
-			Account[] users = DatabaseManager.Select<Account>();
+			List<Account> users = DatabaseManager.SelectAll<Account>();
 			foreach ( Account acc in users )
 			{
 				?>

@@ -60,8 +60,11 @@ namespace TestServer
             #region Template
             private static readonly String _sTemplate = @"
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.IO;
+using System.Linq;
+using System.Text;
 
 using TestServer;
 using TestServer.Entities;
@@ -94,6 +97,7 @@ public static class {0}
                 {
                     Assembly.GetAssembly( typeof( Math ) ).Location,
                     Assembly.GetAssembly( typeof( HttpListener ) ).Location,
+                    Assembly.GetAssembly( typeof( System.Linq.Enumerable ) ).Location,
                     Assembly.GetAssembly( typeof( ScriptedPage ) ).Location
                 };
 

@@ -21,16 +21,15 @@ namespace TestServer.Requests
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
             
-            Account[] accounts = DatabaseManager.Select<Account>( null,
-                String.Format( "Email = '{0}'", email ) );
+            Account account = DatabaseManager.Get<Account>( x => x.Email == email );
 
-            if ( accounts.Length == 0 )
+            if ( account == null )
                 return new Responses.ErrorResponse( "email address not recognised" );
 
-            if ( accounts[ 0 ].IsVerified )
+            if ( account.IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerificationCode.Create( accounts[ 0 ] ).SendEmail( accounts[ 0 ] );
+            VerificationCode.Create( account ).SendEmail( account );
 
             return new Responses.Response( true );
         }
