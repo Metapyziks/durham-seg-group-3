@@ -37,7 +37,7 @@ namespace TestServer.Requests
                     Request inst = (Request) cons.Invoke( new object[ 0 ] );
 
                     String name;
-                    if ( type.IsDefined( typeof( RequestTypeNameAttribute ) ) )
+                    if ( type.IsDefined( typeof( RequestTypeNameAttribute ), false ) )
                         name = type.GetCustomAttribute<RequestTypeNameAttribute>().Name;
                     else
                     {
