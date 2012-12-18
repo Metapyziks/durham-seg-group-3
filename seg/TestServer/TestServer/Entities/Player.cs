@@ -5,11 +5,8 @@ using System.Text;
 
 namespace TestServer.Entities
 {
-    [Serializable]
-    [DatabaseEntity( "Player", Player.Fields.AccountID, false,
-        Player.Fields.AccountID,
-        Player.Fields.Balance)]
-    public class Player : IDatabaseEntity
+    [Serializable, DatabaseEntity]
+    public class Player
     {
         public struct Fields
         {
@@ -44,32 +41,11 @@ namespace TestServer.Entities
         }
 
         [Serialize( "accountid" )]
+        [PrimaryKey]
         public int AccountID { get; set; }
+
         [Serialize( "balance" )]
+        [NotNull]
         public int Balance { get; set; }
-
-        public string GetField( string fieldName )
-        {
-            switch ( fieldName )
-            {
-                case Fields.AccountID:
-                    return AccountID.ToString();
-                case Fields.Balance:
-                    return Balance.ToString();
-                default:
-                    return "";
-            }
-        }
-
-        public void SetField( string fieldName, object value )
-        {
-            switch ( fieldName )
-            {
-                case Fields.AccountID:
-                    AccountID = Convert.ToInt32( value ); break;
-                case Fields.Balance:
-                    Balance = Convert.ToInt32( value ); break;
-            }
-        }
     }
 }

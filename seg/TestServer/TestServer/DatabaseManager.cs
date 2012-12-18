@@ -20,27 +20,178 @@ namespace TestServer
     using DBEngine = System.Data.SqlServerCe.SqlCeEngine;
 #endif
 
-    public interface IDatabaseEntity
+    [AttributeUsage( AttributeTargets.Class )]
+    public class DatabaseEntityAttribute : Attribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class ColumnAttribute : Attribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class NotNullAttribute : ColumnAttribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class UniqueAttribute : NotNullAttribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class PrimaryKeyAttribute : UniqueAttribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class AutoIncrementAttribute : ColumnAttribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class FixedLengthAttribute : ColumnAttribute { }
+
+    [AttributeUsage( AttributeTargets.Property )]
+    public class CapacityAttribute : ColumnAttribute
     {
-        String GetField( String fieldName );
-        void SetField( String fieldName, Object value );
+        public readonly int Value;
+        public readonly int Value2;
+
+        public CapacityAttribute( int value, int value2 = 0 )
+        {
+            Value = value;
+            Value2 = value2;
+        }
     }
 
-    [AttributeUsage( AttributeTargets.Class )]
-    public class DatabaseEntityAttribute : Attribute
+    public class DatabaseColumn
     {
-        public readonly String EntityName;
-        public readonly bool AutoAssignKey;
-        public readonly String PrimaryKey;
-        public readonly String[] FieldNames;
+        private readonly PropertyInfo _property;
 
-        public DatabaseEntityAttribute( String entityName, String publicKey, bool autoAssignKey,
-            params String[] fieldNames )
+        public String Name { get { return _property.Name; } }
+        public Type Type { get { return _property.PropertyType; } }
+
+        public bool NotNull { get; private set; }
+        public bool Unique { get; private set; }
+        public bool PrimaryKey { get; private set; }
+        public bool AutoIncrement { get; private set; }
+        public bool FixedLength { get; private set; }
+
+        public int Capacity { get; private set; }
+        public int Capacity2 { get; private set; }
+
+        public DatabaseColumn( PropertyInfo property )
         {
-            EntityName = entityName;
-            PrimaryKey = publicKey;
-            AutoAssignKey = autoAssignKey;
-            FieldNames = fieldNames;
+            _property = property;
+
+            NotNull = property.IsDefined<NotNullAttribute>();
+            Unique = property.IsDefined<UniqueAttribute>();
+            PrimaryKey = property.IsDefined<PrimaryKeyAttribute>();
+            AutoIncrement = property.IsDefined<AutoIncrementAttribute>();
+            FixedLength = property.IsDefined<FixedLengthAttribute>();
+
+            if ( property.IsDefined<CapacityAttribute>() )
+            {
+                CapacityAttribute val = property.GetCustomAttribute<CapacityAttribute>();
+                Capacity = val.Value;
+                Capacity2 = val.Value2;
+            }
+            else
+            {
+                Capacity = 0;
+                Capacity2 = 0;
+            }
+        }
+
+        private static String GetSQLTypeName( DatabaseColumn col, Type type )
+        {
+            if ( type.IsEnum )
+                return GetSQLTypeName( col, Enum.GetUnderlyingType( type ) );
+
+            if ( type == typeof( String ) || type == typeof( Char[] ) )
+            {
+                if ( col.FixedLength )
+                    return "NCHAR({0})";
+
+                return "NVARCHAR({0})";
+            }
+
+            if ( type == typeof( Int64 ) || type == typeof( DateTime ) )
+                return "BIGINT";
+
+            if ( type == typeof( Int32 ) )
+                return "INTEGER";
+
+            if ( type == typeof( Int16 ) )
+                return "SMALLINT";
+
+            if ( type == typeof( Byte ) )
+                return "TINYINT";
+
+            throw new Exception( "Can't find the SQL type of " + type.FullName );
+        }
+
+        public String GenerateDefinitionStatement()
+        {
+            StringBuilder builder = new StringBuilder();
+
+            builder.AppendFormat( "{0} {1} ", Name, String.Format(
+                GetSQLTypeName( this, Type ), Capacity, Capacity2 ) );
+
+            if ( PrimaryKey )
+                builder.Append( "PRIMARY KEY " );
+            else if ( Unique )
+                builder.Append( "UNIQUE " );
+            else if ( NotNull )
+                builder.Append( "NOT NULL " );
+
+            if ( AutoIncrement )
+#if LINUX
+                builder.Append( "AUTOINCREMENT " );
+#else
+                builder.Append( "IDENTITY " );
+#endif
+
+            return builder.ToString();
+        }
+
+        public override string ToString()
+        {
+            return GenerateDefinitionStatement();
+        }
+    }
+
+    public class DatabaseTable
+    {
+        private readonly Type _type;
+
+        public Type Type { get { return _type; } }
+        public String Name { get { return _type.Name; } }
+
+        public DatabaseColumn[] Columns { get; private set; }
+
+        public DatabaseTable( Type type )
+        {
+            _type = type;
+
+            BuildColumns();
+        }
+
+        private void BuildColumns()
+        {
+            int count = _type.GetProperties().Count( x => x.IsDefined<ColumnAttribute>() );
+            Columns = new DatabaseColumn[count];
+
+            int i = 0;
+            foreach( PropertyInfo property in _type.GetProperties() )
+                if ( property.IsDefined<ColumnAttribute>() )
+                    Columns[i++] = new DatabaseColumn( property );
+        }
+
+        public String GenerateDefinitionStatement()
+        {
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat( "CREATE TABLE {0}\n(\n", Name );
+            for ( int i = 0; i < Columns.Length; ++i )
+                builder.AppendFormat( "\t{0}{1}\n", Columns[i].GenerateDefinitionStatement(),
+                    i < Columns.Length - 1 ? "," : "" );
+            builder.AppendFormat( ");\n" );
+            return builder.ToString();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 
@@ -50,12 +201,15 @@ namespace TestServer
 
         private static readonly String _sFileName = "Database.db";
         private static DBConnection _sConnection;
+        private static List<DatabaseTable> _sTables;
 
         public static void Connect( String connStrFormat, params String[] args )
         {
             String connectionString = String.Format( connStrFormat, args );
             _sConnection = new DBConnection( connectionString );
             _sConnection.Open();
+
+            _sTables = new List<DatabaseTable>();
         }
 
         public static void ConnectLocal()
@@ -68,186 +222,198 @@ namespace TestServer
 
         private static void CreateDatabase( String connStrFormat, params String[] args )
         {
-#if LINUX
-#else
+#if !LINUX
             DBEngine engine = new DBEngine( String.Format( connStrFormat, args ) );
             engine.CreateDatabase();
             engine.Dispose();
 #endif
             Connect( connStrFormat, args );
-#if LINUX
-            String ddl = @"CREATE TABLE Account
-            (
-                AccountID INTEGER NOT NULL UNIQUE PRIMARY KEY AUTOINCREMENT,
-                Username NVARCHAR(32) NOT NULL UNIQUE,
-                PasswordHash NCHAR(32) NOT NULL,
-                Email NVARCHAR(64) NOT NULL UNIQUE,
-                RegistrationDate INTEGER(8) NOT NULL,
-                RANK INTEGER(1) NOT NULL DEFAULT 0
-            )";
-#else
-            String ddl = @"CREATE TABLE Account
-            (
-                AccountID INTEGER IDENTITY(1,1) PRIMARY KEY,
-                Username NVARCHAR(32) NOT NULL UNIQUE,
-                PasswordHash NCHAR(32) NOT NULL,
-                Email NVARCHAR(64) NOT NULL UNIQUE,
-                RegistrationDate BIGINT NOT NULL,
-                RANK TINYINT NOT NULL DEFAULT 0
-            )";
-#endif
-            DBCommand cmd = new DBCommand( ddl, _sConnection );
-            cmd.ExecuteNonQuery();
+
+            foreach ( Type type in Assembly.GetExecutingAssembly().GetTypes() )
+            {
+                if ( type.IsDefined<DatabaseEntityAttribute>() )
+                {
+                    DatabaseTable table = CreateTable( type );
+
+                    DBCommand cmd = new DBCommand( table.GenerateDefinitionStatement(), _sConnection );
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        private static DatabaseTable CreateTable<T>()
+            where T : new()
+        {
+            return CreateTable( typeof( T ) );
+        }
+
+        private static DatabaseTable CreateTable( Type type )
+        {
+            DatabaseTable newTable = new DatabaseTable( type );
+            _sTables.Add( newTable );
+            return newTable;
         }
 
         public static T[] Select<T>( String[] fields = null, String condition = null )
-            where T : IDatabaseEntity, new()
+            where T : new()
         {
-            Type t = typeof( T );
+            return new T[0];
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            String entityName = entAttrib.EntityName;
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            String fieldString = fields == null ? "*" : String.Join( ", ", fields );
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //String entityName = entAttrib.EntityName;
 
-            String query;
-            if( condition != null )
-                query = String.Format( "SELECT {0} FROM {1} WHERE {2}", fieldString, entityName, condition );
-            else
-                query = String.Format( "SELECT {0} FROM {1}", fieldString, entityName );
+            //String fieldString = fields == null ? "*" : String.Join( ", ", fields );
 
-            DBCommand cmd = new DBCommand( query, _sConnection );
-            DBDataReader reader = cmd.ExecuteReader();
+            //String query;
+            //if( condition != null )
+            //    query = String.Format( "SELECT {0} FROM {1} WHERE {2}", fieldString, entityName, condition );
+            //else
+            //    query = String.Format( "SELECT {0} FROM {1}", fieldString, entityName );
 
-            List<T> entities = new List<T>();
+            //DBCommand cmd = new DBCommand( query, _sConnection );
+            //DBDataReader reader = cmd.ExecuteReader();
 
-            while ( reader.Read() )
-            {
-                T entity = new T();
+            //List<T> entities = new List<T>();
 
-                foreach ( String field in entAttrib.FieldNames )
-                    entity.SetField( field, reader[ field ] );
+            //while ( reader.Read() )
+            //{
+            //    T entity = new T();
 
-                entities.Add( entity );
-            }
+            //    foreach ( String field in entAttrib.FieldNames )
+            //        entity.SetField( field, reader[ field ] );
 
-            reader.Close();
+            //    entities.Add( entity );
+            //}
 
-            return entities.ToArray();
+            //reader.Close();
+
+            //return entities.ToArray();
         }
 
         public static int Insert<T>( T entity )
-            where T : IDatabaseEntity
+            where T : new()
         {
-            Type t = typeof( T );
+            return 0;
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            String entityName = entAttrib.EntityName;
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            Dictionary<String, String> fieldDict = new Dictionary<String, String>();
-            foreach ( String field in entAttrib.FieldNames )
-            {
-                if( entAttrib.AutoAssignKey && field == entAttrib.PrimaryKey )
-                    continue;
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //String entityName = entAttrib.EntityName;
 
-                fieldDict.Add( field, entity.GetField( field ) );
-            }
+            //Dictionary<String, String> fieldDict = new Dictionary<String, String>();
+            //foreach ( String field in entAttrib.FieldNames )
+            //{
+            //    if ( entAttrib.AutoAssignKey && field == entAttrib.PrimaryKey )
+            //        continue;
 
-            String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
-                String.Join( ", ", fieldDict.Keys.ToArray() ), String.Join( "', '", fieldDict.Values.ToArray() ) );
+            //    fieldDict.Add( field, entity.GetField( field ) );
+            //}
 
-            DBCommand cmd = new DBCommand( query, _sConnection );
-            return cmd.ExecuteNonQuery();
+            //String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
+            //    String.Join( ", ", fieldDict.Keys.ToArray() ), String.Join( "', '", fieldDict.Values.ToArray() ) );
+
+            //DBCommand cmd = new DBCommand( query, _sConnection );
+            //return cmd.ExecuteNonQuery();
         }
 
         public static int Update<T>( T entity )
-            where T : IDatabaseEntity
+            where T : new()
         {
-            Type t = typeof( T );
+            return 0;
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            String entityName = entAttrib.EntityName;
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            List<String> fieldSets = new List<string>();
-            foreach ( String field in entAttrib.FieldNames )
-            {
-                if ( field == entAttrib.PrimaryKey )
-                    continue;
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //String entityName = entAttrib.EntityName;
 
-                fieldSets.Add( String.Format( "{0}='{1}'", field, entity.GetField( field ) ) );
-            }
+            //List<String> fieldSets = new List<string>();
+            //foreach ( String field in entAttrib.FieldNames )
+            //{
+            //    if ( field == entAttrib.PrimaryKey )
+            //        continue;
 
-            String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
-                String.Join( ", ", fieldSets.ToArray() ), entAttrib.PrimaryKey,
-                entity.GetField( entAttrib.PrimaryKey ) );
+            //    fieldSets.Add( String.Format( "{0}='{1}'", field, entity.GetField( field ) ) );
+            //}
 
-            DBCommand cmd = new DBCommand( query, _sConnection );
-            return cmd.ExecuteNonQuery();
+            //String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
+            //    String.Join( ", ", fieldSets.ToArray() ), entAttrib.PrimaryKey,
+            //    entity.GetField( entAttrib.PrimaryKey ) );
+
+            //DBCommand cmd = new DBCommand( query, _sConnection );
+            //return cmd.ExecuteNonQuery();
         }
 
         public static int Delete<T>( T entity )
-            where T : IDatabaseEntity
+            where T : new()
         {
-            Type t = typeof( T );
+            return 0;
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            return Delete<T>( String.Format( "{0}='{1}'", entAttrib.PrimaryKey,
-                entity.GetField( entAttrib.PrimaryKey ) ) );
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+
+            //return Delete<T>( String.Format( "{0}='{1}'", entAttrib.PrimaryKey,
+            //    entity.GetField( entAttrib.PrimaryKey ) ) );
         }
 
         public static int Delete<T>( IEnumerable<T> entities )
-            where T : IDatabaseEntity
+            where T : new()
         {
-            Type t = typeof( T );
+            return 0;
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            StringBuilder condBuilder = new StringBuilder();
-            bool first = true;
-            foreach ( T entity in entities )
-            {
-                if ( !first )
-                    condBuilder.Append( " OR " );
-                else
-                    first = false;
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+
+            //StringBuilder condBuilder = new StringBuilder();
+            //bool first = true;
+            //foreach ( T entity in entities )
+            //{
+            //    if ( !first )
+            //        condBuilder.Append( " OR " );
+            //    else
+            //        first = false;
                 
-                condBuilder.AppendFormat( "{0}='{1}'", entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
-            }
+            //    condBuilder.AppendFormat( "{0}='{1}'", entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
+            //}
 
-            return Delete<T>( condBuilder.ToString() );
+            //return Delete<T>( condBuilder.ToString() );
         }
 
         public static int Delete<T>( String condition )
-            where T : IDatabaseEntity
+            where T : new()
         {
-            Type t = typeof( T );
+            return 0;
 
-            if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-                throw new Exception( t.FullName + " is not a valid database entity type" );
+            //Type t = typeof( T );
 
-            DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            String entityName = entAttrib.EntityName;
+            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
+            //    throw new Exception( t.FullName + " is not a valid database entity type" );
 
-            String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
+            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
+            //String entityName = entAttrib.EntityName;
 
-            DBCommand cmd = new DBCommand( query, _sConnection );
-            return cmd.ExecuteNonQuery();
+            //String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
+
+            //DBCommand cmd = new DBCommand( query, _sConnection );
+            //return cmd.ExecuteNonQuery();
         }
 
         public static void Disconnect()

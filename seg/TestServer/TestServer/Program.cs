@@ -63,14 +63,12 @@ namespace TestServer
                 String[] line = Console.ReadLine().Split( new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries );
                 if ( line.Length > 0 )
                 {
-#if DEBUG
-#else
+#if !DEBUG
                     try
                     {
 #endif
                         ProcessCommand( line[0].ToLower(), line.Where( ( x, i ) => i > 0 ).ToArray() );
-#if DEBUG
-#else
+#if !DEBUG
                     }
                     catch ( Exception e )
                     {
@@ -127,8 +125,7 @@ namespace TestServer
         {
             Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.ToString() + " : " + context.Request.RawUrl );
 
-#if DEBUG
-#else
+#if !DEBUG
             try
             {
 #endif
@@ -139,8 +136,7 @@ namespace TestServer
                     else
                         ContentManager.ServeRequest( context );
                 }
-#if DEBUG
-#else
+#if !DEBUG
             }
             catch ( Exception e )
             {
@@ -152,8 +148,7 @@ namespace TestServer
             {
 #endif
                 context.Response.OutputStream.Close();
-#if DEBUG
-#else
+#if !DEBUG
             }
 #endif
         }
