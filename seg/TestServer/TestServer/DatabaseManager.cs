@@ -514,31 +514,18 @@ using System.Linq.Expressions;
         public static int Update<T>( T entity )
             where T : new()
         {
-            throw new NotImplementedException();
+            DatabaseTable table = GetTable<T>();
 
-            //Type t = typeof( T );
+            IEnumerable<DatabaseColumn> valid = table.Columns.Where( x => !x.AutoIncrement );
 
-            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-            //    throw new Exception( t.FullName + " is not a valid database entity type" );
+            String columns = String.Join( ",\n  ", valid.Select( x =>
+                String.Format( "{0} = '{1}'", x.Name, x.GetValue( entity ) ) ) );
 
-            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            //String entityName = entAttrib.EntityName;
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat( "UPDATE {0} SET\n  {1}",
+                table.Name, columns );
 
-            //List<String> fieldSets = new List<string>();
-            //foreach ( String field in entAttrib.FieldNames )
-            //{
-            //    if ( field == entAttrib.PrimaryKey )
-            //        continue;
-
-            //    fieldSets.Add( String.Format( "{0}='{1}'", field, entity.GetField( field ) ) );
-            //}
-
-            //String query = String.Format( "UPDATE {0} SET {1} WHERE {2}='{3}'", entityName,
-            //    String.Join( ", ", fieldSets.ToArray() ), entAttrib.PrimaryKey,
-            //    entity.GetField( entAttrib.PrimaryKey ) );
-
-            //DBCommand cmd = new DBCommand( query, _sConnection );
-            //return cmd.ExecuteNonQuery();
+            return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
 
         public static int Delete<T>( T entity )
