@@ -21,8 +21,7 @@ namespace TestServer.Requests
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
             
-            Account[] accounts = DatabaseManager.Select<Account>( null,
-                String.Format( "Email = '{0}'", email ) );
+            Account[] accounts = DatabaseManager.Select<Account>( x => x.Email == email );
 
             if ( accounts.Length == 0 )
                 return new Responses.ErrorResponse( "email address not recognised" );

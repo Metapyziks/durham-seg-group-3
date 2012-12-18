@@ -112,7 +112,7 @@ namespace TestServer.Requests
                 return false;
             }
 
-            Account[] accounts = DatabaseManager.Select<Account>( null, String.Format( "Username='{0}'", username ) );
+            Account[] accounts = DatabaseManager.Select<Account>( x => x.Username == username );
 
             if ( accounts.Length == 0 )
             {

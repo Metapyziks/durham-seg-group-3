@@ -39,6 +39,10 @@ namespace TestServer
 
             DatabaseManager.ConnectLocal();
 
+            String username = "Metapyziks";
+            DatabaseManager.Select<Account>( acc => acc.Username == username
+                || acc.Email == String.Format( "{0}@{1}", "fakeemail", "gmail.com" ) );
+
             Thread clientThread = new Thread( () =>
             {
                 HttpListener listener = new HttpListener();
@@ -98,8 +102,7 @@ namespace TestServer
 
                     String username = args[0];
 
-                    Account[] accounts = DatabaseManager.Select<Account>( null,
-                        String.Format( "Username = '{0}'", username ) );
+                    Account[] accounts = DatabaseManager.Select<Account>( x => x.Username == username );
 
                     if ( accounts.Length == 0 )
                         throw new Exception( "username not recognised" );

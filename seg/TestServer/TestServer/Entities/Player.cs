@@ -18,8 +18,7 @@ namespace TestServer.Entities
 
         public static Player GetPlayer( int accountID )
         {
-            Player[] plys = DatabaseManager.Select<Player>( null,
-                String.Format( "{0} = '{1}'", Fields.AccountID, accountID ) );
+            Player[] plys = DatabaseManager.Select<Player>( x => x.AccountID == accountID );
 
             if ( plys.Length == 0 )
             {

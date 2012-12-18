@@ -32,8 +32,7 @@ namespace TestServer.Requests
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
 
-            Account[] clashes = DatabaseManager.Select<Account>( null,
-                String.Format( "Username='{0}' OR Email='{1}'", uname, email ) );
+            Account[] clashes = DatabaseManager.Select<Account>( x => x.Username == uname || x.Email == email );
 
             if ( clashes.Length > 0 )
             {
@@ -54,7 +53,7 @@ namespace TestServer.Requests
 
             DatabaseManager.Insert( account );
 
-            account = DatabaseManager.Select<Account>( null, "Email='" + account.Email + "'" )[ 0 ];
+            account = DatabaseManager.Select<Account>( x => x.Email == email )[ 0 ];
             VerificationCode.Create( account ).SendEmail( account );
 
             return new Responses.Response( true );

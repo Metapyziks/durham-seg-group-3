@@ -45,7 +45,7 @@ namespace TestServer.Entities
 
         [Serialize( "accountid" )]
         [PrimaryKey, AutoIncrement]
-        public int AccountID { get; private set; }
+        public int AccountID { get; set; }
 
         [Serialize( "uname" )]
         [Capacity( 32 ), Unique]

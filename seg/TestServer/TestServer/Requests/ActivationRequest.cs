@@ -22,8 +22,7 @@ namespace TestServer.Requests
             if(  !Account.IsPasswordHashValid( code ) )
                 return new Responses.ErrorResponse( "invalid activation code" );
 
-            Account[] accounts = DatabaseManager.Select<Account>( null,
-                String.Format( "Email = '{0}'", email ) );
+            Account[] accounts = DatabaseManager.Select<Account>( x => x.Email == email );
 
             if ( accounts.Length == 0 )
                 return new Responses.ErrorResponse( "email address not recognised" );
