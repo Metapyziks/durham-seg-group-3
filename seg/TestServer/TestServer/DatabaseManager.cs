@@ -429,9 +429,8 @@ using System.Linq.Expressions;
             builder.AppendFormat( "SELECT\n  {0}\nFROM {1} AS {2}\n", columns,
                 table.Name, alias );
 
-            String predicate = String.Join( "\n  OR ", predicates.Select( x => SerializeExpression( x.Body ) ) );
-
-            builder.AppendFormat( "WHERE {0}", predicate );
+            builder.AppendFormat( "WHERE {0}", String.Join( "\n  OR ",
+                predicates.Select( x => SerializeExpression( x.Body ) ) ) );
 
 #if DEBUG
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -531,63 +530,37 @@ using System.Linq.Expressions;
         public static int Delete<T>( T entity )
             where T : new()
         {
-            throw new NotImplementedException();
-
-            //Type t = typeof( T );
-
-            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-            //    throw new Exception( t.FullName + " is not a valid database entity type" );
-
-            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-
-            //return Delete<T>( String.Format( "{0}='{1}'", entAttrib.PrimaryKey,
-            //    entity.GetField( entAttrib.PrimaryKey ) ) );
+            return Delete<T>( new T[] { entity } );
         }
 
         public static int Delete<T>( IEnumerable<T> entities )
             where T : new()
         {
-            throw new NotImplementedException();
+            DatabaseTable table = GetTable<T>();
+            DatabaseColumn primaryKey = table.Columns.First( x => x.PrimaryKey );
 
-            //Type t = typeof( T );
+            String predicate = String.Join( "\n  OR ", entities.Select( x => String.Format( "{0}='{1}'",
+                primaryKey.Name, primaryKey.GetValue( x ) ) ) );
 
-            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-            //    throw new Exception( t.FullName + " is not a valid database entity type" );
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat( "DELETE FROM {0} WHERE {1}",
+                table.Name, predicate );
 
-            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-
-            //StringBuilder condBuilder = new StringBuilder();
-            //bool first = true;
-            //foreach ( T entity in entities )
-            //{
-            //    if ( !first )
-            //        condBuilder.Append( " OR " );
-            //    else
-            //        first = false;
-                
-            //    condBuilder.AppendFormat( "{0}='{1}'", entAttrib.PrimaryKey, entity.GetField( entAttrib.PrimaryKey ) );
-            //}
-
-            //return Delete<T>( condBuilder.ToString() );
+            return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
 
-        public static int Delete<T>( String condition )
-            where T : new()
+        public static int Delete<T>( params Expression<Func<T, bool>>[] predicates )
         {
-            throw new NotImplementedException();
+            DatabaseTable table = GetTable<T>();
+            DatabaseColumn primaryKey = table.Columns.First( x => x.PrimaryKey );
 
-            //Type t = typeof( T );
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat( "DELETE FROM {0} ", table.Name );
 
-            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-            //    throw new Exception( t.FullName + " is not a valid database entity type" );
+            builder.AppendFormat( "WHERE {0}", String.Join( "\n  OR ",
+                predicates.Select( x => SerializeExpression( x.Body ) ) ) );
 
-            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            //String entityName = entAttrib.EntityName;
-
-            //String query = String.Format( "DELETE FROM {0} WHERE {1}", entityName, condition );
-
-            //DBCommand cmd = new DBCommand( query, _sConnection );
-            //return cmd.ExecuteNonQuery();
+            return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
 
         public static void Disconnect()
