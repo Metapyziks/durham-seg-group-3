@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Data;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +15,6 @@ namespace TestServer
 #else
     using DBConnection = System.Data.SqlServerCe.SqlCeConnection;
     using DBCommand = System.Data.SqlServerCe.SqlCeCommand;
-    using DBDataReader = System.Data.SqlServerCe.SqlCeDataReader;
     using DBEngine = System.Data.SqlServerCe.SqlCeEngine;
 #endif
 
