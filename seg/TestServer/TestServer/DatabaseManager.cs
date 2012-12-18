@@ -147,12 +147,28 @@ using System.Linq.Expressions;
 
         public object GetValue( object entity )
         {
-            return _property.GetValue( entity, null );
+            object val = _property.GetValue( entity, null );
+            if ( val is DateTime )
+                return ( (DateTime) val ).Ticks;
+            else if ( val.GetType().IsEnum )
+                return Convert.ChangeType( val, Enum.GetUnderlyingType( val.GetType() ) );
+            else if ( val is char[] )
+                return new String( (char[]) val );
+            else
+                return _property.GetValue( entity, null );
         }
 
-        public void SetValue( object entity, object value )
+        public void SetValue( object entity, object val )
         {
-            _property.SetValue( entity, value, null );
+            if ( _property.PropertyType == typeof( DateTime ) )
+                _property.SetValue( entity, new DateTime( Convert.ToInt64( val ) ), null );
+            else if ( _property.PropertyType.IsEnum )
+                _property.SetValue( entity, Convert.ChangeType( val,
+                    Enum.GetUnderlyingType( _property.PropertyType ) ), null );
+            else if ( _property.PropertyType == typeof( char[] ) )
+                _property.SetValue( entity, Convert.ToString( val ).ToCharArray(), null );
+            else
+                _property.SetValue( entity, Convert.ChangeType( val, _property.PropertyType ), null );
         }
 
         public override string ToString()
@@ -483,8 +499,10 @@ using System.Linq.Expressions;
         {
             DatabaseTable table = GetTable<T>();
 
-            String columns = String.Join( ",\n  ", table.Columns.Select( x => x.Name ) );
-            String values = String.Join( "',\n  '", table.Columns.Select( x => x.GetValue( entity ) ) );
+            IEnumerable<DatabaseColumn> valid = table.Columns.Where( x => !x.AutoIncrement );
+
+            String columns = String.Join( ",\n  ", valid.Select( x => x.Name ) );
+            String values = String.Join( "',\n  '", valid.Select( x => x.GetValue( entity ) ) );
 
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat( "INSERT INTO {0}\n(\n  {1}\n) VALUES (\n  '{2}'\n)",
