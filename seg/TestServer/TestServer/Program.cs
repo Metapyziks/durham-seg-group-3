@@ -39,10 +39,6 @@ namespace TestServer
 
             DatabaseManager.ConnectLocal();
 
-            String username = "Metapyziks";
-            DatabaseManager.Select<Account>( acc => acc.Username == username
-                || acc.Email == String.Format( "{0}@{1}", "fakeemail", "gmail.com" ) );
-
             Thread clientThread = new Thread( () =>
             {
                 HttpListener listener = new HttpListener();
@@ -102,21 +98,21 @@ namespace TestServer
 
                     String username = args[0];
 
-                    Account[] accounts = DatabaseManager.Select<Account>( x => x.Username == username );
+                    Account account = DatabaseManager.SelectFirst<Account>( x => x.Username == username );
 
-                    if ( accounts.Length == 0 )
+                    if ( account == null )
                         throw new Exception( "username not recognised" );
 
-                    if ( accounts[ 0 ].IsVerified )
+                    if ( account.IsVerified )
                         throw new Exception( "account already activated" );
 
-                    VerificationCode request = VerificationCode.Get( accounts[ 0 ] );
+                    VerificationCode request = VerificationCode.Get( account );
                     
                     if( request != null )
                         request.Remove();
 
-                    accounts[ 0 ].Rank = Rank.Verified;
-                    DatabaseManager.Update( accounts[ 0 ] );
+                    account.Rank = Rank.Verified;
+                    DatabaseManager.Update( account );
                     break;
             }
         }

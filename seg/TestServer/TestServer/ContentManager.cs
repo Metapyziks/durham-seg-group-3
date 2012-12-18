@@ -61,6 +61,7 @@ namespace TestServer
             private static readonly String _sTemplate = @"
 using System;
 using System.Net;
+using System.Collections.Generic;
 using System.IO;
 
 using TestServer;

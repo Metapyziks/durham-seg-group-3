@@ -18,22 +18,20 @@ namespace TestServer.Entities
 
         public static Player GetPlayer( int accountID )
         {
-            Player[] plys = DatabaseManager.Select<Player>( x => x.AccountID == accountID );
+            Player ply = DatabaseManager.SelectFirst<Player>( x => x.AccountID == accountID );
 
-            if ( plys.Length == 0 )
+            if ( ply == null )
             {
-                Player ply = new Player()
+                ply = new Player()
                 {
                     AccountID = accountID,
                     Balance = 0
                 };
 
                 DatabaseManager.Insert( ply );
-
-                return ply;
             }
 
-            return plys[0];
+            return ply;
         }
 
         [Serialize( "accountid" )]

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 using TestServer.Entities;
@@ -32,9 +33,9 @@ namespace TestServer.Requests
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
 
-            Account[] clashes = DatabaseManager.Select<Account>( x => x.Username == uname || x.Email == email );
+            List<Account> clashes = DatabaseManager.Select<Account>( x => x.Username == uname || x.Email == email );
 
-            if ( clashes.Length > 0 )
+            if ( clashes.Count > 0 )
             {
                 if ( clashes[ 0 ].Username == uname )
                     return new Responses.ErrorResponse( "username already in use" );

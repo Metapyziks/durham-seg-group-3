@@ -15,6 +15,7 @@ namespace TestServer
 #else
     using DBConnection = System.Data.SqlServerCe.SqlCeConnection;
     using DBCommand = System.Data.SqlServerCe.SqlCeCommand;
+    using DBDataReader = System.Data.SqlServerCe.SqlCeDataReader;
     using DBEngine = System.Data.SqlServerCe.SqlCeEngine;
 using System.Linq.Expressions;
 #endif
@@ -144,6 +145,16 @@ using System.Linq.Expressions;
             return builder.ToString();
         }
 
+        public object GetValue( object entity )
+        {
+            return _property.GetValue( entity, null );
+        }
+
+        public void SetValue( object entity, object value )
+        {
+            _property.SetValue( entity, value, null );
+        }
+
         public override string ToString()
         {
             return GenerateDefinitionStatement();
@@ -269,12 +280,6 @@ using System.Linq.Expressions;
             return newTable;
         }
 
-        public static T[] Select<T>()
-            where T : new()
-        {
-            throw new NotImplementedException();
-        }
-
         private static bool RequiresParam( Expression exp )
         {
             if ( exp is BinaryExpression )
@@ -307,7 +312,33 @@ using System.Linq.Expressions;
         private static String SerializeExpression( Expression exp )
         {
             if ( !RequiresParam( exp ) )
-                return String.Format( "'{0}'", Expression.Lambda<Func<Object>>( exp ).Compile()().ToString() );
+            {
+                if ( exp.Type == typeof( bool ) )
+                {
+                    Expression<Func<bool,String>> toString = x => x ? "1'='1" : "1'='0";
+                    return String.Format( "'{0}'", Expression.Lambda<Func<String>>(
+                        Expression.Invoke( toString, exp ) ).Compile()() );
+                }
+                else
+                {
+                    return String.Format( "'{0}'", Expression.Lambda<Func<Object>>( exp ).Compile()() );
+                }
+            }
+
+            if ( exp is UnaryExpression )
+            {
+                UnaryExpression uExp = (UnaryExpression) exp;
+                String oper = SerializeExpression( uExp.Operand );
+
+                switch ( exp.NodeType )
+                {
+                    case ExpressionType.Not:
+                        return String.Format( "(NOT {0})", oper );
+                    default:
+                        throw new Exception( "Cannot convert an expression of type "
+                            + exp.NodeType + " to SQL" );
+                }
+            }
 
             if ( exp is BinaryExpression )
             {
@@ -318,6 +349,16 @@ using System.Linq.Expressions;
                 {
                     case ExpressionType.Equal:
                         return String.Format( "({0} = {1})", left, right );
+                    case ExpressionType.NotEqual:
+                        return String.Format( "({0} != {1})", left, right );
+                    case ExpressionType.LessThan:
+                        return String.Format( "({0} < {1})", left, right );
+                    case ExpressionType.LessThanOrEqual:
+                        return String.Format( "({0} <= {1})", left, right );
+                    case ExpressionType.GreaterThan:
+                        return String.Format( "({0} > {1})", left, right );
+                    case ExpressionType.GreaterThanOrEqual:
+                        return String.Format( "({0} >= {1})", left, right );
                     case ExpressionType.AndAlso:
                         return String.Format( "({0} AND {1})", left, right );
                     case ExpressionType.OrElse:
@@ -327,33 +368,35 @@ using System.Linq.Expressions;
                             + exp.NodeType + " to SQL" );
                 }
             }
-            else
+
+            switch ( exp.NodeType )
             {
-                switch ( exp.NodeType )
-                {
-                    case ExpressionType.Parameter:
-                        ParameterExpression pExp = (ParameterExpression) exp;
-                        return pExp.Name;
-                    case ExpressionType.Constant:
-                        ConstantExpression cExp = (ConstantExpression) exp;
-                        return String.Format( "'{0}'", cExp.Value.ToString() );
-                    case ExpressionType.MemberAccess:
-                        MemberExpression mExp = (MemberExpression) exp;
-                        return String.Format( "{0}.{1}", SerializeExpression( mExp.Expression ),
-                            mExp.Member.Name );
-                    default:
-                        throw new Exception( "Cannot convert an expression of type "
-                            + exp.NodeType + " to SQL" );
-                }
+                case ExpressionType.Parameter:
+                    ParameterExpression pExp = (ParameterExpression) exp;
+                    return pExp.Name;
+                case ExpressionType.Constant:
+                    ConstantExpression cExp = (ConstantExpression) exp;
+                    return String.Format( "'{0}'", cExp.Value.ToString() );
+                case ExpressionType.MemberAccess:
+                    MemberExpression mExp = (MemberExpression) exp;
+                    return String.Format( "{0}.{1}", SerializeExpression( mExp.Expression ),
+                        mExp.Member.Name );
+                default:
+                    throw new Exception( "Cannot convert an expression of type "
+                        + exp.NodeType + " to SQL" );
             }
         }
 
-        public static T[] Select<T>( Expression<Func<T, bool>> predicate )
+        public static DatabaseTable GetTable<T>()
+        {
+            return _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
+        }
+
+        private static DBCommand GenerateSelectCommand<T>( Expression<Func<T, bool>> predicate,
+            DatabaseTable table )
             where T : new()
         {
-            DatabaseTable table = _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
-
-            if( table == null )
+            if ( table == null )
                 throw new Exception( "Cannot select an entity of type "
                     + typeof( T ).Name + ", no such table exists" );
 
@@ -364,12 +407,62 @@ using System.Linq.Expressions;
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat( "SELECT\n  {0}\nFROM {1} AS {2}\n", columns,
                 table.Name, alias );
-            
-            builder.AppendFormat( "WHERE {0};", SerializeExpression( predicate.Body ) );
 
-            Console.WriteLine( builder.ToString() );
+            builder.AppendFormat( "WHERE {0}", SerializeExpression( predicate.Body ) );
 
-            return new T[0];
+            return new DBCommand( builder.ToString(), _sConnection );
+        }
+
+        private static T ReadEntity<T>( this DBDataReader reader, DatabaseTable table )
+            where T : new()
+        {
+            T entity = default( T );
+
+            if ( reader.Read() )
+            {
+                entity = new T();
+
+                foreach ( DatabaseColumn col in table.Columns )
+                    col.SetValue( entity, reader[col.Name] );
+            }
+
+            return entity;
+        }
+
+        public static T SelectFirst<T>( Expression<Func<T, bool>> predicate )
+            where T : new()
+        {
+            DatabaseTable table = GetTable<T>();
+            DBCommand cmd = GenerateSelectCommand( predicate, table );
+
+            T entity;
+            using( DBDataReader reader = cmd.ExecuteReader() )
+                entity = reader.ReadEntity<T>( table );
+
+            return entity;
+        }
+
+        public static List<T> Select<T>( Expression<Func<T, bool>> predicate )
+            where T : new()
+        {
+            DatabaseTable table = GetTable<T>();
+            DBCommand cmd = GenerateSelectCommand( predicate, table );
+
+            List<T> entities = new List<T>();
+            using ( DBDataReader reader = cmd.ExecuteReader() )
+            {
+                T entity;
+                while ( ( entity = reader.ReadEntity<T>( table ) ) != null )
+                    entities.Add( entity );
+            }
+
+            return entities;
+        }
+
+        public static List<T> SelectAll<T>()
+            where T : new()
+        {
+            return Select<T>( x => true );
         }
 
         public static int Insert<T>( T entity )
