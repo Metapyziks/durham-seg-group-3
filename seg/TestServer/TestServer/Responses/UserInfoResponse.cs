@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using TestServer.Entities;
 
@@ -8,9 +9,9 @@ namespace TestServer.Responses
     class UserInfoResponse : Response
     {
         [Serialize( "users" )]
-        public readonly Account[] Users;
+        public readonly List<Account> Users;
 
-        public UserInfoResponse( Account[] users )
+        public UserInfoResponse( List<Account> users )
             : base( true )
         {
             Users = users;

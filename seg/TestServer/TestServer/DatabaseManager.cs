@@ -389,18 +389,23 @@ using System.Linq.Expressions;
 
         public static DatabaseTable GetTable<T>()
         {
-            return _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
-        }
+            DatabaseTable table = _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
 
-        private static DBCommand GenerateSelectCommand<T>( Expression<Func<T, bool>> predicate,
-            DatabaseTable table )
-            where T : new()
-        {
             if ( table == null )
                 throw new Exception( "Cannot select an entity of type "
                     + typeof( T ).Name + ", no such table exists" );
 
-            String alias = predicate.Parameters[0].Name;
+            return table;
+        }
+
+        private static DBCommand GenerateSelectCommand<T>( DatabaseTable table, params Expression<Func<T, bool>>[] predicates )
+            where T : new()
+        {
+            for ( int i = 1; i < predicates.Length; ++i )
+                if ( predicates[i].Parameters[0].Name != predicates[0].Parameters[0].Name )
+                    throw new Exception( "All predicates must use the same parameter name" );
+
+            String alias = predicates[0].Parameters[0].Name;
 
             String columns = String.Join( ",\n  ", table.Columns.Select( x => alias + "." + x.Name ) );
 
@@ -408,7 +413,15 @@ using System.Linq.Expressions;
             builder.AppendFormat( "SELECT\n  {0}\nFROM {1} AS {2}\n", columns,
                 table.Name, alias );
 
-            builder.AppendFormat( "WHERE {0}", SerializeExpression( predicate.Body ) );
+            String predicate = String.Join( "\n  OR ", predicates.Select( x => SerializeExpression( x.Body ) ) );
+
+            builder.AppendFormat( "WHERE {0}", predicate );
+
+#if DEBUG
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.WriteLine( builder.ToString() );
+            Console.ForegroundColor = ConsoleColor.Gray;
+#endif
 
             return new DBCommand( builder.ToString(), _sConnection );
         }
@@ -429,11 +442,11 @@ using System.Linq.Expressions;
             return entity;
         }
 
-        public static T SelectFirst<T>( Expression<Func<T, bool>> predicate )
+        public static T SelectFirst<T>( params Expression<Func<T, bool>>[] predicates )
             where T : new()
         {
             DatabaseTable table = GetTable<T>();
-            DBCommand cmd = GenerateSelectCommand( predicate, table );
+            DBCommand cmd = GenerateSelectCommand( table, predicates );
 
             T entity;
             using( DBDataReader reader = cmd.ExecuteReader() )
@@ -442,11 +455,11 @@ using System.Linq.Expressions;
             return entity;
         }
 
-        public static List<T> Select<T>( Expression<Func<T, bool>> predicate )
+        public static List<T> Select<T>( params Expression<Func<T, bool>>[] predicates )
             where T : new()
         {
             DatabaseTable table = GetTable<T>();
-            DBCommand cmd = GenerateSelectCommand( predicate, table );
+            DBCommand cmd = GenerateSelectCommand( table, predicates );
 
             List<T> entities = new List<T>();
             using ( DBDataReader reader = cmd.ExecuteReader() )
@@ -468,30 +481,16 @@ using System.Linq.Expressions;
         public static int Insert<T>( T entity )
             where T : new()
         {
-            throw new NotImplementedException();
+            DatabaseTable table = GetTable<T>();
 
-            //Type t = typeof( T );
+            String columns = String.Join( ",\n  ", table.Columns.Select( x => x.Name ) );
+            String values = String.Join( "',\n  '", table.Columns.Select( x => x.GetValue( entity ) ) );
 
-            //if ( !t.IsDefined( typeof( DatabaseEntityAttribute ), true ) )
-            //    throw new Exception( t.FullName + " is not a valid database entity type" );
+            StringBuilder builder = new StringBuilder();
+            builder.AppendFormat( "INSERT INTO {0}\n(\n  {1}\n) VALUES (\n  '{2}'\n)",
+                table.Name, columns, values );
 
-            //DatabaseEntityAttribute entAttrib = t.GetCustomAttribute<DatabaseEntityAttribute>( true );
-            //String entityName = entAttrib.EntityName;
-
-            //Dictionary<String, String> fieldDict = new Dictionary<String, String>();
-            //foreach ( String field in entAttrib.FieldNames )
-            //{
-            //    if ( entAttrib.AutoAssignKey && field == entAttrib.PrimaryKey )
-            //        continue;
-
-            //    fieldDict.Add( field, entity.GetField( field ) );
-            //}
-
-            //String query = String.Format( "INSERT INTO {0} ({1}) VALUES ('{2}')", entityName,
-            //    String.Join( ", ", fieldDict.Keys.ToArray() ), String.Join( "', '", fieldDict.Values.ToArray() ) );
-
-            //DBCommand cmd = new DBCommand( query, _sConnection );
-            //return cmd.ExecuteNonQuery();
+            return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
 
         public static int Update<T>( T entity )

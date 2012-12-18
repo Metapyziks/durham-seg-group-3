@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
+using System.Linq.Expressions;
 
 using TestServer.Entities;
 
 namespace TestServer.Requests
 {
+    using AccountPred = Expression<Func<Account, bool>>;
+
     [RequestTypeName( "userinfo" )]
     class UserInfoRequest : Request
     {
@@ -21,18 +26,8 @@ namespace TestServer.Requests
             if ( usernames == null || usernames.Length == 0 )
                 return new Responses.ErrorResponse( "no username given" );
 
-            for ( int i = 0; i < usernames.Length; ++i )
-            {
-                usernames[ i ] = usernames[ i ].Trim();
-
-                if ( !Account.IsUsernameValid( usernames[ i ] ) )
-                    return new Responses.ErrorResponse( "invalid username (#{0})", i + 1 );
-
-                usernames[ i ] = String.Format( "Username = '{0}'", usernames[ i ] );
-            }
-
-            throw new NotImplementedException();
-            Account[] users = null; //DatabaseManager.Select<Account>( String.Join( " OR ", usernames ) );
+            List<Account> users = DatabaseManager.Select( usernames.Select(
+                x => (AccountPred) ( acc => acc.Username == x ) ).ToArray() );
 
             return new Responses.UserInfoResponse( users );
         }
