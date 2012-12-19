@@ -136,7 +136,7 @@ namespace TestServer
             try
             {
 #endif
-                if ( context.Request.HttpMethod == "GET" )
+                if ( context.Request.HttpMethod == "GET" || context.Request.HttpMethod == "POST" )
                 {
                     if ( context.Request.RawUrl.StartsWith( "/api/" ) )
                         APIManager.ServeRequest( context );

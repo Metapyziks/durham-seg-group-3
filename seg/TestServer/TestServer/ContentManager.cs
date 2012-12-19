@@ -1,15 +1,15 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-
+using System.Web;
 using Microsoft.CSharp;
-
 using Nini.Ini;
 
 namespace TestServer
@@ -61,6 +61,7 @@ namespace TestServer
             private static readonly String _sTemplate = @"
 using System;
 using System.Net;
+using System.Web;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -78,6 +79,9 @@ public static class {0}
         var request = context.Request;
         var response = context.Response;
         var get = request.QueryString;
+
+        var body = new StreamReader( request.InputStream ).ReadToEnd();
+        var post = HttpUtility.ParseQueryString( body );
 
         var writer = new StreamWriter( response.OutputStream );
 
@@ -98,6 +102,7 @@ public static class {0}
                 {
                     Assembly.GetAssembly( typeof( Math ) ).Location,
                     Assembly.GetAssembly( typeof( HttpListener ) ).Location,
+                    Assembly.GetAssembly( typeof( HttpUtility ) ).Location,
                     Assembly.GetAssembly( typeof( System.Linq.Expressions.Expression ) ).Location,
                     Assembly.GetAssembly( typeof( ScriptedPage ) ).Location
                 };
@@ -242,7 +247,6 @@ public static class {0}
                     }
                     catch
                     {
-
                     }
                 }
                 StreamWriter writer = new StreamWriter( context.Response.OutputStream );

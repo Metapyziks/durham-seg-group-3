@@ -1,9 +1,9 @@
 ﻿<!DOCTYPE html>
 
 <?
-    var uname = get["uname"] ?? "";
-    var email = ( get["email"] ?? "" ).ToLower();
-    var phash = ( get["phash"] ?? "" ).ToLower();
+    var uname = post["uname"] ?? "";
+    var email = ( post["email"] ?? "" ).ToLower();
+    var phash = ( post["phash"] ?? "" ).ToLower();
 
     var hasUname = uname.Length > 0;
     var hasEmail = email.Length > 0;
@@ -78,7 +78,7 @@
             <a href="/register.html?uname={$uname}&email={$email}" >Retry</a>
 <?} else if( !hasCreds ) { ?>
       
-            <form name="regForm" action="/register.html" method="get" onsubmit="if( pword.value.length > 0 ) phash.value = hash(pword.value); pword.value = ''">
+            <form name="regForm" action="/register.html" method="post" onsubmit="if( pword.value.length > 0 ) phash.value = hash(pword.value); pword.value = ''">
                 <input type="hidden" name="phash" />
                 <table>
                 <tr><td>Username:</td> <td><input type="text"     name="uname" value="{$uname}" /></td></tr>
