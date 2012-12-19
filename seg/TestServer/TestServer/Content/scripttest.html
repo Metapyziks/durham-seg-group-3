@@ -7,32 +7,27 @@
 	</head>
 	<body>
 		<center>
-		<h1>Script Test</h1>
-		<table border="1">
-			<tr>
-				<th>ID</th>
-				<th>Username</th>
-				<th>Rank</th>
-				<th>Join Date</th>
-			</tr>
-			<?
-			List<Account> users = DatabaseManager.SelectAll<Account>();
-			foreach ( Account acc in users )
-			{
-				?>
+			<h1>Script Test</h1>
+			<table border="1">
 				<tr>
-				<?
-				writer.Write( "<td>{0}</td><td>{1}</td><td>{2}</td>"
-					+ "<td>{3}</td>", acc.AccountID, acc.Username,
-					acc.Rank, acc.RegistrationDate.ToShortDateString() );
-				?>
-				</tr>
-				<?
-			}
-			?>
-		</table>
-		<br />
-		<a href="/index.html">Home</a>
+					<th>ID</th>
+					<th>Username</th>
+					<th>Rank</th>
+					<th>Join Date</th>
+				</tr><?
+	List<Account> users = DatabaseManager.SelectAll<Account>();
+	foreach ( Account acc in users )
+	{ ?>
+				  	<tr>
+						<td>{$acc.AccountID}</td>
+						<td>{$acc.Username}</td>
+						<td>{$acc.Rank}</td>
+						<td>{$acc.RegistrationDate.ToShortDateString()}</td>
+					</tr><?
+	} ?>
+			</table>
+			<br />
+			<a href="/index.html">Home</a>
 		</center>
 	</body>
 </html>
