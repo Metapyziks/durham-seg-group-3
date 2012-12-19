@@ -61,6 +61,9 @@ namespace TestServer.Entities
             if ( !Account.IsEmailValid( email ) )
                 return new Responses.ErrorResponse( "invalid email address" );
 
+            if ( code == null || code.Length == 0 )
+                return new Responses.ErrorResponse( "no activation code given" );
+
             if ( !Account.IsPasswordHashValid( code ) )
                 return new Responses.ErrorResponse( "invalid activation code" );
 
@@ -124,7 +127,7 @@ namespace TestServer.Entities
             if ( IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerificationCode request = VerificationCode.Get( this );
+            ActivationCode request = ActivationCode.Get( this );
 
             if ( code != null && ( request == null || !code.EqualsCharArray( request.Code ) ) )
                 return new Responses.ErrorResponse( "incorrect activation code" );

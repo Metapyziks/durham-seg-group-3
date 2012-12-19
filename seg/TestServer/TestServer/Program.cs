@@ -82,7 +82,7 @@ namespace TestServer
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine( e.GetType().Name + " thrown: " + e.Message );
-                        Console.ForegroundColor = ConsoleColor.Gray;
+                        Console.ResetColor();
                     }
 #endif
                 }
@@ -100,14 +100,14 @@ namespace TestServer
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine( format, args );
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ResetColor();
         }
 
         static void Success( String format, params object[] args )
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine( format, args );
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ResetColor();
         }
 
         static void ProcessCommand( String command, String[] args )
@@ -167,7 +167,7 @@ namespace TestServer
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine( e.GetType().Name + " thrown: " + e.Message );
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ResetColor();
             }
             finally
             {

@@ -224,7 +224,7 @@ public static class {0}
                         Console.WriteLine( error.ErrorText );
                     }
 
-                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.ResetColor();
                 }
 
                 if ( borked )
@@ -374,7 +374,7 @@ public static class {0}
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine( formatted );
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ResetColor();
         }
 
         private static void UpdateContent( String path, int depth = 0 )
@@ -414,7 +414,7 @@ public static class {0}
 
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine( formatted );
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ResetColor();
         }
 
         public static void ServeRequest( HttpListenerContext context )

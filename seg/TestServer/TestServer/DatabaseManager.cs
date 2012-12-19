@@ -444,7 +444,7 @@ using System.Linq.Expressions;
 #if DEBUG
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine( builder.ToString() );
-            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.ResetColor();
 #endif
 
             return new DBCommand( builder.ToString(), _sConnection );

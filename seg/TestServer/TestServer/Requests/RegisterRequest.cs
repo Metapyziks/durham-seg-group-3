@@ -55,7 +55,7 @@ namespace TestServer.Requests
             DatabaseManager.Insert( account );
 
             account = DatabaseManager.Select<Account>( x => x.Email == email )[ 0 ];
-            VerificationCode.Create( account ).SendEmail( account );
+            ActivationCode.Create( account ).SendEmail( account );
 
             return new Responses.Response( true );
         }

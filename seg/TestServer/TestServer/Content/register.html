@@ -11,7 +11,6 @@
 
     var hasCreds = hasUname && hasEmail && hasPword;
 
-    var error = true;
     String errorMsg = null;
 
     if( hasCreds )
@@ -35,8 +34,6 @@
             }
             else
             {
-                error = false;
-
                 Account account = new Account()
                 {
                     Username = uname,
@@ -49,7 +46,7 @@
                 DatabaseManager.Insert( account );
 
                 account = DatabaseManager.SelectFirst<Account>( x => x.Email == email );
-                VerificationCode.Create( account ).SendEmail( account );
+                ActivationCode.Create( account ).SendEmail( account );
             }
         }
     }

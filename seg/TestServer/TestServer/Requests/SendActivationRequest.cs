@@ -29,7 +29,7 @@ namespace TestServer.Requests
             if ( account.IsVerified )
                 return new Responses.ErrorResponse( "account already activated" );
 
-            VerificationCode.Create( account ).SendEmail( account );
+            ActivationCode.Create( account ).SendEmail( account );
 
             return new Responses.Response( true );
         }

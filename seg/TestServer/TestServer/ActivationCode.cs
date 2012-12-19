@@ -5,18 +5,18 @@ using TestServer.Entities;
 
 namespace TestServer
 {
-    public class VerificationCode
+    public class ActivationCode
     {
         public const double ExpirationTime = 60.0 * 60.0 * 24.0;
 
-        private static Dictionary<Int32, VerificationCode> stCodes = new Dictionary<int, VerificationCode>();
+        private static Dictionary<Int32, ActivationCode> stCodes = new Dictionary<int, ActivationCode>();
 
-        public static VerificationCode Create( Account account )
+        public static ActivationCode Create( Account account )
         {
             if ( account.IsVerified )
                 return null;
 
-            VerificationCode code = new VerificationCode()
+            ActivationCode code = new ActivationCode()
             {
                 AccountID = account.AccountID,
                 Code = Tools.GenerateHash(),
@@ -31,11 +31,11 @@ namespace TestServer
             return code;
         }
 
-        public static VerificationCode Get( Account account )
+        public static ActivationCode Get( Account account )
         {
             if ( stCodes.ContainsKey( account.AccountID ) )
             {
-                VerificationCode code = stCodes[ account.AccountID ];
+                ActivationCode code = stCodes[ account.AccountID ];
 
                 if ( !code.IsExpired )
                     return code;
@@ -76,7 +76,7 @@ namespace TestServer
             EmailManager.Send( account.Email, "TestServer account activation", String.Format(
 @"Hey {0},
 
-To finish the registration process just click this link: {1}api/activate?email={2}&code={3}
+To finish the registration process just click this link: {1}activate?email={2}&code={3}
 
 Have fun!", account.Username, Program.ServerAddress, account.Email, new String( Code ) ) );
         }
