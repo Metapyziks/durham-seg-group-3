@@ -5,7 +5,7 @@ using TestServer.Entities;
 namespace TestServer.Responses
 {
     [Serializable]
-    class UserBalanceResponse : Response
+    public class UserBalanceResponse : Response
     {
         [Serialize( "balance" )]
         public readonly int Balance;

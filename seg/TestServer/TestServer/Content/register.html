@@ -5,51 +5,11 @@
     var email = ( post["email"] ?? "" ).ToLower();
     var phash = ( post["phash"] ?? "" ).ToLower();
 
-    var hasUname = uname.Length > 0;
-    var hasEmail = email.Length > 0;
-    var hasPword = phash.Length > 0;
+    var hasCreds = uname.Length > 0 && email.Length > 0 && phash.Length > 0;
 
-    var hasCreds = hasUname && hasEmail && hasPword;
-
-    String errorMsg = null;
-
+    ErrorResponse error = null;
     if( hasCreds )
-    {
-        if ( !Account.IsUsernameValid( uname ) )
-            errorMsg = "Invalid username";
-        else if ( !Account.IsPasswordHashValid( phash ) )
-            errorMsg = "Invalid password hash";
-        else if ( !Account.IsEmailValid( email ) )
-            errorMsg = "Invalid email address";
-        else
-        {
-            var clash = DatabaseManager.SelectFirst<Account>( x => x.Username == uname || x.Email == email );
-
-            if ( clash != null )
-            {
-                if ( clash.Username == uname )
-                    errorMsg = "username already in use";
-                else
-                    errorMsg = "email already in use";
-            }
-            else
-            {
-                Account account = new Account()
-                {
-                    Username = uname,
-                    PasswordHash = phash.ToCharArray(),
-                    Email = email,
-                    Rank = Rank.Unverified,
-                    RegistrationDate = DateTime.Now
-                };
-
-                DatabaseManager.Insert( account );
-
-                account = DatabaseManager.SelectFirst<Account>( x => x.Email == email );
-                ActivationCode.Create( account ).SendEmail( account );
-            }
-        }
-    }
+        error = Account.AttemptRegister( uname, email, phash );
 ?>
 
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
@@ -69,9 +29,9 @@
     <body>
         <center>
             <h1>Register Account</h1>
-<? if( errorMsg != null ) { ?>
+<? if( error != null ) { ?>
             There was an error when making your account :(<br />
-            Reason: {$errorMsg}<br /><br />
+            Reason: {$error.Message}<br /><br />
             <a href="/register.html?uname={$uname}&email={$email}" >Retry</a>
 <?} else if( !hasCreds ) { ?>
       
@@ -89,7 +49,7 @@
             </form>
 <? } else { ?>
             <h2>Account created!</h2>
-            A verification email has been sent to {$email}.<br />
+            An activation email has been sent to {$email}.<br />
             Click the link in the email to complete your registration.
 <? } ?>
             <br />

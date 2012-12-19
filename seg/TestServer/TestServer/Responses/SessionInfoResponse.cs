@@ -3,7 +3,7 @@
 namespace TestServer.Responses
 {
     [Serializable]
-    class SessionInfoResponse : Response
+    public class SessionInfoResponse : Response
     {
         [Serialize( "code" )]
         public readonly String Code;

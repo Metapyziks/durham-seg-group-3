@@ -6,7 +6,7 @@ using TestServer.Entities;
 namespace TestServer.Responses
 {
     [Serializable]
-    class UserInfoResponse : Response
+    public class UserInfoResponse : Response
     {
         [Serialize( "users" )]
         public readonly List<Account> Users;
