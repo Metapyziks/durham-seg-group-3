@@ -20,6 +20,10 @@ seg/TestServer/TestServer/obj
 seg/TestServer/TestServer/*.user
 seg/TestServer/TestServer/config.ini
 
+seg/TestServer/TestServerTests/bin
+seg/TestServer/TestServerTests/obj
+seg/TestServer/TestServerTests/*.user
+
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
 seg/documents/requirements/*.out

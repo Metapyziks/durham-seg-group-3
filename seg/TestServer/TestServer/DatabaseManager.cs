@@ -227,16 +227,19 @@ using System.Linq.Expressions;
 
         private static readonly String _sFileName = "Database.db";
         private static DBConnection _sConnection;
-        private static List<DatabaseTable> _sTables;
+
+        private static List<DatabaseTable> _sTables = new List<DatabaseTable>();
 
         public static void Connect( String connStrFormat, params String[] args )
         {
+            if ( _sConnection != null )
+                Disconnect();
+
             Console.WriteLine( "Establishing database connection..." );
             String connectionString = String.Format( connStrFormat, args );
             _sConnection = new DBConnection( connectionString );
             _sConnection.Open();
 
-            _sTables = new List<DatabaseTable>();
             foreach ( Type type in Assembly.GetExecutingAssembly().GetTypes() )
             {
                 if ( type.IsDefined<DatabaseEntityAttribute>() )
@@ -250,14 +253,22 @@ using System.Linq.Expressions;
         public static void ConnectLocal()
         {
 #if DEBUG
-            if ( File.Exists( _sFileName ) )
-                File.Delete( _sFileName );
+            DropDatabase();
 #endif
 
             if( !File.Exists( _sFileName ) )
                 CreateDatabase( "Data Source={0};", _sFileName );
             else
                 Connect( "Data Source={0};", _sFileName );
+        }
+
+        public static void DropDatabase()
+        {
+            if ( _sConnection != null )
+                Disconnect();
+
+            if ( File.Exists( _sFileName ) )
+                File.Delete( _sFileName );
         }
 
         private static void CreateDatabase( String connStrFormat, params String[] args )
@@ -325,7 +336,7 @@ using System.Linq.Expressions;
             throw new Exception( "Cannot reduce an expression of type " + exp.GetType() );
         }
 
-        private static String SerializeExpression( Expression exp )
+        private static String SerializeExpression( Expression exp, bool removeParam = false )
         {
             if ( !RequiresParam( exp ) )
             {
@@ -344,7 +355,7 @@ using System.Linq.Expressions;
             if ( exp is UnaryExpression )
             {
                 UnaryExpression uExp = (UnaryExpression) exp;
-                String oper = SerializeExpression( uExp.Operand );
+                String oper = SerializeExpression( uExp.Operand, removeParam );
 
                 switch ( exp.NodeType )
                 {
@@ -359,8 +370,8 @@ using System.Linq.Expressions;
             if ( exp is BinaryExpression )
             {
                 BinaryExpression bExp = (BinaryExpression) exp;
-                String left = SerializeExpression( bExp.Left );
-                String right = SerializeExpression( bExp.Right );
+                String left = SerializeExpression( bExp.Left, removeParam );
+                String right = SerializeExpression( bExp.Right, removeParam );
                 switch ( exp.NodeType )
                 {
                     case ExpressionType.Equal:
@@ -395,7 +406,10 @@ using System.Linq.Expressions;
                     return String.Format( "'{0}'", cExp.Value.ToString() );
                 case ExpressionType.MemberAccess:
                     MemberExpression mExp = (MemberExpression) exp;
-                    return String.Format( "{0}.{1}", SerializeExpression( mExp.Expression ),
+                    if ( removeParam && mExp.Expression is ParameterExpression )
+                        return mExp.Member.Name;
+                    return String.Format( "{0}.{1}", SerializeExpression(
+                            mExp.Expression, removeParam ),
                         mExp.Member.Name );
                 default:
                     throw new Exception( "Cannot convert an expression of type "
@@ -405,13 +419,7 @@ using System.Linq.Expressions;
 
         public static DatabaseTable GetTable<T>()
         {
-            DatabaseTable table = _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
-
-            if ( table == null )
-                throw new Exception( "Cannot select an entity of type "
-                    + typeof( T ).Name + ", no such table exists" );
-
-            return table;
+            return _sTables.FirstOrDefault( x => x.Type == typeof( T ) );
         }
 
         private static DBCommand GenerateSelectCommand<T>( DatabaseTable table, params Expression<Func<T, bool>>[] predicates )
@@ -558,7 +566,7 @@ using System.Linq.Expressions;
             builder.AppendFormat( "DELETE FROM {0} ", table.Name );
 
             builder.AppendFormat( "WHERE {0}", String.Join( "\n  OR ",
-                predicates.Select( x => SerializeExpression( x.Body ) ) ) );
+                predicates.Select( x => SerializeExpression( x.Body, true ) ) ) );
 
             return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
@@ -566,6 +574,9 @@ using System.Linq.Expressions;
         public static void Disconnect()
         {
             _sConnection.Close();
+            _sConnection = null;
+
+            _sTables.Clear();
         }
     }
 }
