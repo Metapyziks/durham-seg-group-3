@@ -67,17 +67,17 @@ namespace TestServer.Entities
 
         public bool IsVerified
         {
-            get { return ( Rank & Rank.Verified ) != 0; }
+            get { return ( Rank & Rank.Verified ) == Rank.Verified; }
         }
 
         public bool IsAdmin
         {
-            get { return ( Rank & Rank.Admin ) != 0; }
+            get { return ( Rank & Rank.Admin ) == Rank.Admin; }
         }
 
         public bool IsOwner
         {
-            get { return ( Rank & Rank.Owner ) != 0; }
+            get { return ( Rank & Rank.Owner ) == Rank.Owner; }
         }
     }
 }
