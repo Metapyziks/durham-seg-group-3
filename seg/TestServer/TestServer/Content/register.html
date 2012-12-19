@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+
+<?
+    var uname = get["uname"] ?? "";
+    var email = ( get["email"] ?? "" ).ToLower();
+    var phash = ( get["phash"] ?? "" ).ToLower();
+
+    var hasUname = uname.Length > 0;
+    var hasEmail = email.Length > 0;
+    var hasPword = phash.Length > 0;
+
+    var hasCreds = hasUname && hasEmail && hasPword;
+
+    var error = true;
+    String errorMsg = "";
+
+    if( hasCreds )
+    {
+        if ( !Account.IsUsernameValid( uname ) )
+            errorMsg = "Invalid username";
+        else if ( !Account.IsPasswordHashValid( phash ) )
+            errorMsg = "Invalid password hash";
+        else if ( !Account.IsEmailValid( email ) )
+            errorMsg = "Invalid email address";
+        else
+        {
+            var clash = DatabaseManager.SelectFirst<Account>( x => x.Username == uname || x.Email == email );
+
+            if ( clash != null )
+            {
+                if ( clash.Username == uname )
+                    errorMsg = "username already in use";
+                else
+                    errorMsg = "email already in use";
+            }
+            else
+            {
+                error = false;
+
+                Account account = new Account()
+                {
+                    Username = uname,
+                    PasswordHash = phash.ToCharArray(),
+                    Email = email,
+                    Rank = Rank.Unverified,
+                    RegistrationDate = DateTime.Now
+                };
+
+                DatabaseManager.Insert( account );
+
+                account = DatabaseManager.SelectFirst<Account>( x => x.Email == email );
+                VerificationCode.Create( account ).SendEmail( account );
+            }
+        }
+    }
+?>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>Register</title>
+<? if( !hasCreds ) { ?>
+        <script src="http://crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/md5.js"></script>
+        <script type="text/javascript">
+            function hash( string )
+            {
+                return CryptoJS.MD5("7¬`j8,#@ytIsQ9$Od" + string + "%fI4\"0lPQz^~U&An4:9£k").toString();
+            }
+        </script>
+<? } ?>
+    </head>
+    <body>
+        <center>
+            <h1>Register Account</h1>
+<? if( !hasCreds ) { ?>
+            <form name="regForm" action="/register.html" method="get">
+                <input type="hidden" name="phash" value="" />
+                <table>
+                <tr><td>Username:</td> <td><input type="text"     name="uname" value="{$uname}" /></td></tr>
+                <tr><td>Email:   </td> <td><input type="email"    name="email" value="{$email}" /></td></tr>
+                <tr><td>Password:</td> <td><input type="password" name="pword" value="" /></td></tr>
+                <tr><td colspan ="2">&nbsp;</td></tr>
+                <tr><td colspan="2"><input type="submit" value="Register" onclick="phash.value = hash(pword.value);pword.value = ''" /></td></tr>
+                </table>
+            </form>
+<? } else if( error ) { ?>
+            <h2>There was an error when making your account :(</h2>
+            Reason: {$errorMsg}<br />
+            <a href="/register.html?uname={$uname}&pw"
+<? } else { ?>
+            <h2>Account created!</h2>
+            A verification email has been sent to {$email}.<br />
+            Click the link in the email to complete your registration.
+<? } ?>
+            <br />
+            <br />
+            <a href="/index.html">Home</a>
+        </center>
+    </body>
+</html>

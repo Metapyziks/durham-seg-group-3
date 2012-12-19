@@ -62,6 +62,8 @@ namespace TestServer
 using System;
 using System.Net;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.IO;
 
 using TestServer;
@@ -73,10 +75,11 @@ public static class {0}
 {
     public static void ServeRequest( HttpListenerContext context )
     {
-        HttpListenerRequest request = context.Request;
-        HttpListenerResponse response = context.Response;
+        var request = context.Request;
+        var response = context.Response;
+        var get = request.QueryString;
 
-        StreamWriter writer = new StreamWriter( response.OutputStream );        
+        var writer = new StreamWriter( response.OutputStream );        
 
         writer.Write( ""{1}"" );
         writer.Flush();
@@ -95,6 +98,7 @@ public static class {0}
                 {
                     Assembly.GetAssembly( typeof( Math ) ).Location,
                     Assembly.GetAssembly( typeof( HttpListener ) ).Location,
+                    Assembly.GetAssembly( typeof( System.Linq.Expressions.Expression ) ).Location,
                     Assembly.GetAssembly( typeof( ScriptedPage ) ).Location
                 };
 
@@ -130,6 +134,7 @@ public static class {0}
                     .Replace( "\t", "\\t" ).Replace( "\"", "\\\"" );
             }
 
+            // TODO: Make this at least slightly acceptable
             private String GenerateCode( String content )
             {
                 StringBuilder builder = new StringBuilder();
@@ -149,6 +154,16 @@ public static class {0}
                             script = true;
                             continue;
                         }
+
+                        if ( content[i] == '{' && i < content.Length && content[i + 1] == '$' )
+                        {
+                            builder.Append( FormatHTMLBlock( content.Substring( j, i - j ) ) );
+                            j = i + 2;
+                            builder.Append( "\" + " );
+                            while ( ++i < content.Length && content[i] != '}' ) ;
+                            builder.AppendFormat( "{0}.ToString() + \"", content.Substring( j, i - j ) );
+                            j = ++i;
+                        }
                     }
                     else
                     {
@@ -161,12 +176,13 @@ public static class {0}
                             script = false;
                             continue;
                         }
+
+                        if ( content[i] == '"' )
+                            while ( ++i < content.Length && content[i] != '"' ) ;
+                        else if ( content[i] == '\'' )
+                            while ( ++i < content.Length && content[i] != '\'' ) ;
                     }
 
-                    if ( content[i] == '"' )
-                        while ( ++i < content.Length && content[i] != '"' ) ;
-                    else if ( content[i] == '\'' )
-                        while ( ++i < content.Length && content[i] != '\'' ) ;
                     
                     ++i;
                 }

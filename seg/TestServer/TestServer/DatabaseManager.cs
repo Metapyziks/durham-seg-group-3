@@ -522,15 +522,18 @@ using System.Linq.Expressions;
             where T : new()
         {
             DatabaseTable table = GetTable<T>();
+            DatabaseColumn primaryKey = table.Columns.First( x => x.PrimaryKey );
 
-            IEnumerable<DatabaseColumn> valid = table.Columns.Where( x => !x.AutoIncrement );
+            IEnumerable<DatabaseColumn> valid = table.Columns.Where( x => x != primaryKey );
 
             String columns = String.Join( ",\n  ", valid.Select( x =>
                 String.Format( "{0} = '{1}'", x.Name, x.GetValue( entity ) ) ) );
 
+            String predicate = String.Format( "{0}='{1}'", primaryKey.Name, primaryKey.GetValue( entity ) );
+
             StringBuilder builder = new StringBuilder();
-            builder.AppendFormat( "UPDATE {0} SET\n  {1}",
-                table.Name, columns );
+            builder.AppendFormat( "UPDATE {0} SET\n  {1}\nWHERE {2}",
+                table.Name, columns, predicate );
 
             return new DBCommand( builder.ToString(), _sConnection ).ExecuteNonQuery();
         }
