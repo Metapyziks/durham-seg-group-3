@@ -55,6 +55,9 @@ namespace TestServer
                     while( !ctxTask.IsCompleted && stActive )
                         Thread.Yield();
 
+                    if ( !stActive )
+                        break;
+
                     ProcessRequest( await ctxTask );
                 }
 
