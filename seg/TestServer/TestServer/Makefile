@@ -1,16 +1,26 @@
+CSC = mcs
+
+CSVERSION = future
+
+SRC = -recurse:'*.cs'
+
+DEF = LINUX
+
+SYSLIBS = System.Data.dll,System.Core.dll
+NINI = Nini.dll
+SQLLIB = Mono.Data.Sqlite.dll
+
+MAINCLASS = TestServer.Program
+
+TARGET = TestServer.exe
+
 TestServer.exe: 
-	gmcs *.cs Entities/*.cs Properties/*.cs Requests/*.cs Responses/*.cs \
-		-r:System.Data.dll,Mono.Data.Sqlite.dll,Nini.dll \
-		-d:LINUX \
-		-main:TestServer.Program \
-		-out:TestServer.exe
+	$(CSC) -langversion:$(CSVERSION) $(SRC) -r:$(SYSLIBS),$(NINI),$(SQLLIB) -d:$(DEF) \
+		-main:$(MAINCLASS) -out:$(TARGET)
 
 debug:
-	gmcs *.cs Entities/*.cs Properties/*.cs Requests/*.cs Responses/*.cs \
-		-r:System.Data.dll,Mono.Data.Sqlite.dll,Nini.dll \
-		-d:LINUX,DEBUG \
-		-main:TestServer.Program \
-		-out:TestServer.exe
+	$(CSC) -langversion:$(CSVERSION) $(SRC) -r:$(SYSLIBS),$(NINI),$(SQLLIB) -d:$(DEF),DEBUG \
+		-main:$(MAINCLASS) -out:$(TARGET)
 
 clean:
 	rm TestServer.exe Database.db

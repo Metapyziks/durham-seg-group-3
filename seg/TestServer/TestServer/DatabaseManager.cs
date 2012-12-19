@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -563,7 +564,6 @@ using System.Linq.Expressions;
         public static int Delete<T>( params Expression<Func<T, bool>>[] predicates )
         {
             DatabaseTable table = GetTable<T>();
-            DatabaseColumn primaryKey = table.Columns.First( x => x.PrimaryKey );
 
             StringBuilder builder = new StringBuilder();
             builder.AppendFormat( "DELETE FROM {0} ", table.Name );

@@ -79,7 +79,7 @@ public static class {0}
         var response = context.Response;
         var get = request.QueryString;
 
-        var writer = new StreamWriter( response.OutputStream );        
+        var writer = new StreamWriter( response.OutputStream );
 
         writer.Write( ""{1}"" );
         writer.Flush();

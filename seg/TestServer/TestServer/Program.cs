@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Nini.Ini;
 
@@ -39,7 +40,7 @@ namespace TestServer
 
             DatabaseManager.ConnectLocal();
 
-            Thread clientThread = new Thread( () =>
+            Thread clientThread = new Thread( async () =>
             {
                 HttpListener listener = new HttpListener();
                 listener.Prefixes.Add( "http://+:" + LocalPort + "/" );
@@ -48,7 +49,14 @@ namespace TestServer
                 Console.WriteLine( "Http server started and ready for requests" );
 
                 while ( stActive )
-                    ProcessRequest( listener.GetContext() );
+                {
+                    Task<HttpListenerContext> ctxTask = listener.GetContextAsync();
+
+                    while( !ctxTask.IsCompleted && stActive )
+                        Thread.Yield();
+
+                    ProcessRequest( await ctxTask );
+                }
 
                 listener.Stop();
             } );
