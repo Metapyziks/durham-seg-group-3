@@ -3,7 +3,7 @@
 namespace TestServer.Responses
 {
     [Serializable]
-    class Response
+    public class Response
     {
         [Serialize( "success" )]
         public readonly bool Success;

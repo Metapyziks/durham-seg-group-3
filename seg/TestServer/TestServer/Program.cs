@@ -96,8 +96,23 @@ namespace TestServer
             DatabaseManager.Disconnect();
         }
 
+        static void Error( String format, params object[] args )
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine( format, args );
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        static void Success( String format, params object[] args )
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine( format, args );
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
         static void ProcessCommand( String command, String[] args )
         {
+            Responses.ErrorResponse error;
             switch ( command )
             {
                 case "stop":
@@ -105,26 +120,29 @@ namespace TestServer
                     break;
                 case "activate":
                     if ( args.Length == 0 )
-                        throw new ArgumentException( "Expected a user name" );
-
-                    String username = args[0];
-
-                    Account account = DatabaseManager.SelectFirst<Account>( x => x.Username == username );
-
-                    if ( account == null )
-                        throw new Exception( "username not recognised" );
-
-                    if ( account.IsVerified )
-                        throw new Exception( "account already activated" );
-
-                    VerificationCode request = VerificationCode.Get( account );
-                    
-                    if( request != null )
-                        request.Remove();
-
-                    account.Rank = Rank.Verified;
-                    DatabaseManager.Update( account );
+                    {
+                        Error( "Expected a user name" );
+                        break;
+                    }
+                    error = Account.AttemptActivate( args[0] );
+                    if ( error != null )
+                        Error( "Could not activate account: {0}", error.Message );
+                    else
+                        Success( "Activated {0}'s account", args[0] );
                     break;
+                case "promote":
+                    if ( args.Length == 0 )
+                    {
+                        Error( "Expected a user name" );
+                        break;
+                    }
+                    error = Account.AttemptPromote( args[0] );
+                    if ( error != null )
+                        Error( "Could not promote account: {0}", error.Message );
+                    else
+                        Success( "Promoted {0} to admin", args[0] );
+                    break;
+
             }
         }
 

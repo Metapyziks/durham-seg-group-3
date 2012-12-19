@@ -3,7 +3,7 @@
 namespace TestServer.Responses
 {
     [Serializable]
-    class ErrorResponse : Response
+    public class ErrorResponse : Response
     {
         [Serialize( "error" )]
         public readonly String Message;

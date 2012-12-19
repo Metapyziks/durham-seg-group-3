@@ -43,6 +43,45 @@ namespace TestServer.Entities
             return stPasswordHashRegex.IsMatch( hash );
         }
 
+        public static Responses.ErrorResponse AttemptActivate( String username )
+        {
+            Account account = DatabaseManager.SelectFirst<Account>( x => x.Username == username );
+
+            if ( account == null )
+                return new Responses.ErrorResponse( "username not recognised" );
+
+            return account.Activate();
+        }
+
+        public static Responses.ErrorResponse AttemptActivate( String email, String code )
+        {
+            if ( email == null || email.Length == 0 )
+                return new Responses.ErrorResponse( "no email address given" );
+
+            if ( !Account.IsEmailValid( email ) )
+                return new Responses.ErrorResponse( "invalid email address" );
+
+            if ( !Account.IsPasswordHashValid( code ) )
+                return new Responses.ErrorResponse( "invalid activation code" );
+
+            Account account = DatabaseManager.SelectFirst<Account>( x => x.Email == email );
+
+            if ( account == null )
+                return new Responses.ErrorResponse( "email address not recognised" );
+
+            return account.Activate( code );
+        }
+
+        public static Responses.ErrorResponse AttemptPromote( String username )
+        {
+            Account account = DatabaseManager.SelectFirst<Account>( x => x.Username == username );
+
+            if ( account == null )
+                return new Responses.ErrorResponse( "username not recognised" );
+
+            return account.Promote();
+        }
+
         [Serialize( "accountid" )]
         [PrimaryKey, AutoIncrement]
         public int AccountID { get; set; }
@@ -78,6 +117,36 @@ namespace TestServer.Entities
         public bool IsOwner
         {
             get { return ( Rank & Rank.Owner ) == Rank.Owner; }
+        }
+
+        public Responses.ErrorResponse Activate( String code = null )
+        {
+            if ( IsVerified )
+                return new Responses.ErrorResponse( "account already activated" );
+
+            VerificationCode request = VerificationCode.Get( this );
+
+            if ( code != null && ( request == null || !code.EqualsCharArray( request.Code ) ) )
+                return new Responses.ErrorResponse( "incorrect activation code" );
+
+            if( request != null )
+                request.Remove();
+
+            Rank = Rank.Verified;
+            DatabaseManager.Update( this );
+
+            return null;
+        }
+
+        public Responses.ErrorResponse Promote()
+        {
+            if ( IsAdmin )
+                return new Responses.ErrorResponse( "account already promoted" );
+
+            Rank = Rank.Admin;
+            DatabaseManager.Update( this );
+
+            return null;
         }
     }
 }
