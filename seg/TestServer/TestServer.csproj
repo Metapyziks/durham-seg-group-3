@@ -43,18 +43,19 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>.\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Content\favicon.ico</ApplicationIcon>
+    <ApplicationIcon>res\favicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Nini">
-      <HintPath>.\Nini.dll</HintPath>
+    <Reference Include="Nini, Version=1.1.0.0, Culture=neutral, PublicKeyToken=691faec150a7fa7b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>extlibs\Nini.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -71,56 +72,56 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="APIManager.cs" />
-    <Compile Include="AuthSession.cs" />
-    <Compile Include="Entities\Account.cs" />
-    <Compile Include="DatabaseManager.cs" />
-    <Compile Include="EmailManager.cs" />
-    <Compile Include="Entities\Player.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="TestServer.AssemblyInfo.cs" />
-    <Compile Include="Requests\SendActivationRequest.cs" />
-    <Compile Include="Requests\StartSessionRequest.cs" />
-    <Compile Include="Requests\UserBalanceRequest.cs" />
-    <Compile Include="Requests\UserInfoRequest.cs" />
-    <Compile Include="Requests\RegisterRequest.cs" />
-    <Compile Include="Requests\ActivationRequest.cs" />
-    <Compile Include="Requests\Request.cs" />
-    <Compile Include="Requests\EchoRequest.cs" />
-    <Compile Include="Responses\Response.cs" />
-    <Compile Include="Responses\EchoResponse.cs" />
-    <Compile Include="Responses\ErrorResponse.cs" />
-    <Compile Include="Responses\SessionInfoResponse.cs" />
-    <Compile Include="Responses\UserBalanceResponse.cs" />
-    <Compile Include="Responses\UserInfoResponse.cs" />
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="Serialization.cs" />
-    <Compile Include="Tools.cs" />
-    <Compile Include="ActivationCode.cs" />
+    <Compile Include="src\APIManager.cs" />
+    <Compile Include="src\AuthSession.cs" />
+    <Compile Include="src\Entities\Account.cs" />
+    <Compile Include="src\DatabaseManager.cs" />
+    <Compile Include="src\EmailManager.cs" />
+    <Compile Include="src\Entities\Player.cs" />
+    <Compile Include="src\Program.cs" />
+    <Compile Include="src\TestServer.AssemblyInfo.cs" />
+    <Compile Include="src\Requests\SendActivationRequest.cs" />
+    <Compile Include="src\Requests\StartSessionRequest.cs" />
+    <Compile Include="src\Requests\UserBalanceRequest.cs" />
+    <Compile Include="src\Requests\UserInfoRequest.cs" />
+    <Compile Include="src\Requests\RegisterRequest.cs" />
+    <Compile Include="src\Requests\ActivationRequest.cs" />
+    <Compile Include="src\Requests\Request.cs" />
+    <Compile Include="src\Requests\EchoRequest.cs" />
+    <Compile Include="src\Responses\Response.cs" />
+    <Compile Include="src\Responses\EchoResponse.cs" />
+    <Compile Include="src\Responses\ErrorResponse.cs" />
+    <Compile Include="src\Responses\SessionInfoResponse.cs" />
+    <Compile Include="src\Responses\UserBalanceResponse.cs" />
+    <Compile Include="src\Responses\UserInfoResponse.cs" />
+    <Compile Include="src\ContentManager.cs" />
+    <Compile Include="src\Serialization.cs" />
+    <Compile Include="src\Tools.cs" />
+    <Compile Include="src\ActivationCode.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\404.html">
+    <Content Include="res\404.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\activate.html">
+    <Content Include="res\activate.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\favicon.ico">
+    <Content Include="res\favicon.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\images\cats.jpg">
+    <Content Include="res\images\cats.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\index.html">
+    <Content Include="res\index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\images\logo-shaded.jpg">
+    <Content Include="res\images\logo-shaded.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\register.html">
+    <Content Include="res\register.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Content\userlist.html">
+    <Content Include="res\userlist.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -153,6 +154,7 @@
     <None Include="config.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="config.template.ini" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

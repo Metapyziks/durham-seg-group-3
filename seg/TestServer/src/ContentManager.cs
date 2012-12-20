@@ -274,7 +274,7 @@ public static class {0}
             _sContent = new Dictionary<string, byte[]>();
 
 
-            _sContentDirectory = Path.GetFullPath( ini.GetValue( "pagesdir" ) ?? "Content" );
+            _sContentDirectory = Path.GetFullPath( ini.GetValue( "pagesdir" ) ?? "res" );
             _sAllowedExtensions = ( ini.GetValue( "allowedext" ) ?? "" ).Split( ',' ).ToList();
 
             for ( int i = 0; i < _sAllowedExtensions.Count; ++i )
@@ -313,7 +313,7 @@ public static class {0}
 
         private static void InitializeDirectory( string dir, int depth = 0 )
         {
-            String dirName = "Content" + dir.Substring( _sContentDirectory.Length );
+            String dirName = "res" + dir.Substring( _sContentDirectory.Length );
             Console.WriteLine( dirName );
 
             foreach ( String file in Directory.GetFiles( dir ) )

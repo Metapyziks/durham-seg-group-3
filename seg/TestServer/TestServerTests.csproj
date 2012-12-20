@@ -50,8 +50,8 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DatabaseTests.cs" />
-    <Compile Include="TestServerTests.AssemblyInfo.cs" />
+    <Compile Include="src\DatabaseTests.cs" />
+    <Compile Include="src\TestServerTests.AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="TestServer.csproj">
