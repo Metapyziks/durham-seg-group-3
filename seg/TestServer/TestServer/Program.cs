@@ -68,7 +68,18 @@ namespace TestServer
 
             while ( stActive )
             {
-                String[] line = Console.ReadLine().Split( new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries );
+                String input;
+                try
+                {
+                    input = Console.ReadLine();
+                }
+                catch ( UnauthorizedAccessException )
+                {
+                    Thread.Sleep( 100 );
+                    continue;
+                }
+
+                String[] line = input.Split( new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries );
                 if ( line.Length > 0 )
                 {
 #if !DEBUG
