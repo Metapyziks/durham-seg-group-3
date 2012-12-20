@@ -6,7 +6,7 @@ SRC = -recurse:'*.cs'
 
 DEF = LINUX
 
-SYSLIBS = System.Data.dll,System.Core.dll
+SYSLIBS = System.Data.dll,System.Core.dll,System.Web.dll
 NINI = Nini.dll
 SQLLIB = Mono.Data.Sqlite.dll
 

@@ -159,9 +159,9 @@ namespace TestServer
 
         static void ProcessRequest( HttpListenerContext context )
         {
+#if DEBUG
             Console.WriteLine( "Request from " + context.Request.RemoteEndPoint.ToString() + " : " + context.Request.RawUrl );
-
-#if !DEBUG
+#else
             try
             {
 #endif
