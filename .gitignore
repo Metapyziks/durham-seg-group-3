@@ -15,14 +15,10 @@ seg/GPSTestThing/bin/
 *.config
 *.db
 
-seg/TestServer/TestServer/bin
-seg/TestServer/TestServer/obj
-seg/TestServer/TestServer/*.user
-seg/TestServer/TestServer/config.ini
-
-seg/TestServer/TestServerTests/bin
-seg/TestServer/TestServerTests/obj
-seg/TestServer/TestServerTests/*.user
+seg/TestServer/bin
+seg/TestServer/obj
+seg/TestServer/*.user
+seg/TestServer/config.ini
 
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
