@@ -1,0 +1,3 @@
+[submodule "fortitude-server"]
+	path = fortitude-server
+	url = git@github.com:Metapyziks/fortitude-server.git

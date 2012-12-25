@@ -1,6 +1,5 @@
 *.class
 *.*~
-*Thumbs.db
 
 # Package Files #
 *.jar
@@ -12,11 +11,14 @@ seg/GPSTestThing/bin/
 *.suo
 *.exe
 *.pdb
+*.exe.manifest
+*.config
+*.db
 
-seg/TestServer/TestServer/bin
-seg/TestServer/TestServer/obj
-seg/TestServer/TestServer/*.user
-seg/TestServer/TestServer/config.ini
+seg/TestServer/bin
+seg/TestServer/obj
+seg/TestServer/*.user
+seg/TestServer/config.ini
 
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
