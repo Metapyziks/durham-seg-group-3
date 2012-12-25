@@ -3,6 +3,9 @@ package com.example.fortitude;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import 	android.content.Context;
 
 public class Fortitude extends Activity 
 {
@@ -34,6 +37,8 @@ public class Fortitude extends Activity
     ////////
     private void runApp()
     {
+    	new MainLoginScreen();
+    	
         /////////////////////////////////////////////// Create Login Screen Example
         //new LoginScreen();
         ///////////////////////////////////////////////
@@ -81,5 +86,18 @@ public class Fortitude extends Activity
     public static Fortitude getFortitude()
     {
         return fortitude;	
+    }
+    
+    ////////
+    //
+    //getFortitude
+    //
+    //detects whether the phone has an internet connection
+    //
+    ////////
+    public static boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) Fortitude.getFortitude().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return (activeNetworkInfo != null);
     }
 }

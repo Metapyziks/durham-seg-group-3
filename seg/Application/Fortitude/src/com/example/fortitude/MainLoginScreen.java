@@ -14,8 +14,8 @@ import android.widget.EditText;
 import android.text.method.PasswordTransformationMethod;
 
 
-public class LoginScreen extends GridLayout
-{
+public class MainLoginScreen extends GridLayout
+{	
 	private int windowWidth; //Visible window width
 	private int windowHeight; //Visible window height
 	
@@ -39,6 +39,8 @@ public class LoginScreen extends GridLayout
     private EditText usernameField = null; //username text box
     private EditText passwordField = null; //password text box
     
+    private static MainLoginScreen me = null;
+    
 	////////
 	//
 	//newLoginScreen
@@ -46,10 +48,9 @@ public class LoginScreen extends GridLayout
 	//static constructor
 	//
 	////////
-	public static void newLoginScreen()
+	public static void newMainLoginScreen()
 	{
-		
-	    new LoginScreen();	
+	    new MainLoginScreen();	
 	}
 	
 	////////
@@ -57,18 +58,25 @@ public class LoginScreen extends GridLayout
 	//Constructor
 	//
 	////////
-    public LoginScreen()
+    public MainLoginScreen()
     {
     	super(Fortitude.getFortitude());
+    	
+    	me = this;
     	
     	setWindowDimensions();
     	setColsAndRows();
     	
     	createPositionalSpace();
     	
-    	addLoginScreen();
+    	addMainLoginScreen();
     	
     	addThisToDisplay();
+    }
+    
+    public static MainLoginScreen getMe()
+    {
+    	return me;
     }
     
     ////////
@@ -80,7 +88,30 @@ public class LoginScreen extends GridLayout
     ////////
     private void signIn()
     {
-        Login.logIn(usernameField.getText().toString(), passwordField.getText().toString());
+    	if(usernameField.getText().toString().equals(""))
+    	{
+    		MessageBox.newMsgBox("No username input", true);
+    		return;
+    	}
+    	if(passwordField.getText().toString().equals(""))
+    	{
+    		MessageBox.newMsgBox("No password input", true);
+    		return;
+    	}
+        Login.initialLogIn(usernameField.getText().toString(), passwordField.getText().toString());
+    }
+    
+    ////////
+    //
+    //newUser
+    //
+    //closes this screen and opens the screen use to create a new user
+    //
+    ////////
+    private void newUser()
+    {
+    	killMe();
+    	new NewUserScreen();
     }
     
     ////////
@@ -90,9 +121,9 @@ public class LoginScreen extends GridLayout
     //create and add login screen to this grid
     //
     ////////
-    private void addLoginScreen()
+    private void addMainLoginScreen()
     {
-        GridLayout mainArea = new GridLayout(this.getContext()); //The gridlayout for the layout of the messagebox itself
+        GridLayout mainArea = new GridLayout(this.getContext()); //The gridlayout for the layout of the MainLoginScreen itself
         mainArea.setColumnCount(5);
         mainArea.setRowCount(7);
         mainArea.setBackgroundColor(Color.BLUE);
@@ -109,22 +140,26 @@ public class LoginScreen extends GridLayout
     private void addLayoutToLoginScreen(GridLayout mainArea)
     {   
         LayoutParams firstRowTextViewLayout = new LayoutParams(row1, allcols); //1st row text view middle
-        firstRowTextViewLayout.width = (windowWidth / 10) * 8;
-        firstRowTextViewLayout.height = (windowHeight / 2) / 6;
+        firstRowTextViewLayout.width = windowWidth;
+        firstRowTextViewLayout.height = windowHeight / 6;
         TextView firstRowTextView = new TextView(mainArea.getContext());
         firstRowTextView.setLayoutParams(firstRowTextViewLayout);
         firstRowTextView.setText("Please Sign In!");
         firstRowTextView.setTextSize(14);
         firstRowTextView.setGravity(Gravity.CENTER);
         firstRowTextView.setBackgroundColor(Color.RED);
+        firstRowTextView.setGravity(Gravity.CENTER);
         mainArea.addView(firstRowTextView, firstRowTextViewLayout);
         
-        LayoutParams secondRowSpaceLayout = new LayoutParams(row2, allcols); //2nd row space
-        secondRowSpaceLayout.width = (windowWidth / 10);
-        secondRowSpaceLayout.height =  (windowHeight / 2) / 6;
-        Space secondRowSpace = new Space(mainArea.getContext());
-        secondRowSpace.setLayoutParams(secondRowSpaceLayout);
-        mainArea.addView(secondRowSpace, secondRowSpaceLayout);
+        LayoutParams secondRowTextViewLayout = new LayoutParams(row2, allcols); //2nd row space
+        secondRowTextViewLayout.width = windowWidth;
+        secondRowTextViewLayout.height =  windowHeight / 5;
+        TextView secondRowTextView = new TextView(mainArea.getContext());
+        secondRowTextView.setLayoutParams(secondRowTextViewLayout);
+        secondRowTextView.setText("Sign in with your Fortitude username and password");
+        secondRowTextView.setTextSize(14);
+        secondRowTextView.setGravity(Gravity.CENTER);
+        mainArea.addView(secondRowTextView, secondRowTextViewLayout);
         
         LayoutParams thirdRowLeftSpaceLayout = new LayoutParams(row3, col1); //3rd row left space
         thirdRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
@@ -143,8 +178,8 @@ public class LoginScreen extends GridLayout
         usernameLabel.setGravity(Gravity.CENTER);
         mainArea.addView(usernameLabel, thirdRowTextViewLayout);
         
-        LayoutParams usernameFieldLayout = new LayoutParams(row3, col4); //Username text box
-        usernameFieldLayout.width = (windowWidth / 10) * 4;
+        LayoutParams usernameFieldLayout = new LayoutParams(row3, col3); //Username text box
+        usernameFieldLayout.width = windowWidth / 2;
         usernameFieldLayout.height = (windowHeight / 2) / 6;
         usernameField = new EditText(mainArea.getContext());
         usernameField.setLayoutParams(usernameFieldLayout);
@@ -152,15 +187,8 @@ public class LoginScreen extends GridLayout
         usernameField.setTextSize(12);
         mainArea.addView(usernameField, usernameFieldLayout);
         
-        LayoutParams thirdRowRightSpaceLayout = new LayoutParams(row3, col5); //3rd row right space
-        thirdRowRightSpaceLayout.width = (windowWidth / 10) - ((windowWidth / 10) / 3);
-        thirdRowRightSpaceLayout.height = (windowHeight / 2) / 6;
-        Space thirdRowRightSpace = new Space(mainArea.getContext());
-        thirdRowRightSpace.setLayoutParams(thirdRowRightSpaceLayout);
-        mainArea.addView(thirdRowRightSpace, thirdRowRightSpaceLayout);
-        
         LayoutParams fourthRowSpaceLayout = new LayoutParams(row4, allcols); //4th row space
-        fourthRowSpaceLayout.width = (windowWidth / 10);
+        fourthRowSpaceLayout.width = windowWidth;
         fourthRowSpaceLayout.height = usernameFieldLayout.height;
         Space fourthRowSpace = new Space(mainArea.getContext());
         fourthRowSpace.setLayoutParams(fourthRowSpaceLayout);
@@ -183,8 +211,8 @@ public class LoginScreen extends GridLayout
         passwordLabel.setGravity(Gravity.CENTER);
         mainArea.addView(passwordLabel, fithRowTextViewLayout);
         
-        LayoutParams passwordFieldLayout = new LayoutParams(row5, col4); //Password text box
-        passwordFieldLayout.width = (windowWidth / 10) * 4;
+        LayoutParams passwordFieldLayout = new LayoutParams(row5, col3); //Password text box
+        passwordFieldLayout.width = windowWidth / 2;
         passwordFieldLayout.height = (windowHeight / 2) / 6;
         passwordField = new EditText(mainArea.getContext());
         passwordField.setLayoutParams(passwordFieldLayout);
@@ -193,33 +221,26 @@ public class LoginScreen extends GridLayout
         passwordField.setTextSize(12);
         mainArea.addView(passwordField, passwordFieldLayout);
         
-        LayoutParams fithRowRightSpaceLayout = new LayoutParams(row5, col5); //5th row right space
-        fithRowRightSpaceLayout.width = (windowWidth / 10) - ((windowWidth / 10) / 3);
-        fithRowRightSpaceLayout.height = (windowHeight / 2) / 6;
-        Space fithRowRightSpace = new Space(mainArea.getContext());
-        fithRowRightSpace.setLayoutParams(fithRowRightSpaceLayout);
-        mainArea.addView(fithRowRightSpace, fithRowRightSpaceLayout);
-        
         LayoutParams sixthRowSpaceLayout = new LayoutParams(row6, allcols); //6th row space
-        sixthRowSpaceLayout.width = (windowWidth / 10);
-        sixthRowSpaceLayout.height = (windowHeight / 2) / 6;
+        sixthRowSpaceLayout.width = windowWidth;
+        sixthRowSpaceLayout.height = (windowHeight / 2) / 4;
         Space sixthRowSpace = new Space(mainArea.getContext());
         sixthRowSpace.setLayoutParams(sixthRowSpaceLayout);
         mainArea.addView(sixthRowSpace, sixthRowSpaceLayout);      
         
         GridLayout signInGrid = new GridLayout(mainArea.getContext());
         signInGrid.setRowCount(1);
-        signInGrid.setColumnCount(3);
+        signInGrid.setColumnCount(5);
         
         LayoutParams signInButtonLeftSpaceLayout = new LayoutParams(row1, col1); //space left of sign in button
-        signInButtonLeftSpaceLayout.width = (windowWidth - ((windowWidth / 10) * 2)) / 3;
+        signInButtonLeftSpaceLayout.width = windowWidth / 9;
         signInButtonLeftSpaceLayout.height = (windowHeight / 2) / 6;
         Space signInButtonLeftSpace = new Space(mainArea.getContext());
         signInButtonLeftSpace.setLayoutParams(signInButtonLeftSpaceLayout);
         signInGrid.addView(signInButtonLeftSpace, signInButtonLeftSpaceLayout);
         
         LayoutParams signInLayout = new LayoutParams(row1, col2); //Sign in button
-        signInLayout.width = (windowWidth - ((windowWidth / 10) * 2)) / 3;
+        signInLayout.width = windowWidth / 3;
         signInLayout.height = windowHeight / 10;
         Button signInButton = new Button(mainArea.getContext());
         signInButton.setLayoutParams(signInLayout);
@@ -234,12 +255,28 @@ public class LoginScreen extends GridLayout
         });
         signInGrid.addView(signInButton, signInLayout);
         
-        LayoutParams signInButtonRightSpaceLayout = new LayoutParams(row1, col3); //space left of sign in button
-        signInButtonRightSpaceLayout.width = 50;
-        signInButtonRightSpaceLayout.height = (windowHeight / 2) / 6;
-        Space signInButtonRightSpace = new Space(mainArea.getContext());
-        signInButtonRightSpace.setLayoutParams(signInButtonRightSpaceLayout);
-        signInGrid.addView(signInButtonRightSpace, signInButtonRightSpaceLayout);
+        LayoutParams middleButtonSpacerLayout = new LayoutParams(row1, col3); //middle button spacer
+        middleButtonSpacerLayout.width = windowWidth / 9;
+        middleButtonSpacerLayout.height = (windowHeight / 2) / 6;
+        Space middleButtonSpacerSpace = new Space(mainArea.getContext());
+        middleButtonSpacerSpace.setLayoutParams(middleButtonSpacerLayout);
+        signInGrid.addView(middleButtonSpacerSpace, middleButtonSpacerLayout);
+        
+        LayoutParams newUserLayout = new LayoutParams(row1, col4); //New User button
+        newUserLayout.width = windowWidth / 3;
+        newUserLayout.height = windowHeight / 10;
+        Button newUserButton = new Button(mainArea.getContext());
+        newUserButton.setLayoutParams(newUserLayout);
+        newUserButton.setTextSize(14);
+        newUserButton.setText("New User");
+        newUserButton.setBackgroundColor(Color.GRAY);
+        newUserButton.setOnClickListener(new OnClickListener(){
+        	public void onClick(View arg0)
+        	{
+        		newUser();
+        	}
+        });
+        signInGrid.addView(newUserButton, newUserLayout);
         
         LayoutParams xx = new LayoutParams(row7, allcols);
         
@@ -247,7 +284,7 @@ public class LoginScreen extends GridLayout
         
         LayoutParams eigthRowSpaceLayout = new LayoutParams(row8, allcols); //8th row space
         eigthRowSpaceLayout.width = (windowWidth / 10);
-        eigthRowSpaceLayout.height = (windowHeight / 2) / 6;
+        eigthRowSpaceLayout.height = (windowHeight / 2) / 2;
         Space eigthRowSpace = new Space(mainArea.getContext());
         eigthRowSpace.setLayoutParams(eigthRowSpaceLayout);
         mainArea.addView(eigthRowSpace, eigthRowSpaceLayout); 
@@ -274,11 +311,12 @@ public class LoginScreen extends GridLayout
 	//
 	//killMe
 	//
-	//removes the LoginScreen from view
+	//removes the MainLoginScreen from view
 	//
 	////////
-	private void killMe()
+	public void killMe()
 	{
+		me = null;
 		this.removeAllViews();
 	}
 	
@@ -288,15 +326,15 @@ public class LoginScreen extends GridLayout
 	//
 	//Creates an invisible square in the top left corner of the screen.
 	//The width and height of this square define where the message box will
-	//appear on screen as the LoginScreen is positioned starting at the bottom
+	//appear on screen as the MainLoginScreen is positioned starting at the bottom
 	//right hand corner of this square.
 	//
 	////////
 	private void createPositionalSpace()
 	{
         LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
-        spaceLayout.width = windowWidth / 10;
-        spaceLayout.height = windowHeight / 6;
+        spaceLayout.width = 0;
+        spaceLayout.height = 0;
         Space space = new Space(Fortitude.getFortitude());
         space.setLayoutParams(spaceLayout);
         addView(space, spaceLayout);
@@ -307,7 +345,7 @@ public class LoginScreen extends GridLayout
 	//setColsAndRows
 	//
 	//sets the number of columns and rows this main grid will have to define the
-	//overall positional layout of where the message box will go on the screen.
+	//overall positional layout of where the login screen will go on the screen.
 	//
 	////////
 	private void setColsAndRows()

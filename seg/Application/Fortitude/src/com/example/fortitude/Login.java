@@ -44,6 +44,19 @@ public class Login
 
 	////////
 	//
+	//initialLogIn
+	//
+	//method to log in and retrieve a session ID
+	//
+	////////
+	public static void initialLogIn(String uname, String password)
+	{
+		password = hashPassword(password);
+		ServerRequests.createSession(uname, password, true);
+	}  
+	
+	////////
+	//
 	//logIn
 	//
 	//method to log in and retrieve a session ID
@@ -52,7 +65,7 @@ public class Login
 	public static void logIn(String uname, String password)
 	{
 		password = hashPassword(password);
-		ServerRequests.createSession(uname, password);
+		ServerRequests.createSession(uname, password, false);
 	}  
 
 	////////

@@ -4,6 +4,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_fortitude">Fortitude</string>
-    <string name="ServerIP">192.168.33.2</string>
+    <string name="ServerIP">178.63.153.92</string>
 
 </resources>

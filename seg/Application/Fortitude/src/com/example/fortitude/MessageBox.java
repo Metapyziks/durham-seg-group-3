@@ -46,6 +46,8 @@ public class MessageBox extends GridLayout
     
     private Space positionalSpace = null;
     
+    private TextView messageCell;
+    
     public static boolean doYouExist()
     {
     	if(iExist == null)
@@ -184,11 +186,12 @@ public class MessageBox extends GridLayout
         mPaint.setTextSize(14);
         row2TextLayout.width = ((windowWidth / 10) * 6); //TIDY ME UP YOU FOOL!!!!
         row2TextLayout.height = ((int)((float)(Math.ceil(mPaint.measureText(messageToDisplay, 0, messageToDisplay.length()) / row2TextLayout.width)))) * 20;
+        row2TextLayout.height = row2TextLayout.height + (getLineBreakOccurrencesInString(messageToDisplay) * 20);
         if((row2TextLayout.height + ((windowWidth / 10) * 2.5)) > windowWidth) //If the height of the variable height message box goes below the screen then we don't want the ok button hidden so just set the height of the messagebox to the maximum height that is visible
         {
         	row2TextLayout.height = windowHeight - positionalSpace.getLayoutParams().height - ((int)((float)Math.ceil((windowHeight / 10) * 2.5)));
         }
-        TextView messageCell = new TextView(msgBox.getContext());
+        messageCell = new TextView(msgBox.getContext());
         messageCell.setLayoutParams(row2TextLayout);
         messageCell.setText(messageToDisplay);
         messageCell.setTextSize(14);
@@ -256,6 +259,24 @@ public class MessageBox extends GridLayout
         LayoutParams messageLayout = new LayoutParams(row2, col2);
         
         addView(msgBox, messageLayout);
+	}
+	
+	private int getLineBreakOccurrencesInString(String theString)
+	{
+		int lastIndex = 0;
+		int count = 0;
+		
+		while(lastIndex != -1)
+		{
+			lastIndex = theString.indexOf("\n\n", lastIndex);
+			
+			if( lastIndex != -1)
+			{
+				count++;
+				lastIndex++;
+			}
+		}
+		return count;
 	}
 	
 	////////
