@@ -30,3 +30,5 @@ seg/Application/.Settings.java.swp
 seg/Application/build.bat
 seg/Application/bin
 seg/Application/gen
+seg/Application/Fortitude/bin/classes.dex
+seg/Application/Fortitude/bin/Fortitude.apk
