@@ -18,6 +18,8 @@ public class MainScreen extends GridLayout
 	private int windowHeight; //Visible window height
 	
     private Spec row1 = GridLayout.spec(0);
+    private Spec row2 = GridLayout.spec(1);
+    private Spec row3 = GridLayout.spec(2);
     
     private Spec col1 = GridLayout.spec(0);
     private Spec col2 = GridLayout.spec(1);
@@ -69,7 +71,7 @@ public class MainScreen extends GridLayout
     {
         GridLayout mainArea = new GridLayout(this.getContext()); //The gridlayout for the layout of the MainLoginScreen itself
         mainArea.setColumnCount(1);
-        mainArea.setRowCount(1);
+        mainArea.setRowCount(3);
         mainArea.setBackgroundColor(Color.BLUE);
         addLayoutToMainScreen(mainArea);
     }
@@ -125,7 +127,21 @@ public class MainScreen extends GridLayout
         LayoutParams signInGridLayoutParams = new LayoutParams(row1, allcols);
         mainArea.addView(signInGrid, signInGridLayoutParams);
         
-        LayoutParams mainAreaParams = new LayoutParams(col1, row1);
+        LayoutParams theMapLayout = new LayoutParams(row2, col1);
+        theMapLayout.width = windowWidth;
+        theMapLayout.height = windowHeight - (windowHeight / 10) - (windowHeight / 20);
+        Space theMap = new Space(mainArea.getContext());
+        theMap.setLayoutParams(theMapLayout);
+        mainArea.addView(theMap, theMapLayout);
+        
+        LayoutParams buttonPanelLayout = new LayoutParams(row3, col1);
+        buttonPanelLayout.width = windowWidth;
+        buttonPanelLayout.height = windowHeight / 10;
+        Space buttonPanel = new Space(mainArea.getContext());
+        buttonPanel.setLayoutParams(buttonPanelLayout);
+        mainArea.addView(buttonPanel, buttonPanelLayout);
+        
+        LayoutParams mainAreaParams = new LayoutParams(row1, col1);
         addView(mainArea, mainAreaParams);
     }
     

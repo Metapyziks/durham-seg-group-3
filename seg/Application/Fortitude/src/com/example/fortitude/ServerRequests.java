@@ -263,7 +263,7 @@ public class ServerRequests
 															{
 																while(!(ServerRequests.getGetUserBalanceComplete()))
 																{
-																	////Do nothing
+																	//Do nothing
 																}
 																if(ServerRequests.getGetUserBalanceSuccess())
 																{

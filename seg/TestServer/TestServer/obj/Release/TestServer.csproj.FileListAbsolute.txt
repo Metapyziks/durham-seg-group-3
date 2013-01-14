@@ -1,0 +1,10 @@
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\Content\404.html
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\Content\index.html
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\Database.sdf
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\config.ini
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\TestServer.exe
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\TestServer.pdb
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Release\Nini.dll
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\obj\Release\TestServer.csprojResolveAssemblyReference.cache
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\obj\Release\TestServer.exe
+C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\obj\Release\TestServer.pdb
