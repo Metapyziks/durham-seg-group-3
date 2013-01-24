@@ -15,11 +15,6 @@ seg/GPSTestThing/bin/
 *.config
 *.db
 
-seg/TestServer/bin
-seg/TestServer/obj
-seg/TestServer/*.user
-seg/TestServer/config.ini
-
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
 seg/documents/requirements/*.out
@@ -30,7 +25,5 @@ seg/GPSTestThing/gen
 
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
-seg/Application/bin
-seg/Application/gen
-seg/Application/Fortitude/bin/classes.dex
-seg/Application/Fortitude/bin/Fortitude.apk
+seg/Application/Fortitude/bin
+seg/Application/Fortitude/gen
