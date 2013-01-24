@@ -1,0 +1,14 @@
+Message box top, middle and bottom are saved under "Miscellaneous components".
+
+Also in that folder is an image called "message_box_fade_screen" - this is a semi transparent black image that fades out the screen behind the message box. I've used a small image to reduce file size, but it will stretch to fit the screen with no problems.
+
+There's an example of the fade screen in use in the "Screen mock ups" file.
+
+
+Buttons
+
+Some message boxes require one button (ok). There is a large "ok" button in the button folder that you can use.
+
+Some message boxes require two buttons (ok, cancel). The large buttons will not fit; there are smaller buttons for these messages, "small_ok" and "small_cancel".
+
+For consitency, you may use the smaller buttons for all message boxes?

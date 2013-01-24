@@ -1,0 +1,42 @@
+
+
+[ ]	Create 9 part image for message box
+[ ]	'Forgotten your details?'
+[ ]	Rename filenames to be unique
+[ ]	Redo some page titles to use smaller text
+
+
+[ ]	Inbox
+[ ]	Message
+[ ]	Send message/Reply to message
+[ ]	Report screen
+[ ]	Splash screen
+[ ]	Resend activation email (or is this a message box?)
+[ ]	Avatar images
+[ ]	Waiting/loading gif?
+
+
+At a later date
+
+[ ]	Place cache
+[ ]	Scout cache
+[ ]	Scout report
+[ ]	Attack cache
+[ ]	Attack report
+[ ]	Activate account
+[ ]	Unactivated account banner
+
+
+
+[x]	Sign in
+[x]	Forgotten details
+[x]	New user
+[x]	Main screen
+[x]	News
+[x]	Battle report
+[x]	Allied cache
+[x]	Enemy cache
+[x]	User profile
+[x]	Account page
+[x]	Change settings
+[x]	Change avatar
