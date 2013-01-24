@@ -243,7 +243,7 @@ class ParseContext
 	boolean isNextBoolean()
 	{
 		skipWhitespace();
-		return isNext( "true" ) | isNext( "false" );
+		return isNext( "true" ) || isNext( "false" );
 	}
 
 	boolean nextBoolean()
