@@ -21,9 +21,7 @@ seg/documents/requirements/*.out
 seg/documents/requirements/*.toc
 
 seg/GPSTestThing/bin
-seg/GPSTestThing/gen
 
 seg/Application/.Settings.java.swp
 seg/Application/build.bat
 seg/Application/Fortitude/bin
-seg/Application/Fortitude/gen
