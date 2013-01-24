@@ -144,8 +144,6 @@ public class ServerRequests
 	////////
 	public static void createSession(String uname, String phash, boolean initialLogin)
 	{
-		theMessageBox = MessageBox.newMsgBox("Connecting To Server...", false);
-
 		staticInitialLogin = initialLogin;
 
 		staticUname = uname;
@@ -175,7 +173,7 @@ public class ServerRequests
 					{
 						if(response == null)
 						{
-							this.setOutputMessage("Failed To Log in0");
+							this.setOutputMessage("Failed To Log in");
 							this.setSuccess("1");
 							return;
 						}
@@ -228,7 +226,6 @@ public class ServerRequests
 											public void run()
 											{
 												staticSessionId = staticOutputMessage;
-												ServerRequests.getTheMessageBox().killMe();
 												ServerRequests.getUserInfo(staticUname); 
 											}
 										});
@@ -256,7 +253,6 @@ public class ServerRequests
 													}
 													else
 													{
-														ServerRequests.getTheMessageBox().killMe();
 														ServerRequests.getUserBalance(staticUname, staticSessionId);
 														Thread getBalanceThread = new Thread(new Runnable() {
 															public void run()
@@ -270,22 +266,23 @@ public class ServerRequests
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
-																			ServerRequests.getTheMessageBox().killMe();
-																			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																			ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+																			//ServerRequests.getTheMessageBox().killMe();
+																			//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
 																		}
 																	});
 																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, staticUserBalance);
-																	try
-																	{
-																		Thread.sleep(1500);
-																	}
-																	catch(Exception e)
-																	{
-
-																	}
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
+																			try
+																			{
+																				Thread.sleep(1500);
+																			}
+																			catch(Exception e)
+																			{
+
+																			}
 																			ServerRequests.getTheMessageBox().killMe();
 																			MainLoginScreen.getMe().killMe();
 																			new MainScreen();
@@ -362,8 +359,6 @@ public class ServerRequests
 	////////
 	public static void getUserBalance(String uname, String sessionId)
 	{
-		ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server...", false));
-
 		staticUname = uname;
 		staticSessionId = sessionId;
 
@@ -466,8 +461,6 @@ public class ServerRequests
 	////////
 	public static void registerUser(String uname, String phash, String email)
 	{
-		theMessageBox = MessageBox.newMsgBox("Connecting To Server...", false);
-
 		staticUname = uname;
 		staticPhash = phash;
 		staticEmail = email;
@@ -550,7 +543,7 @@ public class ServerRequests
 									ServerRequests.getTheMessageBox().killMe();
 									NewUserScreen.getMe().killMe();
 									new MainLoginScreen();
-									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
 								}
 							});
 						}
@@ -563,6 +556,96 @@ public class ServerRequests
 		thread.start();
 	}
 
+	public static void resetPassReset(String email)
+	{
+		staticEmail = email;
+		
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ServerRequests.getTheMessageBox().killMe();
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					return;
+				}
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Send Email To Account");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Send Email To Account");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success").asString().equals("false"))
+						{
+							this.setOutputMessage("Failed To Send Email To Account");
+							this.setSuccess("1");
+							return;
+						}
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://" + ServerIP + "/api/sendpassreset?email=" + ServerRequests.getStaticEmail());
+				Thread thread = new Thread(rt);
+				thread.start();
+				
+				boolean connecting = false; //wait for response
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.getTheMessageBox().killMe();
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						connecting = true;
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.getTheMessageBox().killMe();
+								ForgottenDetailsScreen.getMe().killMe();
+								new MainLoginScreen();
+								MessageBox.newMsgBox("An email has been sent to your email address containg your username and instructions of how to change your password", true);
+							}
+						});
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+	
 	////////
 	//
 	//getUserInfo
@@ -574,8 +657,6 @@ public class ServerRequests
 	{
 		getUserInfoComplete = false;
 		getUserInfoSuccess = false;
-
-		theMessageBox = MessageBox.newMsgBox("Connecting To Server...", false);
 
 		usersToGet = users;
 		staticUserInfo = new ArrayList<User>();
@@ -660,16 +741,6 @@ public class ServerRequests
 					}
 					else if(rt.getSuccess().equals("2"))
 					{
-						Fortitude.getFortitude().runOnUiThread(new Runnable() {
-							public void run()
-							{
-								ServerRequests.getTheMessageBox().killMe();
-							}
-						});
-						while(MessageBox.doYouExist())
-						{
-							//wait till the connecting to server message has gone!
-						}
 						connecting = true;
 						ServerRequests.setGetUserInfoSuccess(true);
 						ServerRequests.setGetUserInfoComplete(true);

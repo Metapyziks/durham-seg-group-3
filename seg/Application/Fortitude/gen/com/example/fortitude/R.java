@@ -128,9 +128,29 @@ containing a value of this type.
         public static final int zOrderOnTop=0x7f01000d;
     }
     public static final class drawable {
-        public static final int ic_action_search=0x7f020000;
-        public static final int ic_launcher=0x7f020001;
-        public static final int logoshaded=0x7f020002;
+        public static final int cancel=0x7f020000;
+        public static final int cancel_pressed=0x7f020001;
+        public static final int create_user=0x7f020002;
+        public static final int create_user_pressed=0x7f020003;
+        public static final int forgotten_details=0x7f020004;
+        public static final int ic_action_search=0x7f020005;
+        public static final int logoshaded=0x7f020006;
+        public static final int message_box_bottom=0x7f020007;
+        public static final int message_box_fade_screen=0x7f020008;
+        public static final int message_box_middle=0x7f020009;
+        public static final int message_box_top=0x7f02000a;
+        public static final int new_user=0x7f02000b;
+        public static final int new_user_button=0x7f02000c;
+        public static final int new_user_button_pressed=0x7f02000d;
+        public static final int ok=0x7f02000e;
+        public static final int ok_pressed=0x7f02000f;
+        public static final int send_email=0x7f020010;
+        public static final int send_email_pressed=0x7f020011;
+        public static final int sign_in=0x7f020012;
+        public static final int sign_in_button=0x7f020013;
+        public static final int sign_in_button_pressed=0x7f020014;
+        public static final int textfield=0x7f020015;
+        public static final int top=0x7f020016;
     }
     public static final class id {
         public static final int none=0x7f040000;

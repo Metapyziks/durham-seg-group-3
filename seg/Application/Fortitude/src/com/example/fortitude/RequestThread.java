@@ -48,6 +48,7 @@ public abstract class RequestThread implements Runnable
 				setSuccess("1");
 				return;
 			}
+			
 			JSONObject obj = makeGetRequest();
 			processResponse(obj);
 		}
@@ -58,7 +59,7 @@ public abstract class RequestThread implements Runnable
 		}
 		catch(SocketTimeoutException e)
 		{
-			setOutputMessage("Unable to connect to server");
+			setOutputMessage("Unable to connect to server, connection timed out");
 			setSuccess("1");
 		}
 		catch(FileNotFoundException e)
@@ -94,7 +95,7 @@ public abstract class RequestThread implements Runnable
 	{
 		URL urler = new URL(url);
 		URLConnection connection = urler.openConnection();
-		connection.setConnectTimeout(10000);
+		connection.setConnectTimeout(15000);
 		return JSONObject.parseStream(connection.getInputStream());
 	}
 

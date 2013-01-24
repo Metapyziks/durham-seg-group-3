@@ -1,25 +1,14 @@
 package com.example.fortitude;
 
 import java.util.regex.Pattern;
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
 import android.widget.Space;
-import android.graphics.Color;
-import android.widget.TextView;
-import android.view.Gravity;
-import android.view.View.OnClickListener;
-import android.view.View;
-import android.widget.EditText;
-import android.text.method.PasswordTransformationMethod;
 
 
-public class NewUserScreen extends GridLayout
+public class NewUserScreen extends Window
 {
-	private int windowWidth; //Visible window width
-	private int windowHeight; //Visible window height
-
 	private Spec row1 = GridLayout.spec(0);
 	private Spec row2 = GridLayout.spec(1);
 	private Spec row3 = GridLayout.spec(2);
@@ -27,27 +16,24 @@ public class NewUserScreen extends GridLayout
 	private Spec row5 = GridLayout.spec(4);
 	private Spec row6 = GridLayout.spec(5);
 	private Spec row7 = GridLayout.spec(6);
-	private Spec row8 = GridLayout.spec(7); 
+	private Spec row8 = GridLayout.spec(7);
 	private Spec row9 = GridLayout.spec(8);
 	private Spec row10 = GridLayout.spec(9);
 	private Spec row11 = GridLayout.spec(10);
 	private Spec row12 = GridLayout.spec(11);
-	private Spec row13 = GridLayout.spec(12);
-	private Spec row14 = GridLayout.spec(13);
 
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
-	private Spec col5 = GridLayout.spec(4);
 
-	private Spec allcols = GridLayout.spec(0,5);
+	private Spec allcols = GridLayout.spec(0,2);
 
-	private EditText usernameField = null; //username text box
-	private EditText passwordField1 = null; //password text box
-	private EditText passwordField2 = null; //password text box
-	private EditText emailField1 = null; //email address
-	private EditText emailField2 = null; //email address
+	private TextField usernameField = null; //username text box
+	private PasswordTextField passwordField1 = null; //password text box
+	private PasswordTextField passwordField2 = null; //password text box
+	private TextField emailField1 = null; //email address
+	private TextField emailField2 = null; //email address
 	
 	private static NewUserScreen me = null;
 
@@ -60,7 +46,7 @@ public class NewUserScreen extends GridLayout
 	////////
 	public static void newNewUserScreen()
 	{
-		new MainLoginScreen();	
+		new NewUserScreen();	
 	}
 
 	////////
@@ -70,20 +56,187 @@ public class NewUserScreen extends GridLayout
 	////////
 	public NewUserScreen()
 	{
-		super(Fortitude.getFortitude());
-
+		super(R.drawable.new_user);
 		me = this;
-		
-		setWindowDimensions();
-		setColsAndRows();
-
-		createPositionalSpace();
-
-		addNewUserScreen();
-
-		addThisToDisplay();
+		addContentToContentPane(createWindowPane());
 	}
 
+	private GridLayout createWindowPane()
+	{
+		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
+		mainArea.setColumnCount(2);
+		mainArea.setRowCount(12);
+		
+		LayoutParams firstColumnSpacerLayout = new LayoutParams(row1, col1); //like a positional spacer in top left
+		firstColumnSpacerLayout.width = (GUI.calculateWindowWidth() / 2) - (GUI.calculateWindowWidth() / 15);
+		firstColumnSpacerLayout.height = GUI.calculateWindowHeight() / 4;
+		Space firstColumnSpacer = new Space(mainArea.getContext());
+		firstColumnSpacer.setLayoutParams(firstColumnSpacerLayout);
+		mainArea.addView(firstColumnSpacer, firstColumnSpacerLayout);
+		
+		LayoutParams usernameFieldImageLayout = new LayoutParams(row2, col2); //username image
+		usernameFieldImageLayout.width = GUI.calculateWindowWidth() / 2;
+		usernameFieldImageLayout.height = GUI.calculateWindowHeight() / 12;
+		TextFieldImage usernameFieldImage = new TextFieldImage();
+		usernameFieldImage.setLayoutParams(usernameFieldImageLayout);
+		mainArea.addView(usernameFieldImage, usernameFieldImageLayout);
+		
+		LayoutParams usernameFieldLayout = new LayoutParams(row2, col2); //username textField
+		usernameFieldLayout.width = GUI.calculateWindowWidth() / 2;
+		usernameFieldLayout.height = GUI.calculateWindowHeight() / 12;
+		this.usernameField = new TextField(16);
+		usernameField.setLayoutParams(usernameFieldLayout);
+		mainArea.addView(usernameField, usernameFieldLayout);
+		
+		LayoutParams thirdRowSpaceLayout = new LayoutParams(row3, col2); //third row space
+		thirdRowSpaceLayout.height = GUI.calculateWindowHeight() / 25;
+		Space thirdRowSpace = new Space(mainArea.getContext());
+		thirdRowSpace.setLayoutParams(thirdRowSpaceLayout);
+		mainArea.addView(thirdRowSpace, thirdRowSpaceLayout);
+		
+		LayoutParams password1FieldImageLayout = new LayoutParams(row4, col2); //fourth row password1 image
+		password1FieldImageLayout.width = GUI.calculateWindowWidth() / 2;
+		password1FieldImageLayout.height = GUI.calculateWindowHeight() / 12;
+		TextFieldImage password1FieldImage = new TextFieldImage();
+		password1FieldImage.setLayoutParams(password1FieldImageLayout);
+		mainArea.addView(password1FieldImage, password1FieldImageLayout);
+		
+		LayoutParams password1FieldLayout = new LayoutParams(row4, col2); //fourth row password1 textField
+		password1FieldLayout.width = GUI.calculateWindowWidth() / 2;
+		password1FieldLayout.height = GUI.calculateWindowHeight() / 12;
+		this.passwordField1 = new PasswordTextField(16);
+		passwordField1.setLayoutParams(password1FieldLayout);
+		mainArea.addView(passwordField1, password1FieldLayout);
+		
+		LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col2); //fith row space
+		fithRowSpaceLayout.height = GUI.calculateWindowHeight() / 25;
+		Space fithRowSpace = new Space(mainArea.getContext());
+		fithRowSpace.setLayoutParams(fithRowSpaceLayout);
+		mainArea.addView(fithRowSpace, fithRowSpaceLayout);
+		
+		LayoutParams password2FieldImageLayout = new LayoutParams(row6, col2); //sixth row password2 image
+		password2FieldImageLayout.width = GUI.calculateWindowWidth() / 2;
+		password2FieldImageLayout.height = GUI.calculateWindowHeight() / 12;
+		TextFieldImage password2FieldImage = new TextFieldImage();
+		password2FieldImage.setLayoutParams(password2FieldImageLayout);
+		mainArea.addView(password2FieldImage, password2FieldImageLayout);
+		
+		LayoutParams password2FieldLayout = new LayoutParams(row6, col2); //sixth row password2 textfield
+		password2FieldLayout.width = GUI.calculateWindowWidth() / 2;
+		password2FieldLayout.height = GUI.calculateWindowHeight() / 12;
+		this.passwordField2 = new PasswordTextField(16);
+		passwordField2.setLayoutParams(password2FieldLayout);
+		mainArea.addView(passwordField2, password2FieldLayout);
+		
+		LayoutParams sixthRowSpaceLayout = new LayoutParams(row7, col2); //seventh row space
+		sixthRowSpaceLayout.height = GUI.calculateWindowHeight() / 25;
+		Space sixthRowSpace = new Space(mainArea.getContext());
+		sixthRowSpace.setLayoutParams(sixthRowSpaceLayout);
+		mainArea.addView(sixthRowSpace, sixthRowSpaceLayout);
+		
+		LayoutParams email1FieldImageLayout = new LayoutParams(row8, col2); //eighth row email1 image
+		email1FieldImageLayout.width = GUI.calculateWindowWidth() / 2;
+		email1FieldImageLayout.height = GUI.calculateWindowHeight() / 12;
+		TextFieldImage email1FieldImage = new TextFieldImage();
+		email1FieldImage.setLayoutParams(email1FieldImageLayout);
+		mainArea.addView(new TextFieldImage(), email1FieldImageLayout);
+		
+		LayoutParams email1FieldLayout = new LayoutParams(row8, col2); //eighth row email1 textfield
+		email1FieldLayout.width = GUI.calculateWindowWidth() / 2;
+		email1FieldLayout.height = GUI.calculateWindowHeight() / 12;
+		this.emailField1 = new TextField();
+		emailField1.setLayoutParams(email1FieldLayout);
+		mainArea.addView(emailField1, email1FieldLayout);
+		
+		LayoutParams eighthRowSpaceLayout = new LayoutParams(row9, col2); //ninth row space
+		eighthRowSpaceLayout.height = GUI.calculateWindowHeight() / 25;
+		Space eighthRowSpace = new Space(mainArea.getContext());
+		eighthRowSpace.setLayoutParams(eighthRowSpaceLayout);
+		mainArea.addView(eighthRowSpace, eighthRowSpaceLayout);
+		
+		LayoutParams email2FieldImageLayout = new LayoutParams(row10, col2); //tenth row email2 text box image
+		email2FieldImageLayout.width = GUI.calculateWindowWidth() / 2;
+		email2FieldImageLayout.height = GUI.calculateWindowHeight() / 12;
+		TextFieldImage email2FieldImage = new TextFieldImage();
+		email2FieldImage.setLayoutParams(email2FieldImageLayout);
+		mainArea.addView(email2FieldImage, email2FieldImageLayout);
+		
+		LayoutParams email2FieldLayout = new LayoutParams(row10, col2); //tenth row email2 textbox
+		email2FieldLayout.width = GUI.calculateWindowWidth() / 2;
+		email2FieldLayout.height = GUI.calculateWindowHeight() / 12;
+		this.emailField2 = new TextField();
+		emailField2.setLayoutParams(email2FieldLayout);
+		mainArea.addView(emailField2, email2FieldLayout);
+		
+		LayoutParams eleventhRowSpaceLayout = new LayoutParams(row11, col2);
+		eleventhRowSpaceLayout.height = GUI.calculateWindowHeight() / 25;
+		Space eleventhRowSpace = new Space(mainArea.getContext());
+		eleventhRowSpace.setLayoutParams(eleventhRowSpaceLayout);
+		mainArea.addView(eleventhRowSpace);
+		
+		GridLayout buttonGrid = new GridLayout(mainArea.getContext());
+		buttonGrid.setColumnCount(4);
+		buttonGrid.setRowCount(1);
+		
+		LayoutParams buttonLeftSpaceLayout = new LayoutParams(row1, col1);
+		buttonLeftSpaceLayout.width = GUI.calculateWindowWidth() / 12;
+		buttonLeftSpaceLayout.height = GUI.calculateWindowHeight() / 10;
+		Space buttonLeftSpace = new Space(buttonGrid.getContext());
+		buttonLeftSpace.setLayoutParams(buttonLeftSpaceLayout);
+		buttonGrid.addView(buttonLeftSpace, buttonLeftSpaceLayout);
+		
+		LayoutParams createUserButtonLayout = new LayoutParams(row1, col2);
+		createUserButtonLayout.width = (GUI.calculateWindowWidth() / 2) - (GUI.calculateWindowWidth() / 10);
+		createUserButtonLayout.height = GUI.calculateWindowHeight() / 10;
+		FortitudeButton createUserButton = (new FortitudeButton(R.drawable.create_user, R.drawable.create_user_pressed) {
+			public void preClickActions()
+			{
+				
+			}
+			public void whenClicked()
+			{
+				createUser();
+			}
+		});
+		createUserButton.setLayoutParams(createUserButtonLayout);
+		buttonGrid.addView(createUserButton, createUserButtonLayout);
+		
+		LayoutParams buttonMiddleSpaceLayout = new LayoutParams(row1, col3);
+		buttonMiddleSpaceLayout.width = GUI.calculateWindowWidth() / 15;
+		buttonMiddleSpaceLayout.height = GUI.calculateWindowHeight() / 10;
+		Space buttonMiddleSpace = new Space(buttonGrid.getContext());
+		buttonMiddleSpace.setLayoutParams(buttonMiddleSpaceLayout);
+		buttonGrid.addView(buttonMiddleSpace, buttonMiddleSpaceLayout);
+		
+		LayoutParams cancelButtonLayout = new LayoutParams(row1, col4);
+		cancelButtonLayout.width = (GUI.calculateWindowWidth() / 2) - (GUI.calculateWindowWidth() / 10);
+		cancelButtonLayout.height = GUI.calculateWindowHeight() / 10;
+		FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
+			public void preClickActions()
+			{
+				
+			}
+			public void whenClicked()
+			{
+				cancelCreateUser();
+			}
+		});
+		cancelButton.setLayoutParams(cancelButtonLayout);
+		buttonGrid.addView(cancelButton, cancelButtonLayout);
+		
+		LayoutParams buttonGridLayout = new LayoutParams(row12, allcols);
+		mainArea.addView(buttonGrid, buttonGridLayout);
+		
+		return mainArea;
+	}
+	
+	////////
+	//
+	//getMe()
+	//
+	//returns the last instance of this class that was created, could be null
+	//
+	////////
 	public static NewUserScreen getMe()
 	{
 		return me;
@@ -100,6 +253,7 @@ public class NewUserScreen extends GridLayout
 	{
 		if(validateUserInput())
 		{
+	    	ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 		    Login.createUser(usernameField.getText().toString(), passwordField1.getText().toString(), emailField1.getText().toString());
 		}
 	}
@@ -128,6 +282,11 @@ public class NewUserScreen extends GridLayout
 			MessageBox.newMsgBox("Username must be at most 16 characters", true);
 			return false;
 		}
+		if(passwordField1.getText().toString().length() > 16)
+		{
+			MessageBox.newMsgBox("Passwords can be at most 16 characters long", true);
+			return false;
+		}
 		if(passwordField1.getText().toString().length() < 5)
 		{
 			MessageBox.newMsgBox("Passwords must be atleast 5 characters long", true);
@@ -150,7 +309,7 @@ public class NewUserScreen extends GridLayout
 			MessageBox.newMsgBox("No email address entered", true);
 			return false;
 		}
-		if(!(emailField1.getText().toString().equals(emailField2.getText().toString())))
+		if(!(emailField1.getText().toString().toLowerCase().equals(emailField2.getText().toString().toLowerCase())))
 		{
 			MessageBox.newMsgBox("Emails did not match", true);	
 			return false;
@@ -173,300 +332,17 @@ public class NewUserScreen extends GridLayout
 		return true;
 	}
 	
+	////////
+	//
+	//cancelCreateUser
+	//
+	//called when the user presses the cancel button. clears screen and returns to Main login screen
+	//
+	////////
 	private void cancelCreateUser()
 	{
 		killMe();
 		new MainLoginScreen();
-	}
-
-	////////
-	//
-	//addLoginScreen
-	//
-	//create and add login screen to this grid
-	//
-	////////
-	private void addNewUserScreen()
-	{
-		GridLayout mainArea = new GridLayout(this.getContext()); //The gridlayout for the layout of the NewUserScreen itself
-		mainArea.setColumnCount(5);
-		mainArea.setRowCount(12);
-		mainArea.setBackgroundColor(Color.BLUE);
-		addLayoutToNewUserScreen(mainArea);
-	}
-
-	////////
-	//
-	//addLayoutToLoginScreen
-	//
-	//adds all the relevant layout to the given LoginScreen
-	//
-	////////
-	private void addLayoutToNewUserScreen(GridLayout mainArea)
-	{   
-		LayoutParams firstRowTextViewLayout = new LayoutParams(row1, allcols); //1st row text view middle
-		firstRowTextViewLayout.width = windowWidth;
-		firstRowTextViewLayout.height = windowHeight / 6;
-		TextView firstRowTextView = new TextView(mainArea.getContext());
-		firstRowTextView.setLayoutParams(firstRowTextViewLayout);
-		firstRowTextView.setText("Create A New User");
-		firstRowTextView.setTextSize(14);
-		firstRowTextView.setGravity(Gravity.CENTER);
-		firstRowTextView.setBackgroundColor(Color.RED);
-		firstRowTextView.setGravity(Gravity.CENTER);
-		mainArea.addView(firstRowTextView, firstRowTextViewLayout);
-
-		LayoutParams secondRowSpaceLayout = new LayoutParams(row2, allcols); //2nd row space
-		secondRowSpaceLayout.width = windowWidth;
-		secondRowSpaceLayout.height =  windowHeight / 20;
-		Space secondRowSpace = new Space(mainArea.getContext());
-		secondRowSpace.setLayoutParams(secondRowSpaceLayout);
-		mainArea.addView(secondRowSpace, secondRowSpaceLayout);
-
-		LayoutParams thirdRowLeftSpaceLayout = new LayoutParams(row3, col1); //3rd row left space
-		thirdRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
-		thirdRowLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space thirdRowLeftSpace = new Space(mainArea.getContext());
-		thirdRowLeftSpace.setLayoutParams(thirdRowLeftSpaceLayout);
-		mainArea.addView(thirdRowLeftSpace, thirdRowLeftSpaceLayout);
-
-		LayoutParams secondRowTextViewLayout = new LayoutParams(row3, col2); //Username label
-		secondRowTextViewLayout.width = (windowWidth / 10) * 3;
-		secondRowTextViewLayout.height = (windowHeight / 2) / 6;
-		TextView usernameLabel = new TextView(mainArea.getContext());
-		usernameLabel.setLayoutParams(secondRowTextViewLayout);
-		usernameLabel.setText("Username:");
-		usernameLabel.setTextSize(14);
-		usernameLabel.setGravity(Gravity.CENTER);
-		mainArea.addView(usernameLabel, secondRowTextViewLayout);
-
-		LayoutParams usernameFieldLayout = new LayoutParams(row3, col3); //Username text box
-		usernameFieldLayout.width = windowWidth / 2;
-		usernameFieldLayout.height = (windowHeight / 2) / 6;
-		usernameField = new EditText(mainArea.getContext());
-		usernameField.setLayoutParams(usernameFieldLayout);
-		usernameField.setBackgroundColor(Color.WHITE);
-		usernameField.setTextSize(12);
-		mainArea.addView(usernameField, usernameFieldLayout);
-
-		LayoutParams fourthRowSpaceLayout = new LayoutParams(row4, allcols); //4th row space
-		fourthRowSpaceLayout.width = windowWidth;
-		fourthRowSpaceLayout.height = windowHeight / 20;
-		Space fourthRowSpace = new Space(mainArea.getContext());
-		fourthRowSpace.setLayoutParams(fourthRowSpaceLayout);
-		mainArea.addView(fourthRowSpace, fourthRowSpaceLayout);        
-
-		LayoutParams fithRowLeftSpaceLayout = new LayoutParams(row5, col1); //5th row left space
-		fithRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
-		fithRowLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space fithRowLeftSpace = new Space(mainArea.getContext());
-		fithRowLeftSpace.setLayoutParams(fithRowLeftSpaceLayout);
-		mainArea.addView(fithRowLeftSpace, fithRowLeftSpaceLayout);
-
-		LayoutParams fithRowTextViewLayout = new LayoutParams(row5, col2); //Password1 label
-		fithRowTextViewLayout.width = (windowWidth / 10) * 3;
-		fithRowTextViewLayout.height = (windowHeight / 2) / 6;
-		TextView password1Label = new TextView(mainArea.getContext());
-		password1Label.setLayoutParams(fithRowTextViewLayout);
-		password1Label.setText("Password:");
-		password1Label.setTextSize(14);
-		password1Label.setGravity(Gravity.CENTER);
-		mainArea.addView(password1Label, fithRowTextViewLayout);
-
-		LayoutParams passwordField1Layout = new LayoutParams(row5, col3); //Password1 text box
-		passwordField1Layout.width = windowWidth / 2;
-		passwordField1Layout.height = (windowHeight / 2) / 6;
-		passwordField1 = new EditText(mainArea.getContext());
-		passwordField1.setLayoutParams(passwordField1Layout);
-		passwordField1.setBackgroundColor(Color.WHITE);
-		passwordField1.setTransformationMethod(PasswordTransformationMethod.getInstance());
-		passwordField1.setTextSize(12);
-		mainArea.addView(passwordField1, passwordField1Layout);
-
-		LayoutParams sixthRowSpaceLayout = new LayoutParams(row6, allcols); //6th row space
-		sixthRowSpaceLayout.width = windowWidth;
-		sixthRowSpaceLayout.height = windowHeight / 20;
-		Space sixthRowSpace = new Space(mainArea.getContext());
-		sixthRowSpace.setLayoutParams(sixthRowSpaceLayout);
-		mainArea.addView(sixthRowSpace, sixthRowSpaceLayout);
-		
-		LayoutParams seventhRowLeftSpaceLayout = new LayoutParams(row7, col1); //7th row left space
-		seventhRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
-		seventhRowLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space seventhRowLeftSpace = new Space(mainArea.getContext());
-		seventhRowLeftSpace.setLayoutParams(seventhRowLeftSpaceLayout);
-		mainArea.addView(seventhRowLeftSpace, seventhRowLeftSpaceLayout);
-
-		LayoutParams seventhRowTextViewLayout = new LayoutParams(row7, col2); //Password label 2
-		seventhRowTextViewLayout.width = (windowWidth / 10) * 3;
-		seventhRowTextViewLayout.height = (windowHeight / 2) / 6;
-		TextView password2Label = new TextView(mainArea.getContext());
-		password2Label.setLayoutParams(seventhRowTextViewLayout);
-		password2Label.setText("Re-enter Pass.:");
-		password2Label.setTextSize(14);
-		password2Label.setGravity(Gravity.CENTER);
-		mainArea.addView(password2Label, seventhRowTextViewLayout);
-
-		LayoutParams passwordField2Layout = new LayoutParams(row7, col3); //Password text box 2
-		passwordField2Layout.width = windowWidth / 2;
-		passwordField2Layout.height = (windowHeight / 2) / 6;
-		passwordField2 = new EditText(mainArea.getContext());
-		passwordField2.setLayoutParams(passwordField2Layout);
-		passwordField2.setBackgroundColor(Color.WHITE);
-		passwordField2.setTransformationMethod(PasswordTransformationMethod.getInstance());
-		passwordField2.setTextSize(12);
-		mainArea.addView(passwordField2, passwordField2Layout);
-		
-		LayoutParams eigthRowSpaceLayout = new LayoutParams(row8, allcols); //8th row space
-		eigthRowSpaceLayout.width = windowWidth;
-		eigthRowSpaceLayout.height = windowHeight / 20;
-		Space eigthRowSpace = new Space(mainArea.getContext());
-		eigthRowSpace.setLayoutParams(eigthRowSpaceLayout);
-		mainArea.addView(eigthRowSpace, eigthRowSpaceLayout);
-		
-		LayoutParams ninthRowLeftSpaceLayout = new LayoutParams(row9, col1); //9th row left space
-		ninthRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
-		ninthRowLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space ninthRowLeftSpace = new Space(mainArea.getContext());
-		ninthRowLeftSpace.setLayoutParams(ninthRowLeftSpaceLayout);
-		mainArea.addView(ninthRowLeftSpace, ninthRowLeftSpaceLayout);
-
-		LayoutParams ninthRowTextViewLayout = new LayoutParams(row9, col2); //Email label 1
-		ninthRowTextViewLayout.width = (windowWidth / 10) * 3;
-		ninthRowTextViewLayout.height = (windowHeight / 2) / 6;
-		TextView emailLabel1 = new TextView(mainArea.getContext());
-		emailLabel1.setLayoutParams(ninthRowTextViewLayout);
-		emailLabel1.setText("Email:");
-		emailLabel1.setTextSize(14);
-		emailLabel1.setGravity(Gravity.CENTER);
-		mainArea.addView(emailLabel1, ninthRowTextViewLayout);
-
-		LayoutParams emailField1Layout = new LayoutParams(row9, col3); //Email edit text 1
-		emailField1Layout.width = windowWidth / 2;
-		emailField1Layout.height = (windowHeight / 2) / 6;
-		emailField1 = new EditText(mainArea.getContext());
-		emailField1.setLayoutParams(emailField1Layout);
-		emailField1.setBackgroundColor(Color.WHITE);
-		emailField1.setTextSize(12);
-		mainArea.addView(emailField1, emailField1Layout);
-
-		LayoutParams tenthRowSpaceLayout = new LayoutParams(row10, allcols); //10th row space
-		tenthRowSpaceLayout.width = windowWidth;
-		tenthRowSpaceLayout.height = windowHeight / 20;
-		Space tenthRowSpace = new Space(mainArea.getContext());
-		tenthRowSpace.setLayoutParams(tenthRowSpaceLayout);
-		mainArea.addView(tenthRowSpace, tenthRowSpaceLayout); 
-		
-		LayoutParams eleventhRowLeftSpaceLayout = new LayoutParams(row11, col1); //11th row left space
-		eleventhRowLeftSpaceLayout.width = (windowWidth / 10) / 3;
-		eleventhRowLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space eleventhRowLeftSpace = new Space(mainArea.getContext());
-		eleventhRowLeftSpace.setLayoutParams(eleventhRowLeftSpaceLayout);
-		mainArea.addView(eleventhRowLeftSpace, eleventhRowLeftSpaceLayout);
-
-		LayoutParams eleventhRowTextViewLayout = new LayoutParams(row11, col2); //Email label 2
-		eleventhRowTextViewLayout.width = (windowWidth / 10) * 3;
-		eleventhRowTextViewLayout.height = (windowHeight / 2) / 6;
-		TextView emailLabel2 = new TextView(mainArea.getContext());
-		emailLabel2.setLayoutParams(eleventhRowTextViewLayout);
-		emailLabel2.setText("Re-enter Email:");
-		emailLabel2.setTextSize(14);
-		emailLabel2.setGravity(Gravity.CENTER);
-		mainArea.addView(emailLabel2, eleventhRowTextViewLayout);
-
-		LayoutParams emailField2Layout = new LayoutParams(row11, col3); //Email edit text 2
-		emailField2Layout.width = windowWidth / 2;
-		emailField2Layout.height = (windowHeight / 2) / 6;
-		emailField2 = new EditText(mainArea.getContext());
-		emailField2.setLayoutParams(emailField2Layout);
-		emailField2.setBackgroundColor(Color.WHITE);
-		emailField2.setTextSize(12);
-		mainArea.addView(emailField2, emailField2Layout);
-
-		LayoutParams twelthRowSpaceLayout = new LayoutParams(row12, allcols); //12th row space
-		twelthRowSpaceLayout.width = windowWidth;
-		twelthRowSpaceLayout.height = windowHeight / 20;
-		Space twelthRowSpace = new Space(mainArea.getContext());
-		twelthRowSpace.setLayoutParams(twelthRowSpaceLayout);
-		mainArea.addView(twelthRowSpace, twelthRowSpaceLayout); 
-
-		GridLayout signInGrid = new GridLayout(mainArea.getContext());
-		signInGrid.setRowCount(1);
-		signInGrid.setColumnCount(5);
-
-		LayoutParams signInButtonLeftSpaceLayout = new LayoutParams(row1, col1); //space left of sign in button
-		signInButtonLeftSpaceLayout.width = windowWidth / 9;
-		signInButtonLeftSpaceLayout.height = (windowHeight / 2) / 6;
-		Space signInButtonLeftSpace = new Space(mainArea.getContext());
-		signInButtonLeftSpace.setLayoutParams(signInButtonLeftSpaceLayout);
-		signInGrid.addView(signInButtonLeftSpace, signInButtonLeftSpaceLayout);
-
-		LayoutParams signInLayout = new LayoutParams(row1, col2); //Sign in button
-		signInLayout.width = windowWidth / 3;
-		signInLayout.height = windowHeight / 10;
-		Button signInButton = new Button(mainArea.getContext());
-		signInButton.setLayoutParams(signInLayout);
-		signInButton.setTextSize(14);
-		signInButton.setText("Create User");
-		signInButton.setBackgroundColor(Color.GRAY);
-		signInButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg0)
-			{
-				createUser();
-			}
-		});
-		signInGrid.addView(signInButton, signInLayout);
-
-		LayoutParams middleButtonSpacerLayout = new LayoutParams(row1, col3); //middle button spacer
-		middleButtonSpacerLayout.width = windowWidth / 9;
-		middleButtonSpacerLayout.height = (windowHeight / 2) / 6;
-		Space middleButtonSpacerSpace = new Space(mainArea.getContext());
-		middleButtonSpacerSpace.setLayoutParams(middleButtonSpacerLayout);
-		signInGrid.addView(middleButtonSpacerSpace, middleButtonSpacerLayout);
-
-		LayoutParams newUserLayout = new LayoutParams(row1, col4); //New User button
-		newUserLayout.width = windowWidth / 3;
-		newUserLayout.height = windowHeight / 10;
-		Button newUserButton = new Button(mainArea.getContext());
-		newUserButton.setLayoutParams(newUserLayout);
-		newUserButton.setTextSize(14);
-		newUserButton.setText("Cancel");
-		newUserButton.setBackgroundColor(Color.GRAY);
-		newUserButton.setOnClickListener(new OnClickListener(){
-			public void onClick(View arg0)
-			{
-				cancelCreateUser();
-			}
-		});
-		signInGrid.addView(newUserButton, newUserLayout);
-
-		LayoutParams xx = new LayoutParams(row13, allcols);
-
-		mainArea.addView(signInGrid, xx);
-
-		LayoutParams fourteenthRowSpaceLayout = new LayoutParams(row14, allcols); //14th row space
-		fourteenthRowSpaceLayout.width = (windowWidth / 10);
-		fourteenthRowSpaceLayout.height = (windowHeight / 2) / 2;
-		Space fourteenthRowSpace = new Space(mainArea.getContext());
-		fourteenthRowSpace.setLayoutParams(fourteenthRowSpaceLayout);
-		mainArea.addView(fourteenthRowSpace, fourteenthRowSpaceLayout); 
-
-		LayoutParams messageLayout = new LayoutParams(row2, col2);
-
-		addView(mainArea, messageLayout);
-	}
-
-	////////
-	//
-	//addThisToDisplay
-	//
-	//adds the current object to the top of the application's display
-	//
-	////////
-	private void addThisToDisplay()
-	{
-		LayoutParams messageboxParams = new LayoutParams();
-		Fortitude.getFortitude().addContentView(this, messageboxParams);
 	}
 
 	////////
@@ -480,52 +356,5 @@ public class NewUserScreen extends GridLayout
 	{
 		me = null;
 		this.removeAllViews();
-	}
-
-	////////
-	//
-	//createPositionalSpace
-	//
-	//Creates an invisible square in the top left corner of the screen.
-	//The width and height of this square define where the message box will
-	//appear on screen as the new user screen is positioned starting at the bottom
-	//right hand corner of this square.
-	//
-	////////
-	private void createPositionalSpace()
-	{
-		LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
-		spaceLayout.width = 0;
-		spaceLayout.height = 0;
-		Space space = new Space(Fortitude.getFortitude());
-		space.setLayoutParams(spaceLayout);
-		addView(space, spaceLayout);
-	}
-
-	////////
-	//
-	//setColsAndRows
-	//
-	//sets the number of columns and rows this main grid will have to define the
-	//overall positional layout of where the message box will go on the screen.
-	//
-	////////
-	private void setColsAndRows()
-	{
-		setColumnCount(2);
-		setRowCount(2);
-	}
-
-	////////
-	//
-	//setWindowDimensions
-	//
-	//sets the values for dimensions of the visible window
-	//
-	////////
-	private void setWindowDimensions()
-	{
-		windowWidth = GUI.calculateWindowWidth();
-		windowHeight = GUI.calculateWindowHeight();
 	}
 }

@@ -76,7 +76,7 @@ public class GUI
         //TypedValue tv = new TypedValue();
         //Fortitude.getFortitude().getTheme().resolveAttribute(android.R.attr.actionBarSize, tv, true);
         //return Fortitude.getFortitude().getResources().getDimensionPixelSize(tv.resourceId);
-    	return 0;
+        return 0;
     }
     
 	////////
@@ -95,6 +95,47 @@ public class GUI
 		    for(int i = 0; i < z; i++)
 		    {
 			    vg.removeAllViews();
+		    }
+		}
+	}
+	
+	////////
+	//
+	//makeAllTheGUIElementsBetter
+	//
+	//opposite of "disableAllTheGUIElements", calls when finished to re enable all of the elements
+	//
+	////////
+	public static void makeAllTheGUIElementsBetter(View v)
+	{
+		v.setEnabled(true);
+		if(v instanceof ViewGroup)
+		{
+		    ViewGroup vg = ((ViewGroup) v);
+		    int z = vg.getChildCount();
+		    for(int i = 0; i < z; i++)
+		    {
+			    makeAllTheGUIElementsBetter(vg.getChildAt(i));
+		    }
+		}
+	}
+	
+	////////
+	//
+	//disableAllTheGUIElements
+	//
+	//disable all  elements in the application that currently exist
+	//
+	////////
+	public static void disableAllTheGUIElements(View v)
+	{
+		if(v instanceof ViewGroup)
+		{
+		    ViewGroup vg = ((ViewGroup) v);
+		    int z = vg.getChildCount();
+		    for(int i = 0; i < z; i++)
+		    {
+			    disableAllTheGUIElements(vg.getChildAt(i));
 		    }
 		}
 	}

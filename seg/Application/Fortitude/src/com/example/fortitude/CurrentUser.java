@@ -12,8 +12,13 @@ public class CurrentUser extends User
 		super(accountid, username, joindate, rank);
 		this.sessionID = sessionID;
 		this.phash = phash;
-		this.balance = balance;
+		this.balance = truncateBalance(balance);
 		me = this;
+	}
+	
+	private String truncateBalance(String x)
+	{
+		return Integer.toString((int)(Double.parseDouble(x)));
 	}
 	
 	public String getBalance()

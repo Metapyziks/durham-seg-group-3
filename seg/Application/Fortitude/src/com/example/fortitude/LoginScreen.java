@@ -80,7 +80,7 @@ public class LoginScreen extends GridLayout
     ////////
     private void signIn()
     {
-        Login.logIn(usernameField.getText().toString(), passwordField.getText().toString());
+        //Login.logIn(usernameField.getText().toString(), passwordField.getText().toString());
     }
     
     ////////
@@ -111,13 +111,7 @@ public class LoginScreen extends GridLayout
         LayoutParams firstRowTextViewLayout = new LayoutParams(row1, allcols); //1st row text view middle
         firstRowTextViewLayout.width = (windowWidth / 10) * 8;
         firstRowTextViewLayout.height = (windowHeight / 2) / 6;
-        TextView firstRowTextView = new TextView(mainArea.getContext());
-        firstRowTextView.setLayoutParams(firstRowTextViewLayout);
-        firstRowTextView.setText("Please Sign In!");
-        firstRowTextView.setTextSize(14);
-        firstRowTextView.setGravity(Gravity.CENTER);
-        firstRowTextView.setBackgroundColor(Color.RED);
-        mainArea.addView(firstRowTextView, firstRowTextViewLayout);
+        mainArea.addView(new BackgroundImage(R.drawable.sign_in), firstRowTextViewLayout);
         
         LayoutParams secondRowSpaceLayout = new LayoutParams(row2, allcols); //2nd row space
         secondRowSpaceLayout.width = (windowWidth / 10);

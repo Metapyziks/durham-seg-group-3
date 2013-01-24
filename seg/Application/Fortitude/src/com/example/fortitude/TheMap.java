@@ -1,10 +1,13 @@
 package com.example.fortitude;
 
-public class TheMap
+import com.google.android.gms.maps.MapFragment;
+
+public class TheMap extends MapFragment
 {
-	public TheMap()
-	{
-		
-	}
+	
+    public TheMap()
+    {
+    	super();
+    }
 	
 }

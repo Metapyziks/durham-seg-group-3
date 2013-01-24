@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import 	android.content.Context;
+import android.content.Context;
 
 public class Fortitude extends Activity 
 {
@@ -36,7 +36,7 @@ public class Fortitude extends Activity
     //
     ////////
     private void runApp()
-    {
+    {	
     	new MainLoginScreen();
     	
         /////////////////////////////////////////////// Create Login Screen Example

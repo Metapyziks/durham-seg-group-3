@@ -1,6 +1,5 @@
 package com.example.fortitude;
 
-import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
@@ -8,268 +7,208 @@ import android.widget.Space;
 import android.graphics.Color;
 import android.widget.TextView;
 import android.view.Gravity;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.view.View;
 import android.graphics.Paint;
 import java.lang.Math;
+import android.widget.ImageView.ScaleType;
+import android.widget.ImageView;
 
-//Class to display a message box on the screen that is capable
-//of displaying 20-40 characters of text.
-//
-//This class extends the gridlayout as this class adds itself to the screen.
-public class MessageBox extends GridLayout
-{
-	
-	private int windowWidth; //Visible window width
-	private int windowHeight; //Visible window height
-	
+public class MessageBox extends Window
+{	
 	//row layouts
-    private Spec row1 = GridLayout.spec(0);
-    private Spec row2 = GridLayout.spec(1);
-    private Spec row3 = GridLayout.spec(2);
-    private Spec row4 = GridLayout.spec(3);
-    
-    //column layouts
-    private Spec col1 = GridLayout.spec(0);
-    private Spec col2 = GridLayout.spec(1);
-    private Spec col3 = GridLayout.spec(2);
-    private Spec col4 = GridLayout.spec(3);
-    private Spec col5 = GridLayout.spec(4);
-    
-    private Spec textAreaBoxCol = GridLayout.spec(1,3); //definition of number of columns for the TextView to go across
-    private Spec textBreaker = GridLayout.spec(0,4); //row between button and text
-    
-    private static MessageBox iExist = null;//a static variable to store whether an instance of this class currrently exists or not.
-    
-    private Boolean haveOkButton = true;
-    
-    private Space positionalSpace = null;
-    
-    private TextView messageCell;
-    
-    public static boolean doYouExist()
-    {
-    	if(iExist == null)
-    	{
-    		return false;
-    	}
-    	else
-    	{
-    		return true;
-    	}
-    }
-    
-    ////////
-    //
-    //newMsgBox
-    //
-    //static constructor
-    //
-    ////////
-    public static MessageBox newMsgBox(String messageToDisplay, Boolean okButton)
-    {
-	    if(MessageBox.activeMessageBox())
-	    {
-	    	return null;
-	    }
-	    
-	    disableAllTheChildren(Fortitude.getFortitude().getWindow().getDecorView());
-	    
-        return new MessageBox(messageToDisplay, okButton);
-    }
-    
-    ////////
-    //
-    //Constructor
-    //
-    ////////
+	private Spec row1 = GridLayout.spec(0);
+	private Spec row2 = GridLayout.spec(1);
+	private Spec row3 = GridLayout.spec(2);
+	private Spec row4 = GridLayout.spec(3);
+	private Spec row5 = GridLayout.spec(4);
+	private Spec row6 = GridLayout.spec(5);
+
+	//column layouts
+	private Spec col1 = GridLayout.spec(0);
+	private Spec col2 = GridLayout.spec(1);
+
+	private Spec allcols = GridLayout.spec(0,3);
+
+	private static MessageBox me = null;
+
+	private String messageToDisplay = "";
+
+	private Boolean haveOkButton;
+
+	private TextView messageCell;
+
+	////////
+	//
+	//newMsgBox
+	//
+	//static constructor
+	//
+	////////
+	public static MessageBox newMsgBox(String messageToDisplay, Boolean okButton)
+	{
+		if(me != null)
+		{
+			return null;
+		}
+
+		disableAllTheChildren(Fortitude.getFortitude().getWindow().getDecorView());
+
+		return new MessageBox(messageToDisplay, okButton);
+	}
+
+	////////
+	//
+	//Constructor
+	//
+	////////
 	private MessageBox(String messageToDisplay, Boolean okButton)
 	{
-	    super(Fortitude.getFortitude());	    
-	    
-	    haveOkButton = okButton;
-	    
-	    iExist = this;
-	    
-	    setWindowDimensions();
-	    setColsAndRows();
-
-	    createPositionalSpace();
-	    
-	    addMessageBox(messageToDisplay);
-        
-	    addThisToDisplay();
-	}
-	
-	////////
-	//
-	//addThisToDisplay
-	//
-	//adds the current object to the top of the application's display
-	//
-	////////
-	private void addThisToDisplay()
-	{
-        LayoutParams messageboxParams = new LayoutParams();
-        Fortitude.getFortitude().addContentView(this, messageboxParams);
+		super(((GUI.calculateWindowWidth() / 10) * 8), (GUI.calculateWindowWidth() / 10), (GUI.calculateWindowHeight() / 4), R.drawable.message_box_middle);
+		me = this;
+		haveOkButton = okButton;
+		this.messageToDisplay = messageToDisplay;
+		
+		new GreyScreen();
+		
+		addContentToContentPane(createWindowPane());
 	}
 
 	////////
 	//
-	//addMessageBox
+	//createWindowPane
 	//
-	//adds the message box to the cell positioned by the method "createPositionalSpace"
-	//
-	////////
-	private void addMessageBox(String messageToDisplay)
-	{
-        GridLayout boxArea = new GridLayout(this.getContext()); //The gridlayout for the layout of the messagebox itself
-        boxArea.setColumnCount(5);
-        boxArea.setRowCount(5);
-        boxArea.setBackgroundColor(Color.RED);
-        addLayoutToMessageBox(boxArea, messageToDisplay);
-	}
-	
-	////////
-	//
-	//addLayoutToMessageBox
-	//
-	//adds all the relevant layout to the given messagebox
+	//returns a gridlayout that is added to the window
 	//
 	////////
-	private void addLayoutToMessageBox(GridLayout msgBox, String messageToDisplay)
-	{
-        LayoutParams row1col1Layout = new LayoutParams(row1, col1); //Top left Space
-        row1col1Layout.width = windowWidth / 10;
-        row1col1Layout.height = windowHeight / 10;
-        Space row1col1 = new Space(msgBox.getContext());
-        row1col1.setLayoutParams(row1col1Layout);
-        msgBox.addView(row1col1, row1col1Layout);
+	private GridLayout createWindowPane()
+	{	
+		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
+		mainArea.setColumnCount(3);
+		mainArea.setRowCount(7);
+
+		LayoutParams topBarLayout = new LayoutParams(row1, allcols); //top bar
+		topBarLayout.width = super.getWindowWidth();
+		ImageView topBar = new ImageView(mainArea.getContext());
+		topBar.setScaleType(ScaleType.FIT_XY);
+		topBar.setImageResource(R.drawable.message_box_top);
+		mainArea.addView(topBar, topBarLayout);
+
+		LayoutParams secondRowSpaceLayout = new LayoutParams(row2, allcols); //second row space
+		secondRowSpaceLayout.width = super.getWindowWidth();
+		secondRowSpaceLayout.height = GUI.calculateWindowHeight() / 15;
+		Space secondRowSpace = new Space(mainArea.getContext());
+		secondRowSpace.setLayoutParams(secondRowSpaceLayout);
+		mainArea.addView(secondRowSpace, secondRowSpaceLayout);
         
-        LayoutParams row1col2Layout = new LayoutParams(row1, col2); //Top left right Space
-        row1col2Layout.width = windowWidth / 10;
-        row1col2Layout.height = windowHeight / 10;
-        Space row1col2 = new Space(msgBox.getContext());
-        row1col2.setLayoutParams(row1col2Layout);
-        msgBox.addView(row1col2, row1col2Layout);
-        
-        LayoutParams row1col3Layout = new LayoutParams(row1, col3); //Top middle Space (MAYBE TITLE SUCH AS "Alert" or "Message" TO BE ADDED)
-        row1col3Layout.width = ((windowWidth / 10) * 4);
-        row1col3Layout.height = windowHeight / 10;
-        Space row1col3 = new Space(msgBox.getContext());
-        row1col3.setLayoutParams(row1col3Layout);
-        msgBox.addView(row1col3, row1col3Layout);
-        
-        LayoutParams row1col4Layout = new LayoutParams(row1, col4); //Top right left Space
-        row1col4Layout.width = (windowWidth / 10);
-        row1col4Layout.height = windowHeight / 10;
-        Space row1col4 = new Space(msgBox.getContext());
-        row1col4.setLayoutParams(row1col4Layout);
-        msgBox.addView(row1col4, row1col4Layout);
-        
-        LayoutParams row1col5Layout = new LayoutParams(row1, col5); //Top Right Space
-        row1col5Layout.width = (windowWidth / 10);
-        row1col5Layout.height = windowHeight / 10;
-        Space row1col5 = new Space(msgBox.getContext());
-        row1col5.setLayoutParams(row1col5Layout);
-        msgBox.addView(row1col5, row1col5Layout);
-        
-        LayoutParams row2col1Layout = new LayoutParams(row2, col1); //Middle Left Space
-        row2col1Layout.width = (windowWidth / 10);
-        Space row2col1 = new Space(msgBox.getContext());
-        row2col1.setLayoutParams(row2col1Layout);
-        msgBox.addView(row2col1, row2col1Layout);
-        
-        LayoutParams row2TextLayout = new LayoutParams(row2, textAreaBoxCol); //Middle middle TEXT GOES HERE!!!
-        Paint mPaint = new Paint();
-        mPaint.setTextSize(14);
-        row2TextLayout.width = ((windowWidth / 10) * 6); //TIDY ME UP YOU FOOL!!!!
-        row2TextLayout.height = ((int)((float)(Math.ceil(mPaint.measureText(messageToDisplay, 0, messageToDisplay.length()) / row2TextLayout.width)))) * 20;
-        row2TextLayout.height = row2TextLayout.height + (getLineBreakOccurrencesInString(messageToDisplay) * 20);
-        if((row2TextLayout.height + ((windowWidth / 10) * 2.5)) > windowWidth) //If the height of the variable height message box goes below the screen then we don't want the ok button hidden so just set the height of the messagebox to the maximum height that is visible
-        {
-        	row2TextLayout.height = windowHeight - positionalSpace.getLayoutParams().height - ((int)((float)Math.ceil((windowHeight / 10) * 2.5)));
-        }
-        messageCell = new TextView(msgBox.getContext());
-        messageCell.setLayoutParams(row2TextLayout);
+        LayoutParams buttonSpacerLayout = new LayoutParams(row4, allcols); //fourth row space
+        buttonSpacerLayout.width = super.getWindowWidth();
+        buttonSpacerLayout.height = GUI.calculateWindowHeight() / 20;
+        Space buttonSpacer = new Space(mainArea.getContext());
+        buttonSpacer.setLayoutParams(buttonSpacerLayout);
+		mainArea.addView(buttonSpacer, buttonSpacerLayout);
+		
+		LayoutParams okButtonLayout = null;
+		if(haveOkButton)
+		{
+			GridLayout okButtonGridLayout = new GridLayout(mainArea.getContext());
+			okButtonGridLayout.setColumnCount(2);
+			okButtonGridLayout.setRowCount(1);
+			
+		    okButtonLayout = new LayoutParams(row1, col2); //ok button
+		    FortitudeButton okButton = new FortitudeButton(R.drawable.ok, R.drawable.ok_pressed) {
+		    	public void preClickActions()
+		    	{
+		    		
+		    	}
+		    	public void whenClicked()
+		    	{
+		    		MessageBox.getMe().killMe();
+		    	}
+		    };
+		    okButtonLayout.height = GUI.calculateWindowHeight() / 10;
+		    okButtonLayout.width = GUI.calculateWindowWidth() / 3;
+		    okButton.setLayoutParams(okButtonLayout);
+		    okButtonGridLayout.addView(okButton, okButtonLayout);
+		    
+			LayoutParams okButtonLeftSpacerLayout = new LayoutParams(row1, col1);
+			okButtonLeftSpacerLayout.width = (super.getWindowWidth() - okButtonLayout.width) / 2;
+			Space okButtonLeftSpacer = new Space(okButtonGridLayout.getContext());
+			okButtonLeftSpacer.setLayoutParams(okButtonLeftSpacerLayout);
+			okButtonGridLayout.addView(okButtonLeftSpacer, okButtonLeftSpacerLayout);
+		    
+		    LayoutParams okButtonGridLayoutParams = new LayoutParams(row5, allcols);
+		    mainArea.addView(okButtonGridLayout, okButtonGridLayoutParams);
+		}
+		
+		LayoutParams middlePartLayout = new LayoutParams(row3, allcols); //text to display
+		middlePartLayout.width = super.getWindowWidth();
+		Paint mPaint = new Paint();
+		mPaint.setTextSize(14);
+		middlePartLayout.height = ((int)((float)(Math.ceil(mPaint.measureText(messageToDisplay, 0, messageToDisplay.length()) / middlePartLayout.width)))) * 20;
+		middlePartLayout.height = middlePartLayout.height + (getLineBreakOccurrencesInString(messageToDisplay) * 20) + (GUI.calculateWindowWidth() / 10);
+		if((middlePartLayout.height + ((middlePartLayout.width / 10) * 2.5)) > middlePartLayout.width) //If the height of the variable height message box goes below the screen then we don't want the ok button hidden so just set the height of the messagebox to the maximum height that is visible
+		{
+			middlePartLayout.height = middlePartLayout.width - secondRowSpace.getLayoutParams().height - topBarLayout.height - ((int)((float)Math.ceil((middlePartLayout.height / 10) * 2.5)));
+		}
+		messageCell = new TextView(mainArea.getContext());
+        messageCell.setLayoutParams(middlePartLayout);
         messageCell.setText(messageToDisplay);
         messageCell.setTextSize(14);
         messageCell.setGravity(Gravity.CENTER);
-        msgBox.addView(messageCell, row2TextLayout);
+        messageCell.setTextColor(Color.WHITE);
+        mainArea.addView(messageCell, middlePartLayout);
         
-        LayoutParams row2col5Layout = new LayoutParams(row2, col5); //Middle right
-        row2col5Layout.width = (windowWidth / 10);
-        Space row2col5 = new Space(msgBox.getContext());
-        row2col5.setLayoutParams(row2col5Layout);
-        msgBox.addView(row2col5, row2col5Layout);
+        LayoutParams bottomPartLayout = new LayoutParams(row6, allcols); //bottom bar image
+        bottomPartLayout.width = super.getWindowWidth();
+		ImageView bottomBar = new ImageView(mainArea.getContext());
+		bottomBar.setScaleType(ScaleType.FIT_XY);
+		bottomBar.setImageResource(R.drawable.message_box_bottom);
+		mainArea.addView(bottomBar, bottomPartLayout);
+		
+		LayoutParams newBackgroundLayout = new LayoutParams(row2, col2); //background if not full size is inappropriately sized so resize;
+		if(!haveOkButton)
+		{
+		    newBackgroundLayout.height= 0 + secondRowSpaceLayout.height + middlePartLayout.height + buttonSpacerLayout.height + 5;
+		}
+		else
+		{
+			newBackgroundLayout.height= 0 + secondRowSpaceLayout.height + middlePartLayout.height + buttonSpacerLayout.height + okButtonLayout.height + 5;
+		}
+		newBackgroundLayout.width = super.getWindowWidth();
+		super.getBackgroundImage().setLayoutParams(newBackgroundLayout);
         
-        LayoutParams row3Spacer = new LayoutParams(row3, textBreaker); //Entire blank row separating text and button
-        row3Spacer.width = ((windowWidth / 10) * 6);
-        row3Spacer.height = (windowHeight / 10) / 2;
-        Space row3Space = new Space(msgBox.getContext());
-        row3Space.setLayoutParams(row3Spacer);
-        msgBox.addView(row3Space, row3Spacer);
-        
-        LayoutParams row4col1Layout = new LayoutParams(row4, col1); //Space left of space
-        row4col1Layout.width = (windowWidth / 10);
-        row4col1Layout.height = windowHeight / 10;
-        Space row4col1 = new Space(msgBox.getContext());
-        row4col1.setLayoutParams(row4col1Layout);
-        msgBox.addView(row4col1, row4col1Layout);
-        
-        LayoutParams row4col2Layout = new LayoutParams(row4, col2); //Space left of button
-        row4col2Layout.width = (windowWidth / 10);
-        row4col2Layout.height = windowHeight / 10;
-        Space row4col2 = new Space(msgBox.getContext());
-        row4col2.setLayoutParams(row4col2Layout);
-        msgBox.addView(row4col2, row4col2Layout);
-        
-        if(haveOkButton)
-        {
-        	LayoutParams row4col3Layout = new LayoutParams(row4, col3); //OK button
-        	row4col3Layout.width = ((windowWidth / 10) * 4);
-        	row4col3Layout.height = windowHeight / 10;
-        	Button row4col3 = new Button(msgBox.getContext());
-        	row4col3.setLayoutParams(row4col3Layout);
-        	row4col3.setTextSize(14);
-        	row4col3.setText("OK");
-        	row4col3.setOnClickListener(new OnClickListener(){
-        		public void onClick(View arg0)
-        		{
-        			killMe();
-        		}
-        	});
-        	msgBox.addView(row4col3);
-        }
-        LayoutParams row4col4Layout = new LayoutParams(row4, col4); //Space right of button
-        row4col4Layout.width = (windowWidth / 10);
-        row4col4Layout.height = windowHeight / 10;
-        Space row4col4 = new Space(msgBox.getContext());
-        row4col4.setLayoutParams(row4col4Layout);
-        msgBox.addView(row4col4, row4col4Layout);
-        
-        LayoutParams row4col5Layout = new LayoutParams(row4, col5); //Space right of space right of button
-        row4col5Layout.width = (windowWidth / 10);
-        row4col5Layout.height = windowHeight / 10;
-        Space row4col5 = new Space(msgBox.getContext());
-        row4col5.setLayoutParams(row4col5Layout);
-        msgBox.addView(row4col5, row4col5Layout);
-        
-        LayoutParams messageLayout = new LayoutParams(row2, col2);
-        
-        addView(msgBox, messageLayout);
+		return mainArea;
 	}
-	
+
+	////////
+	//
+	//changeMessageToDisplay
+	//
+	//allows the message in this message box to be changed from elsewhere. WARNING! if you change the text the
+	//messagebox will NOT resize. If you require and messagebox of similar size you msut kill this one and
+	//create a new one.
+	//
+	////////
+	public void changeMessageToDisplay(String x)
+	{
+		messageCell.setText(x);
+	}
+
+	////////
+	//
+	//getLineBreakOccurrencesInString
+	//
+	//returns the number of complete line breaks in a string
+	//
+	////////
 	private int getLineBreakOccurrencesInString(String theString)
 	{
 		int lastIndex = 0;
 		int count = 0;
-		
+
 		while(lastIndex != -1)
 		{
 			lastIndex = theString.indexOf("\n\n", lastIndex);
-			
+
 			if( lastIndex != -1)
 			{
 				count++;
@@ -278,7 +217,7 @@ public class MessageBox extends GridLayout
 		}
 		return count;
 	}
-	
+
 	////////
 	//
 	//killMe
@@ -289,118 +228,20 @@ public class MessageBox extends GridLayout
 	public void killMe()
 	{
 		makeAllTheChildrenBetter(Fortitude.getFortitude().getWindow().getDecorView());
-		iExist = null;
+		me = null;
+		GreyScreen.getMe().killMe();
 		removeAllViews();
 	}
-	
+
 	////////
 	//
-	//activeMessageBox
+	//getMe
 	//
-	//returns true if there is currently a message box being displayed
+	//returns the last created instance of this class
 	//
 	////////
-	public static boolean activeMessageBox()
+	public static MessageBox getMe()
 	{
-		if(iExist == null)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-	
-	////////
-	//
-	//createPositionalSpace
-	//
-	//Creates an invisible square in the top left corner of the screen.
-	//The width and height of this square define where the message box will
-	//appear on screen as the messagebox is positioned starting at the bottom
-	//right hand corner of this square.
-	//
-	////////
-	private void createPositionalSpace()
-	{
-        LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
-        spaceLayout.width = windowWidth / 10;
-        spaceLayout.height = windowHeight / 4;
-        positionalSpace = new Space(Fortitude.getFortitude());
-        positionalSpace.setLayoutParams(spaceLayout);
-        addView(positionalSpace, spaceLayout);
-	}
-	
-	////////
-	//
-	//setColsAndRows
-	//
-	//sets the number of columns and rows this main grid will have to define the
-	//overall positional layout of where the message box will go on the screen.
-	//
-	////////
-	private void setColsAndRows()
-	{
-        setColumnCount(2);
-        setRowCount(2);
-	}
-	
-	////////
-	//
-	//makeAllTheChildrenBetter
-	//
-	//opposite of "disableAllTheChildren", calls when finished to re enable all of the elements
-	//
-	////////
-	private static void makeAllTheChildrenBetter(View v)
-	{
-		v.setEnabled(true);
-		if(v instanceof ViewGroup)
-		{
-		    ViewGroup vg = ((ViewGroup) v);
-		    int z = vg.getChildCount();
-		    for(int i = 0; i < z; i++)
-		    {
-			    makeAllTheChildrenBetter(vg.getChildAt(i));
-		    }
-		}
-	}
-	
-	////////
-	//
-	//disableAllTheChildren
-	//
-	//disable all  elements in the application that aren't this messagebox
-	//
-	////////
-	private static void disableAllTheChildren(View v)
-	{
-		if(!(v instanceof MessageBox))
-		{
-		    v.setEnabled(false);
-		}
-		if(v instanceof ViewGroup)
-		{
-		    ViewGroup vg = ((ViewGroup) v);
-		    int z = vg.getChildCount();
-		    for(int i = 0; i < z; i++)
-		    {
-			    disableAllTheChildren(vg.getChildAt(i));
-		    }
-		}
-	}
-	
-	////////
-	//
-	//setWindowDimensions
-	//
-	//sets the values for dimensions of the visible window
-	//
-	////////
-	private void setWindowDimensions()
-	{
-	    windowWidth = GUI.calculateWindowWidth();
-	    windowHeight = GUI.calculateWindowHeight();
+		return me;
 	}
 }
