@@ -7,20 +7,28 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.content.Context;
 
-public class Fortitude extends Activity 
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.GoogleMap;
+
+public class Fortitude extends Activity
 {
     private static Fortitude fortitude = null;
-	
+    
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        //setContentView(R.layout.activity_fortitude);
+        //GoogleMap mMap;
+        //mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+        
         fortitude = this;
         this.setRequestedOrientation(1); //lock application to portrait
     	GUI.setUpActivityGraphics();
         runApp();
     }
-
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
