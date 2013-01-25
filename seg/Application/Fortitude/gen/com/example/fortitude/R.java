@@ -153,6 +153,7 @@ containing a value of this type.
         public static final int top=0x7f020016;
     }
     public static final class id {
+        public static final int map=0x7f040004;
         public static final int none=0x7f040000;
         public static final int normal=0x7f040001;
         public static final int satellite=0x7f040002;
@@ -160,6 +161,7 @@ containing a value of this type.
     }
     public static final class layout {
         public static final int activity_fortitude=0x7f030000;
+        public static final int maplayout=0x7f030001;
     }
     public static final class menu {
         public static final int activity_fortitude=0x7f070000;

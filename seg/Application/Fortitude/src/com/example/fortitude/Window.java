@@ -18,8 +18,6 @@ public abstract class Window extends GridLayout
 	
 	private BackgroundImage backgroundImage;
 	
-	private GridLayout contentPane;
-	
     private Spec row1 = GridLayout.spec(0);
     private Spec row2 = GridLayout.spec(1);
     

@@ -118,7 +118,7 @@ public class MainLoginScreen extends Window
         mainArea.addView(fithRowSpace, fithRowSpaceLayout);
         
         GridLayout forgottenDetailsButtonGrid = new GridLayout(mainArea.getContext());
-        forgottenDetailsButtonGrid.setColumnCount(3);
+        forgottenDetailsButtonGrid.setColumnCount(2);
         forgottenDetailsButtonGrid.setRowCount(1);
         
         LayoutParams sixthRowLeftSpaceLayout = new LayoutParams(row1, col1); //Space to position the forgotten details link 
@@ -155,8 +155,8 @@ public class MainLoginScreen extends Window
         mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);
         
         GridLayout buttonsArea = new GridLayout(Fortitude.getFortitude());
-        mainArea.setRowCount(1);
-        mainArea.setColumnCount(4);
+        buttonsArea.setRowCount(1);
+        buttonsArea.setColumnCount(4);
         
         LayoutParams eigthRowLeftSpaceLayout = new LayoutParams(row1, col1); //eigth row left space
         eigthRowLeftSpaceLayout.width = super.getWindowWidth() / 12;

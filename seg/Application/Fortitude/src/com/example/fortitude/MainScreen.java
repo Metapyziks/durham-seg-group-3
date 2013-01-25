@@ -11,7 +11,7 @@ import android.view.View;
 import android.widget.ImageView.ScaleType;
 import android.widget.ImageView;
 import android.graphics.Color;
-import com.google.android.gms.maps.MapView;
+import android.view.LayoutInflater;
 
 public class MainScreen extends Window
 {
@@ -137,14 +137,14 @@ public class MainScreen extends Window
 	    
 	    LayoutParams theMapLayout = new LayoutParams(row2, col1);
 	    theMapLayout.width = super.getWindowWidth();
-	    theMapLayout.height = super.getWindowHeight() / 2;
-	    MapView theMap = new MapView(mainArea.getContext());
-	    theMap.setLayoutParams(theMapLayout);
-	    mainArea.addView(theMap, theMapLayout);
+	    theMapLayout.height = super.getWindowHeight() - (super.getWindowHeight() / 5) - (super.getWindowHeight() / 20);
+	    LayoutInflater factory = LayoutInflater.from(Fortitude.getFortitude());
+	    View mapView = factory.inflate(R.layout.maplayout, null);
+	    mainArea.addView(mapView, theMapLayout);
 	    
 	    LayoutParams activateAccountBarLayout = new LayoutParams(row3, col1);
 	    activateAccountBarLayout.width = super.getWindowWidth();
-	    activateAccountBarLayout.height = super.getWindowWidth() / 10;
+	    activateAccountBarLayout.height = super.getWindowHeight() / 5;
 	    ImageView activateAccountBar = new ImageView(mainArea.getContext());
 	    activateAccountBar.setLayoutParams(activateAccountBarLayout);
 	    activateAccountBar.setScaleType(ScaleType.FIT_XY);
