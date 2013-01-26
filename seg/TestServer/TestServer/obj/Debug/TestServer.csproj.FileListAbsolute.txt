@@ -1,9 +1,0 @@
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\Content\404.html
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\Content\index.html
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\Database.sdf
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\config.ini
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\TestServer.exe
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\TestServer.pdb
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\bin\Debug\Nini.dll
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\obj\Debug\TestServer.exe
-C:\Users\James\Projects\durham-seg-group-3\seg\TestServer\TestServer\obj\Debug\TestServer.pdb
