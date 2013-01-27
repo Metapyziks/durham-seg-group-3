@@ -212,7 +212,7 @@ class ParseContext
 	boolean isNextNumber()
 	{
 		skipWhitespace();
-		return Character.isDigit( peek() );
+		return peek() == '-' || Character.isDigit( peek() );
 	}
 
 	double nextNumber()
@@ -221,6 +221,9 @@ class ParseContext
 			return Double.NaN;
 
 		StringBuilder str = new StringBuilder();
+
+		if ( hasNext() && peek() == '-' )
+			str.append( next() );
 
 		boolean dp = false;
 		while( hasNext() )
