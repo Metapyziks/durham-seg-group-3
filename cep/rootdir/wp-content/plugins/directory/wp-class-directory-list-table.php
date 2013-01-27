@@ -7,7 +7,7 @@
  */
 
 if(!class_exists('WP_List_Table')) {
-    require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
+    require_once(ABSPATH.'wp-admin/includes/class-wp-list-table.php');
 }
 
 class WP_Directory_List_Table extends WP_List_Table
@@ -15,13 +15,23 @@ class WP_Directory_List_Table extends WP_List_Table
     var $test_data = array(
         array(
             'id' => 1,
-            'name' => 'Test Retailer',
-            'rating' => 4
+            'name' => 'Oxfam Bookshop',
+            'postcode' => 'DH1 3AA',
+            'website' => 'http://www.oxfam.org.uk/shop/local-shops/oxfam-books-music-durham',
+            'contact' => 'Michael Ridsdale',
+            'phone' => '0191 3846366',
+            'location' => '54.775122,-1.574381',
+            'stars' => 3
         ),
         array(
             'id' => 2,
-            'name' => 'Another Retailer',
-            'rating' => 2
+            'name' => 'Oxfam Boutique',
+            'postcode' => 'DH1 3AA',
+            'website' => 'http://www.oxfam.org.uk/shop/local-shops/oxfam-boutique-durham',
+            'contact' => '-',
+            'phone' => '0191 3847440',
+            'location' => '54.778102,-1.573104',
+            'stars' => 2
         )
     );
 
@@ -38,8 +48,15 @@ class WP_Directory_List_Table extends WP_List_Table
     function column_default($item, $column_name) {
         switch($column_name){
             case 'name':
-            case 'rating':
+                return '<a href="'.$item['website'].'">'.$item[$column_name].'</a>';
+            case 'postcode':
+            case 'contact':
+            case 'phone':
                 return $item[$column_name];
+            case 'location':
+                return '<a href="https://maps.google.co.uk/maps?q='.$item[$column_name].'">View</a>'; 
+            case 'stars':
+                return str_repeat('<img src="/wordpress/wp-content/images/star.png" />', $item[$column_name]);
             default:
                 return print_r($item,true);
         }
@@ -55,9 +72,13 @@ class WP_Directory_List_Table extends WP_List_Table
 
     function get_columns() {
         $columns = array(
-            'cb'        => '<input type="checkbox" />',
-            'name'     => 'Retailer',
-            'rating'    => 'Rating'
+            //'cb'            => '<input type="checkbox" />',
+            'name'          => 'Retailer',
+            'postcode'      => 'Post Code',
+            'contact'       => 'Contact',
+            'phone'         => 'Phone&nbsp;Number',
+            'stars'        => 'Star&nbsp;Rating',
+            'location'      => 'Location'
         );
         return $columns;
     }
@@ -65,7 +86,7 @@ class WP_Directory_List_Table extends WP_List_Table
     function get_sortable_columns() {
         $sortable_columns = array(
             'name'     => array('name',false),
-            'rating'    => array('rating',false)
+            'stars'    => array('stars',false)
         );
         return $sortable_columns;
     }
