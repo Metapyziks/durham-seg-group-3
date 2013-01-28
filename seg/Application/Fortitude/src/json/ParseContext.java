@@ -21,6 +21,7 @@ class ParseContext
 	ParseContext( InputStream stream )
 	{
 		Scanner scan = new Scanner( stream );
+
 		scan.useDelimiter( "$" );
 		String string = scan.next();
 
@@ -212,7 +213,7 @@ class ParseContext
 	boolean isNextNumber()
 	{
 		skipWhitespace();
-		return Character.isDigit( peek() );
+		return peek() == '-' || Character.isDigit( peek() );
 	}
 
 	double nextNumber()
@@ -221,6 +222,9 @@ class ParseContext
 			return Double.NaN;
 
 		StringBuilder str = new StringBuilder();
+
+		if ( hasNext() && peek() == '-' )
+			str.append( next() );
 
 		boolean dp = false;
 		while( hasNext() )
@@ -243,7 +247,7 @@ class ParseContext
 	boolean isNextBoolean()
 	{
 		skipWhitespace();
-		return isNext( "true" ) | isNext( "false" );
+		return isNext( "true" ) || isNext( "false" );
 	}
 
 	boolean nextBoolean()

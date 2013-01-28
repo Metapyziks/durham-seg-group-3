@@ -6,6 +6,7 @@ import java.net.ConnectException;
 import json.JSONObject;
 import java.net.SocketTimeoutException;
 import java.io.FileNotFoundException;
+import java.net.SocketException;
 
 public abstract class RequestThread implements Runnable
 {   
@@ -55,6 +56,11 @@ public abstract class RequestThread implements Runnable
 		catch(ConnectException e)
 		{
 			setOutputMessage("Unable to connect to server");
+			setSuccess("1");
+		}
+		catch(SocketException e)
+		{
+			setOutputMessage("Unable to connect to server, please check your internet connection and try again");
 			setSuccess("1");
 		}
 		catch(SocketTimeoutException e)

@@ -21,6 +21,9 @@ class ParseContext
 	ParseContext( InputStream stream )
 	{
 		Scanner scan = new Scanner( stream );
+
+		System.out.println("lolcats");
+
 		scan.useDelimiter( "$" );
 		String string = scan.next();
 

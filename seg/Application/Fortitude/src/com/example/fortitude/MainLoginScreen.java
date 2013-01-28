@@ -129,8 +129,8 @@ public class MainLoginScreen extends Window
         
         LayoutParams forgottenDetailsButtonLayout = new LayoutParams(row1, col2); //forgotten details link
         forgottenDetailsButtonLayout.width = super.getWindowWidth() / 2;
-        forgottenDetailsButtonLayout.height = super.getWindowHeight() / 12;
-        FortitudeButton forgottenDetailsButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel, 0) {
+        forgottenDetailsButtonLayout.height = super.getWindowHeight() / 36;
+        FortitudeButton forgottenDetailsButton = (new FortitudeButton(R.drawable.forgotten_your_details, R.drawable.forgotten_your_details, 0) {
         	public void preClickActions()
         	{
         		
@@ -149,7 +149,7 @@ public class MainLoginScreen extends Window
         
         LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, allcols); //seventh row space
         seventhRowSpaceLayout.width = super.getWindowWidth();
-        seventhRowSpaceLayout.height = super.getWindowHeight() / 15;
+        seventhRowSpaceLayout.height = (super.getWindowHeight() / 15) + (super.getWindowHeight() / 24) + (super.getWindowHeight() / 70);
         Space seventhRowSpace = new Space(mainArea.getContext());
         seventhRowSpace.setLayoutParams(seventhRowSpaceLayout);
         mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);

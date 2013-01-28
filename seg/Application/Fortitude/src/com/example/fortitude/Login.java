@@ -96,6 +96,7 @@ public class Login
 		{
 			password = "7¬`j8,#@ytIsQ9$Od" + password + "%fI4\"0lPQz^~U&An4:9£k";
 			MessageDigest m = MessageDigest.getInstance("MD5");
+			m.reset();
 			m.update(password.getBytes(), 0, password.length());
 			return new BigInteger(1, m.digest()).toString(16);  
 		}

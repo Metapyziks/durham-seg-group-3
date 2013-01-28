@@ -9,20 +9,44 @@ public class User
   private String username; //username of user
   private String joindate; //date (time since the epoc in milliseconds) since the user joined
   private String rank; //Whether the user is verified or not.
+  private String avatarId; //The id of the avatar to use;
 
   ////////
   //
   //Constructor
   //
   ////////
-  public User(String accountid, String username, String joindate, String rank)
+  public User(String accountid, String username, String joindate, String rank, String avatarId)
   {
       this.accountid = accountid;
       this.username = username;
       this.joindate = joindate;
       this.rank = rank;	
+      this.avatarId = avatarId;
   }
 
+  ////////
+  //
+  //getAvatarId
+  //
+  //gets the Id of the avatar file to use
+  //
+  ////////
+  public String getAvatarId()
+  {
+	  return avatarId;
+  }
+  
+  ////////
+  //
+  //getIntAvatarId
+  //
+  //returns Avatar Id as int
+  public int getIntAvatarId()
+  {
+	  return Integer.parseInt(avatarId);
+  }
+  
   ////////
   //
   //getAccountId
