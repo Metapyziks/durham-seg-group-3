@@ -75,37 +75,6 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setZoomControlsEnabled(false); //disable default zoom controls
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
-		mapView.setVisibility(View.INVISIBLE); //make the map invisible until it is ready
-
-		googleMap.setOnCameraChangeListener(new OnCameraChangeListener() { //executes everytime the camera moves
-			public void onCameraChange(CameraPosition cameraPosition)
-			{
-				if(!getGotInitialLocation())
-				{
-					return;
-				}
-				//while(true)
-				//{
-				if(TheMap.getFreeToGetCaches())
-				{
-					freeToGetCaches = false;
-					updateMap();
-					freeToGetCaches = true;
-				}
-				else
-				{
-					try
-					{
-						Thread.sleep(1000);
-					}
-					catch(Exception e)
-					{
-
-					}
-				}
-				//}
-			}
-		});
 
 		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
 			public void run()                       //location asap
@@ -118,7 +87,6 @@ public class TheMap extends GridLayout
 							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
 							if(xx != null)
 							{
-								TheMap.getMe().getMapView().setVisibility(View.VISIBLE);
 								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
 							}
@@ -138,7 +106,19 @@ public class TheMap extends GridLayout
 		thread.start();
 	}
 
-	public void updateMap()
+	public void updateCachePositions()
+	{
+		if(!getGotInitialLocation())
+		{
+			return;
+		}
+		else
+		{
+			updateMap();
+		}
+	}
+	
+	private void updateMap()
 	{
 		ServerRequests.getNearbyCaches(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID(), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.latitude), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.longitude), "5000");
 		while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)

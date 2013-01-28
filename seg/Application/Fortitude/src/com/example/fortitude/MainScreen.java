@@ -146,17 +146,6 @@ public class MainScreen extends Window
 
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-
-		LayoutParams gettingUserLocationTextViewLayout = new LayoutParams(row2, col1);
-		gettingUserLocationTextViewLayout.width = super.getWindowWidth();
-		gettingUserLocationTextViewLayout.height = super.getWindowHeight() - (super.getWindowHeight() / 5) - (super.getWindowHeight() / 20);
-		TextView gettingUserLocationTextView = new TextView(mainArea.getContext());
-		gettingUserLocationTextView.setText("Getting Your Location!");
-		gettingUserLocationTextView.setTextColor(Color.WHITE);
-		gettingUserLocationTextView.setGravity(Gravity.CENTER);
-		gettingUserLocationTextView.setTextSize(18);
-		gettingUserLocationTextView.setLayoutParams(gettingUserLocationTextViewLayout);
-		mainArea.addView(gettingUserLocationTextView, gettingUserLocationTextViewLayout);
 		
 		LayoutParams theMapLayout = new LayoutParams(row2, col1); //The map
 		theMapLayout.width = super.getWindowWidth();
@@ -266,7 +255,14 @@ public class MainScreen extends Window
 		}
 		else
 		{
-
+            LayoutParams bottomBarImageLayout = new LayoutParams(row3, col1);
+            bottomBarImageLayout.width = super.getWindowWidth();
+            bottomBarImageLayout.height = super.getWindowHeight() / 5;
+            ImageView bottomBarImage = new ImageView(mainArea.getContext());
+            bottomBarImage.setLayoutParams(bottomBarImageLayout);
+            bottomBarImage.setScaleType(ScaleType.FIT_XY);
+            bottomBarImage.setImageResource(R.drawable.bottom);
+            mainArea.addView(bottomBarImage, bottomBarImageLayout);
 		}
 
 		return mainArea;

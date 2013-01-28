@@ -103,7 +103,7 @@ public class User
   ////////
   public boolean isVerified()
   {
-	return rank.equals("Verified");
+	return (!rank.equals("Unverified"));
   }
 }
 

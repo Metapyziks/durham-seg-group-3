@@ -15,8 +15,8 @@ public class CurrentUser extends User
 		this.sessionID = sessionID;
 		this.phash = phash;
 		this.balance = truncateBalance(balance);
-		this.numberOfCaches = numberOfCaches;
-		this.totalBalance = truncateBalance(totalBalance); 
+		this.numberOfCaches = truncateBalance(numberOfCaches);
+		this.totalBalance = Integer.toString((Integer.parseInt(truncateBalance(totalBalance))) + (Integer.parseInt(this.balance))); 
 		me = this;
 	}
 	
