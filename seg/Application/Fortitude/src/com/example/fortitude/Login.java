@@ -94,10 +94,14 @@ public class Login
 	{
 		try
 		{
-			password = "7¬`j8,#@ytIsQ9$Od" + password + "%fI4\"0lPQz^~U&An4:9£k";
+			password = "7ï¿½`j8,#@ytIsQ9$Od" + password + "%fI4\"0lPQz^~U&An4:9ï¿½k";
 			MessageDigest m = MessageDigest.getInstance("MD5");
-			m.update(password.getBytes(), 0, password.length());
-			return new BigInteger(1, m.digest()).toString(16);  
+		        byte[] digest = m.digest(password.getBytes("UTF-8"));
+		        StringBuffer builder = new StringBuffer();
+		        for(int i = 0; i < digest.length; ++i) {
+		            builder.append(Integer.toHexString((digest[i] & 0xFF) | 0x100).substring(1, 3));
+		        }
+        		return builder.toString();
 		}
 		catch(Exception e)
 		{
