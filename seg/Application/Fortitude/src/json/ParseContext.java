@@ -1,7 +1,10 @@
 package json;
 
 import java.io.InputStream;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.lang.StringBuilder;
+import java.io.BufferedReader;
+import java.io.IOException;
 
 class ParseContext
 {
@@ -18,12 +21,20 @@ class ParseContext
 		string.getChars( 0, length, _chars, 0 );
 	}
 
-	ParseContext( InputStream stream )
+	ParseContext( InputStream stream ) throws IOException
 	{
-		Scanner scan = new Scanner( stream );
-
-		scan.useDelimiter( "$" );
-		String string = scan.next();
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+		StringBuilder sb = new StringBuilder();
+		
+		String string = br.readLine();
+		
+		while(string != null)
+		{
+			sb.append(string);
+			string = br.readLine();
+		}
+		
+		string = sb.toString();
 
 		length = string.length();
 		_chars = new char[length];

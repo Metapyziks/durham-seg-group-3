@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.io.IOException;
 
 public class JSONObject extends JSONValue
 {
@@ -19,13 +20,13 @@ public class JSONObject extends JSONValue
 	}
 
 	public static JSONObject parseFile( String path )
-		throws FileNotFoundException, JSONParserException
+		throws FileNotFoundException, JSONParserException, IOException
 	{
 		return parseStream( new FileInputStream( path ) );
 	}
 
 	public static JSONObject parseStream( InputStream stream )
-		throws JSONParserException
+		throws JSONParserException, IOException
 	{
 		ParseContext ctx = new ParseContext( stream );
 
