@@ -25,27 +25,25 @@
 		</div>	
 		
 		<!-- This should be dynamically generated, so that letters not used don't display -->
-		
+
 		<p style="text-align: center;">
-			<a onclick="searchDatabase('number')">0 - 9</a> | 
-			<a onclick="searchDatabase('a')">A</a> | 
-			<a onclick="searchDatabase('b')">B</a> | 
-			<!-- I got bored. -->
-			C | D | E | F | G | H | I | J | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z
-		</p>
-		
 <?PHP
-		$sql = "SELECT * FROM dcftp_directory";
-        $data = $wpdb->get_results($sql, ARRAY_A);
+    function starImages($rating) {
+        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
+        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
 
-        function starImages($rating) {
-	        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
-	        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
+        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
+    }
 
-	        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
-	    }
+	$sql = "SELECT * FROM dcftp_directory";
+    $data = $wpdb->get_results($sql, ARRAY_A);
+
+    echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
+	foreach (range('A', 'Z') as $char) {
+		echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.$char.'">'.$char.'</a> ';
+	}
 ?>
-
+		</p>
 		<div id="entries">
 <?PHP
 	foreach ($data as $entry) {
