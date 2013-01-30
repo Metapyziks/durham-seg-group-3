@@ -874,7 +874,10 @@ public class ServerRequests
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
-							ServerRequests.getTheMessageBox().killMe();
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+							    ServerRequests.getTheMessageBox().killMe();
+							}
 							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
 						}
 					});
@@ -941,7 +944,10 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								ServerRequests.getTheMessageBox().killMe();
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+								    ServerRequests.getTheMessageBox().killMe();
+								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});

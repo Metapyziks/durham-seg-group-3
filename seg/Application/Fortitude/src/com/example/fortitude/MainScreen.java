@@ -32,6 +32,8 @@ public class MainScreen extends Window
 
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
+	private Spec col3 = GridLayout.spec(2);
+	private Spec col4 = GridLayout.spec(3);
 
 	private Spec allcols = GridLayout.spec(0,1);
 
@@ -41,6 +43,11 @@ public class MainScreen extends Window
 	FortitudeButton zoomOutButton;
 
 	private static MainScreen me = null;
+	
+	private ImageView mailIcon;
+	private ImageView flagIcon;
+    private ImageView castleIcon;
+    private ImageView refreshIcon;
 
 	////////
 	//
@@ -263,6 +270,112 @@ public class MainScreen extends Window
             bottomBarImage.setScaleType(ScaleType.FIT_XY);
             bottomBarImage.setImageResource(R.drawable.bottom);
             mainArea.addView(bottomBarImage, bottomBarImageLayout);
+            
+            GridLayout bottomBarIconGrid = new GridLayout(mainArea.getContext());
+            bottomBarIconGrid.setColumnCount(4);
+            bottomBarIconGrid.setRowCount(1);
+            
+            GridLayout bottomBarMailIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+            bottomBarMailIconGrid.setColumnCount(3);
+            bottomBarMailIconGrid.setRowCount(3);
+            
+            LayoutParams firstTopLeftSpaceLayout = new LayoutParams(row1, col1);
+            //firstTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+            firstTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+            Space firstLeftSpace = new Space(bottomBarMailIconGrid.getContext());
+            firstLeftSpace.setLayoutParams(firstTopLeftSpaceLayout);
+            bottomBarMailIconGrid.addView(firstLeftSpace, firstTopLeftSpaceLayout);
+            
+            LayoutParams mailIconLayout = new LayoutParams(row2, col1); //mailIcon
+            mailIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+            mailIconLayout.width = (super.getWindowWidth() / 4);
+            mailIcon = new ImageView(bottomBarMailIconGrid.getContext());
+            mailIcon.setScaleType(ScaleType.FIT_XY);
+            mailIcon.setImageResource(R.drawable.mail);
+            mailIcon.setLayoutParams(mailIconLayout);
+            bottomBarMailIconGrid.addView(mailIcon, mailIconLayout);
+            
+            LayoutParams bottomBarMailIconGridLayout = new LayoutParams(row1, col1);
+            bottomBarIconGrid.addView(bottomBarMailIconGrid, bottomBarMailIconGridLayout);
+            
+            GridLayout bottomBarflagIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+            bottomBarflagIconGrid.setColumnCount(3);
+            bottomBarflagIconGrid.setRowCount(3);
+            
+            LayoutParams secondTopLeftSpaceLayout = new LayoutParams(row1, col1);
+            //secondTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+            secondTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+            Space secondLeftSpace = new Space(bottomBarflagIconGrid.getContext());
+            secondLeftSpace.setLayoutParams(secondTopLeftSpaceLayout);
+            bottomBarflagIconGrid.addView(secondLeftSpace, secondTopLeftSpaceLayout);
+            
+            LayoutParams flagIconLayout = new LayoutParams(row2, col1); //flagIcon
+            flagIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+            flagIconLayout.width = (super.getWindowWidth() / 4);
+            flagIcon = new ImageView(bottomBarMailIconGrid.getContext());
+            flagIcon.setScaleType(ScaleType.FIT_XY);
+            flagIcon.setImageResource(R.drawable.flag);
+            flagIcon.setLayoutParams(flagIconLayout);
+            bottomBarflagIconGrid.addView(flagIcon, flagIconLayout);
+            
+            LayoutParams flagIconGridLayout = new LayoutParams(row1, col2);
+            bottomBarIconGrid.addView(bottomBarflagIconGrid, flagIconGridLayout);
+            
+            GridLayout bottomBarCastleIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+            bottomBarCastleIconGrid.setColumnCount(3);
+            bottomBarCastleIconGrid.setRowCount(3);
+            
+            LayoutParams thirdTopLeftSpaceLayout = new LayoutParams(row1, col1);
+            //thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+            thirdTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+            Space thirdLeftSpace = new Space(bottomBarCastleIconGrid.getContext());
+            thirdLeftSpace.setLayoutParams(thirdTopLeftSpaceLayout);
+            bottomBarCastleIconGrid.addView(thirdLeftSpace, thirdTopLeftSpaceLayout);
+            
+            LayoutParams castleIconLayout = new LayoutParams(row2, col1); //castleIcon
+            castleIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+            castleIconLayout.width = (super.getWindowWidth() / 4);
+            castleIcon = new ImageView(bottomBarCastleIconGrid.getContext());
+            castleIcon.setScaleType(ScaleType.FIT_XY);
+            castleIcon.setImageResource(R.drawable.castle);
+            castleIcon.setLayoutParams(castleIconLayout);
+            bottomBarCastleIconGrid.addView(castleIcon, castleIconLayout);
+            
+            LayoutParams bottomBarCastleIconGridLayout = new LayoutParams(row1, col3);
+            bottomBarIconGrid.addView(bottomBarCastleIconGrid, bottomBarCastleIconGridLayout);
+            
+            GridLayout bottomBarRefreshIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+            bottomBarRefreshIconGrid.setColumnCount(3);
+            bottomBarRefreshIconGrid.setRowCount(3);
+            
+            LayoutParams fourthTopLeftSpaceLayout = new LayoutParams(row1, col1);
+            //thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+            fourthTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+            Space fourthLeftSpace = new Space(bottomBarRefreshIconGrid.getContext());
+            fourthLeftSpace.setLayoutParams(fourthTopLeftSpaceLayout);
+            bottomBarRefreshIconGrid.addView(fourthLeftSpace, fourthTopLeftSpaceLayout);
+            
+            LayoutParams refreshIconLayout = new LayoutParams(row2, col1); //refreshIcon
+            refreshIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+            refreshIconLayout.width = (super.getWindowWidth() / 4);
+            refreshIcon = new ImageView(bottomBarRefreshIconGrid.getContext());
+            refreshIcon.setScaleType(ScaleType.FIT_XY);
+            refreshIcon.setImageResource(R.drawable.refresh);
+            refreshIcon.setLayoutParams(refreshIconLayout);
+            refreshIcon.setOnClickListener(new OnClickListener() {
+            	public void onClick(View v)
+            	{
+            		ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+            		TheMap.getMe().updateCachePositions();
+            	}
+            });
+            bottomBarRefreshIconGrid.addView(refreshIcon, refreshIconLayout);
+            
+            LayoutParams bottomBarRefreshIconGridLayout = new LayoutParams(row1, col4);
+            bottomBarIconGrid.addView(bottomBarRefreshIconGrid, bottomBarRefreshIconGridLayout);
+            
+            LayoutParams bottomBarIconGridLayout = new LayoutParams(row3, col1);
+            mainArea.addView(bottomBarIconGrid, bottomBarIconGridLayout);
 		}
 
 		return mainArea;
@@ -298,4 +411,24 @@ public class MainScreen extends Window
 	{
 		return zoomInButton;
 	}
+	
+    public ImageView getMailIcon()
+    {
+    	return mailIcon;
+    }
+    
+    public ImageView getFlagIcon()
+    {
+    	return flagIcon;
+    }
+    
+    public ImageView getCastleIcon()
+    {
+    	return castleIcon;
+    }
+    
+    public ImageView getRefreshIcon()
+    {
+    	return refreshIcon;
+    }
 }

@@ -89,6 +89,7 @@ public class TheMap extends GridLayout
 							{
 								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
+								updateCachePositions();
 							}
 						}
 					});
@@ -114,49 +115,65 @@ public class TheMap extends GridLayout
 		}
 		else
 		{
-			updateMap();
-		}
-	}
-	
-	private void updateMap()
-	{
-		ServerRequests.getNearbyCaches(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID(), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.latitude), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.longitude), "5000");
-		while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
-		{
-			// do nothing
-		}
-		if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
-		{
 			Fortitude.getFortitude().runOnUiThread(new Runnable() {
 				public void run()
 				{
-					ArrayList<Cache> caches = ServerRequests.getNearbyCaches();
-
-					if(caches == null)
-					{
-						return;
-					}
-					for(Marker marker: TheMap.getMe().getMarkers())
-					{
-						marker.remove();
-					}
-
-					TheMap.getMe().setMarkers(new ArrayList<Marker>());
-					for(Cache cache: caches)
-					{
-						System.out.println(cache.getGarrison() + " " + cache.getOwnerId());
-						if(cache.getGarrison().equals("-1"))
-						{
-						    TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-						}
-						if(!cache.getGarrison().equals("-1"))
-						{
-							TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-						}
-					}
+		            ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
 				}
 			});
+			updateMap();
 		}
+	}
+
+	private void updateMap()
+	{
+		ServerRequests.getNearbyCaches(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID(), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.latitude), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.longitude), "5000");
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+				{
+					// do nothing
+				}
+				if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ArrayList<Cache> caches = ServerRequests.getNearbyCaches();
+
+							if(caches == null)
+							{
+								return;
+							}
+							for(Marker marker: TheMap.getMe().getMarkers())
+							{
+								marker.remove();
+							}
+
+							TheMap.getMe().setMarkers(new ArrayList<Marker>());
+							for(Cache cache: caches)
+							{
+								System.out.println(cache.getGarrison() + " " + cache.getOwnerId());
+								if(cache.getGarrison().equals("-1"))
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+								}
+								if(!cache.getGarrison().equals("-1"))
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+								}
+							}
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+						}
+					});
+				}
+			}
+		});
+		thread.start();
 	}
 
 	public static boolean getFreeToGetCaches()
