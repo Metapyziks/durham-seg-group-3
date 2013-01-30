@@ -4,6 +4,6 @@
 * Ability to display locations of outlets on a map
 
 -- Search results by first letter
-* Ability to seach DB by first letter or substring in name
+- Ability to seach DB by first letter or substring in name
 - A dynamically generated list of all the first letters in the DB if they occur
 - When clicked, send a search request for names beginning with that letter

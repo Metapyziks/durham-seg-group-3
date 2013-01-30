@@ -2,6 +2,10 @@
 
 <?php get_header(); ?>
 
+<?PHP
+	$thisPage = $_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'];
+?>
+
 <div id="main-section">
 	<div class="nav-margin">
 	</div>
@@ -20,8 +24,11 @@
 			<?php endwhile; ?>
 
 		<div style="text-align: center;">
-			<input id="searchName"></input><br />
-			<button onclick="getMap()" class="button">Search</button>
+			<form name="searchname" action="/?page_id=7" method="get">
+				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
+				<input type="text" name="search" />
+				<input type="submit" value="Search" />
+			</form>
 		</div>	
 		
 		<!-- This should be dynamically generated, so that letters not used don't display -->
@@ -36,7 +43,9 @@
     }
 
 	$sql = "SELECT * FROM dcftp_directory";
-	if ($_GET['letter']) {
+	if ($_GET['search']) {
+		$sql = $sql.' WHERE name LIKE \'%'.$_GET['search'].'%\'';
+	} elseif ($_GET['letter']) {
 		if($_GET['letter'] == '0-9') {
 			$sql = $sql.' WHERE name NOT LIKE \'A%\'';
 			foreach (range('B', 'Z') as $char) {
@@ -49,8 +58,10 @@
 
     $data = $wpdb->get_results($sql, ARRAY_A);
 
-    if ($_GET['letter']) {
-    	echo 'Showing retailers beggining with \''.strtoupper($_GET['letter']).'\' | <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'">All Entries</a>';
+	if ($_GET['search']) {
+		echo 'Showing retailers containing \''.strtolower($_GET['search']).'\' | <a href="'.$thisPage.'">All Entries</a>';
+	} elseif ($_GET['letter']) {
+    	echo 'Showing retailers beggining with \''.strtoupper($_GET['letter']).'\' | <a href="'.$thisPage.'">All Entries</a>';
     } else {
 	    $cats = array();
 
@@ -64,13 +75,13 @@
 	    }
 
 	    if ($cats['0-9']) {
-	    	echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
+	    	echo '<a href="'.$thisPage.'&letter=0-9">0-9</a> ';
 		} else {
 			echo '0-9 ';
 		}
 		foreach (range('A', 'Z') as $char) {
 			if ($cats[strtolower($char)]) {
-				echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.strtolower($char).'">'.$char.'</a> ';
+				echo '| <a href="'.$thisPage.'&letter='.strtolower($char).'">'.$char.'</a> ';
 			} else {
 				echo '| '.$char.' ';
 			}
