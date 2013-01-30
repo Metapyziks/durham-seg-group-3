@@ -4,8 +4,8 @@
 		<ul id="nav-ul">
 					
 			<!-- Display links to all pages with no navigation title -->
-			<!-- 67 and 63 refer to the key links and scrolling news -->
-			<?php wp_list_pages('title_li=&exclude=67,63' ); ?>
+			<!-- 12 and 10 refer to the key links and scrolling news -->
+			<?php wp_list_pages('title_li=&exclude=10,12' ); ?>
 			
 			<!-- The link to the dashboard - only displayed to logged in users. -->
 			<?php wp_register(); ?>

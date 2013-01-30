@@ -15,10 +15,14 @@ Wordpress to do list
 [x] Check styling of scroller
 [x] Check styling of key links
 
-[ ] Feedback form
-[ ] Feedback comments
+[ ] Make comments nest
+[ ] Screenshot
+[ ] favicon (image appearing in tab)
 
-[ ] Comments on events
+[ ] Feedback form
+[x] Feedback comments
+
+[x] Comments on events
 
 [ ] Directory page
 [ ] Directory as attachment
