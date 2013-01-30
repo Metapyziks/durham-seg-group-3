@@ -31,7 +31,7 @@ class WP_Directory_List_Table extends WP_List_Table
             case 'phone':
                 return $item[$column_name];
             case 'location':
-                return '<a href="https://maps.google.co.uk/maps?q='.$item[$column_name].'">View</a>'; 
+                return '<a href="https://maps.google.co.uk/maps?q='.$item['latitude'].','.$item['longitude'].'">View</a>'; 
             case 'stars':
                 return str_repeat('<img src="/wp-content/plugins/directory/images/star.png" />', $item[$column_name])
                     .str_repeat('<img src="/wp-content/plugins/directory/images/star_grey.png" />', 3 - $item[$column_name]);
