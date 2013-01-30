@@ -21,6 +21,18 @@ function directory_manager_menu() {
         'directory_manager_add_item');
 }
 
+function directory_admin_header() {
+    $page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
+    if ('directory-manager' != $page) return; 
+
+    echo '<style type="text/css">';
+    echo '.wp-list-table .column-stars { width: 64px; }';
+    echo '.wp-list-table .column-action { width: 64px; }';
+    echo '</style>';
+}
+
+add_action('admin_head', 'directory_admin_header');
+
 function directory_manager_main() {
     if ( !current_user_can( 'publish_pages' ) )  {
         wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
@@ -37,7 +49,6 @@ function directory_manager_main() {
     echo '<h2>Directory Manager';
     echo ' <a href="'.esc_url($add_new_page).'" class="add-new-h2">Add New</a>';
     echo '</h2>';
-    $wp_list_table->views();
     $wp_list_table->display();
     echo '</div>';
 }

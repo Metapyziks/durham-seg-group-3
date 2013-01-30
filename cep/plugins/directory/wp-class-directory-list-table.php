@@ -22,19 +22,34 @@ class WP_Directory_List_Table extends WP_List_Table
         ));
     }
 
+    function starImages($rating) {
+        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
+        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
+
+        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
+    }
+
+    function actionButtons($id) {
+        return
+            '<img src="/wp-content/plugins/directory/images/magnifier.png" />&nbsp;'.
+            '<img src="/wp-content/plugins/directory/images/pencil.png" />&nbsp;'.
+            '<img src="/wp-content/plugins/directory/images/delete.png" />';
+    }
+
     function column_default($item, $column_name) {
         switch($column_name){
             case 'name':
-                return '<a href="'.$item['website'].'">'.$item[$column_name].'</a>';
+                return '<a href="'.$item['url'].'">'.$item[$column_name].'</a>';
             case 'postcode':
             case 'contact':
             case 'phone':
                 return $item[$column_name];
             case 'location':
-                return '<a href="https://maps.google.co.uk/maps?q='.$item['latitude'].','.$item['longitude'].'">View</a>'; 
+                return '<a href="https://maps.google.co.uk/maps?q='.$item['latitude'].','.$item['longitude'].'">'.$item['addressline1'].' '.$item['postcode'].'</a>'; 
             case 'stars':
-                return str_repeat('<img src="/wp-content/plugins/directory/images/star.png" />', $item[$column_name])
-                    .str_repeat('<img src="/wp-content/plugins/directory/images/star_grey.png" />', 3 - $item[$column_name]);
+                return $this->starImages($item[$column_name]);
+            case 'action':
+                return $this->actionButtons($item['outletID']);
             default:
                 return print_r($item,true);
         }
@@ -52,11 +67,11 @@ class WP_Directory_List_Table extends WP_List_Table
         $columns = array(
             //'cb'            => '<input type="checkbox" />',
             'name'          => 'Retailer',
-            'postcode'      => 'Post Code',
             'contact'       => 'Contact',
-            'phone'         => 'Phone&nbsp;Number',
-            'stars'        => 'Star&nbsp;Rating',
-            'location'      => 'Location'
+            'phone'         => 'Phone',
+            'location'      => 'Location',
+            'stars'         => 'Rating',
+            'action'        => 'Action'
         );
         return $columns;
     }
