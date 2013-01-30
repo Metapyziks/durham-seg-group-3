@@ -26,6 +26,7 @@ function directory_admin_header() {
     if ('directory-manager' != $page) return; 
 
     echo '<style type="text/css">';
+    echo '.wp-list-table .column-phone { width: 96px; }';
     echo '.wp-list-table .column-stars { width: 64px; }';
     echo '.wp-list-table .column-action { width: 64px; }';
     echo '</style>';
