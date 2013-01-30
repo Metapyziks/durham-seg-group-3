@@ -38,9 +38,28 @@
 	$sql = "SELECT * FROM dcftp_directory";
     $data = $wpdb->get_results($sql, ARRAY_A);
 
-    echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
+    $cats = array();
+
+    foreach ($data as $entry) {
+    	$char = strtolower(substr($entry['name'], 0, 1));
+    	if (is_numeric($char)) {
+    		$char = "0-9";
+    	}
+
+    	$cats[$char] = true;
+    }
+
+    if ($cats['0-9']) {
+    	echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
+	} else {
+		echo '0-9 ';
+	}
 	foreach (range('A', 'Z') as $char) {
-		echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.$char.'">'.$char.'</a> ';
+		if ($cats[strtolower($char)]) {
+			echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.strtolower($char).'">'.$char.'</a> ';
+		} else {
+			echo '| '.$char.' ';
+		}
 	}
 ?>
 		</p>
