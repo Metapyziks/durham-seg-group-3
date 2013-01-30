@@ -23,10 +23,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `dcpt_directory`
+-- Table structure for table `dcftp_directory`
 --
 
-CREATE TABLE IF NOT EXISTS `dcpt_directory` (
+CREATE TABLE IF NOT EXISTS `dcftp_directory` (
   `outletID` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `addressline1` varchar(255) DEFAULT NULL,

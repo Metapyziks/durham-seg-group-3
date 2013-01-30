@@ -14,7 +14,7 @@ require_once('wp-class-directory-list-table.php');
 add_action('admin_menu', 'directory_manager_menu');
 
 function directory_manager_menu() {
-    add_menu_page('Directory Manager', 'Directory', 'publish_pages',
+    add_menu_page('Directory Manager', 'DCFTP Directory', 'publish_pages',
         'directory-manager', 'directory_manager_main');
     add_submenu_page('directory-manager', 'Directory Manager - Add New Retailer',
         'Add New Retailer', 'publish_pages', 'directory-manager-add',
@@ -50,7 +50,7 @@ function directory_manager_add_item() {
     global $wpdb;
 
     wp_register_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBsQ0syxq6tKXsyCAoef02pSbrr2PcP0Tw&sensor=false');
-    wp_register_script('add-retailer', plugins_url('/addretailer.js', __FILE__));
+    wp_register_script('add-retailer', '/wp-content/plugins/directory/addretailer.js');
     wp_enqueue_script('google-maps-api');
     wp_enqueue_script('add-retailer');
 

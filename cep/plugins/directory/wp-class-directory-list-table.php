@@ -12,29 +12,6 @@ if(!class_exists('WP_List_Table')) {
 
 class WP_Directory_List_Table extends WP_List_Table
 {
-    var $test_data = array(
-        array(
-            'id' => 1,
-            'name' => 'Oxfam Bookshop',
-            'postcode' => 'DH1 3AA',
-            'website' => 'http://www.oxfam.org.uk/shop/local-shops/oxfam-books-music-durham',
-            'contact' => 'Michael Ridsdale',
-            'phone' => '0191 3846366',
-            'location' => '54.775122,-1.574381',
-            'stars' => 3
-        ),
-        array(
-            'id' => 2,
-            'name' => 'Oxfam Boutique',
-            'postcode' => 'DH1 3AA',
-            'website' => 'http://www.oxfam.org.uk/shop/local-shops/oxfam-boutique-durham',
-            'contact' => '-',
-            'phone' => '0191 3847440',
-            'location' => '54.778102,-1.573104',
-            'stars' => 2
-        )
-    );
-
     function __construct() {
         global $status, $page;
                 
@@ -86,8 +63,8 @@ class WP_Directory_List_Table extends WP_List_Table
 
     function get_sortable_columns() {
         $sortable_columns = array(
-            'name'     => array('name',false),
-            'stars'    => array('stars',false)
+            'name'     => array('name', false),
+            'stars'    => array('stars', false)
         );
         return $sortable_columns;
     }
@@ -103,7 +80,9 @@ class WP_Directory_List_Table extends WP_List_Table
         
         $this->_column_headers = array($columns, $hidden, $sortable);
         
-        $data = $this->test_data;
+        $sql = "SELECT * FROM dcftp_directory";
+
+        $data = $wpdb->get_results($sql, ARRAY_A);
 
         function usort_reorder($a,$b){
             $orderby = (!empty($_REQUEST['orderby'])) ? $_REQUEST['orderby'] : 'title';
@@ -112,17 +91,6 @@ class WP_Directory_List_Table extends WP_List_Table
             return ($order==='asc') ? $result : -$result;
         }
         usort($data, 'usort_reorder');
-        
-        
-        /***********************************************************************
-         * ---------------------------------------------------------------------
-         * vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-         * 
-         * In a real-world situation, this is where you would place your query.
-         * 
-         * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-         * ---------------------------------------------------------------------
-         **********************************************************************/
         
         $current_page = $this->get_pagenum();
         $total_items = count($data);
