@@ -36,29 +36,44 @@
     }
 
 	$sql = "SELECT * FROM dcftp_directory";
+	if ($_GET['letter']) {
+		if($_GET['letter'] == '0-9') {
+			$sql = $sql.' WHERE name NOT LIKE \'A%\'';
+			foreach (range('B', 'Z') as $char) {
+				$sql = $sql.' AND name NOT LIKE \''.$char.'%\'';
+			}
+		} else {
+			$sql = $sql.' WHERE name LIKE \''.$_GET['letter'].'%\'';
+		}
+	}
+
     $data = $wpdb->get_results($sql, ARRAY_A);
 
-    $cats = array();
+    if ($_GET['letter']) {
+    	echo 'Showing retailers beggining with \''.strtoupper($_GET['letter']).'\' | <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'">All Entries</a>';
+    } else {
+	    $cats = array();
 
-    foreach ($data as $entry) {
-    	$char = strtolower(substr($entry['name'], 0, 1));
-    	if (is_numeric($char)) {
-    		$char = "0-9";
-    	}
+	    foreach ($data as $entry) {
+	    	$char = strtolower(substr($entry['name'], 0, 1));
+	    	if (is_numeric($char)) {
+	    		$char = "0-9";
+	    	}
 
-    	$cats[$char] = true;
-    }
+	    	$cats[$char] = true;
+	    }
 
-    if ($cats['0-9']) {
-    	echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
-	} else {
-		echo '0-9 ';
-	}
-	foreach (range('A', 'Z') as $char) {
-		if ($cats[strtolower($char)]) {
-			echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.strtolower($char).'">'.$char.'</a> ';
+	    if ($cats['0-9']) {
+	    	echo '<a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter=0-9">0-9</a> ';
 		} else {
-			echo '| '.$char.' ';
+			echo '0-9 ';
+		}
+		foreach (range('A', 'Z') as $char) {
+			if ($cats[strtolower($char)]) {
+				echo '| <a href="'.$_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'].'&letter='.strtolower($char).'">'.$char.'</a> ';
+			} else {
+				echo '| '.$char.' ';
+			}
 		}
 	}
 ?>
