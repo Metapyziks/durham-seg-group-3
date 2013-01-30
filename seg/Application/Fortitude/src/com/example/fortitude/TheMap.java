@@ -114,7 +114,7 @@ public class TheMap extends GridLayout
 			{
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 			}
-		});a
+		});
 
 		updateMap();
 	}
