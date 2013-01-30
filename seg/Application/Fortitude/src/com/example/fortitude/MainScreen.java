@@ -365,7 +365,6 @@ public class MainScreen extends Window
             refreshIcon.setOnClickListener(new OnClickListener() {
             	public void onClick(View v)
             	{
-            		ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
             		TheMap.getMe().updateCachePositions();
             	}
             });
@@ -376,6 +375,41 @@ public class MainScreen extends Window
             
             LayoutParams bottomBarIconGridLayout = new LayoutParams(row3, col1);
             mainArea.addView(bottomBarIconGrid, bottomBarIconGridLayout);
+            
+            GridLayout centerMeIconGrid = new GridLayout(mainArea.getContext());
+            centerMeIconGrid.setRowCount(1);
+            centerMeIconGrid.setColumnCount(3);
+            
+            LayoutParams centerMeIconLeftSpaceLayout = new LayoutParams(row1, col1);
+            centerMeIconLeftSpaceLayout.width = super.getWindowWidth() / 2;
+            Space centerMeIconLeftSpace = new Space(centerMeIconGrid.getContext());
+            centerMeIconLeftSpace.setLayoutParams(centerMeIconLeftSpaceLayout);
+            centerMeIconGrid.addView(centerMeIconLeftSpace, centerMeIconLeftSpaceLayout);
+            
+            GridLayout centerMeGrid = new GridLayout(centerMeIconGrid.getContext());
+            centerMeGrid.setColumnCount(1);
+            centerMeGrid.setRowCount(3);
+            
+            LayoutParams centerMeIconTopSpaceLayout = new LayoutParams(row1, col1);
+            centerMeIconTopSpaceLayout.height = ((super.getWindowHeight() / 5) / 2) - (super.getWindowWidth() / 30);
+            Space centerMeIconTopSpace = new Space(centerMeGrid.getContext());
+            centerMeIconTopSpace.setLayoutParams(centerMeIconTopSpaceLayout);
+            centerMeGrid.addView(centerMeIconTopSpace, centerMeIconTopSpaceLayout);
+            
+            LayoutParams centerMeIconLayout = new LayoutParams(row2, col1); // center me icon
+            centerMeIconLayout.width = super.getWindowWidth() / 15;
+            centerMeIconLayout.height = super.getWindowWidth() / 15;
+            ImageView centerMeIcon = new ImageView(centerMeIconGrid.getContext());
+            centerMeIcon.setLayoutParams(centerMeIconLayout);
+            centerMeIcon.setScaleType(ScaleType.FIT_XY);
+            centerMeIcon.setImageResource(R.drawable.center_me);
+            centerMeGrid.addView(centerMeIcon, centerMeIconLayout);
+            
+            LayoutParams centerMeGridLayout = new LayoutParams(row1, col2);
+            centerMeIconGrid.addView(centerMeGrid, centerMeGridLayout);
+            
+            LayoutParams centerMeIconGridLayout = new LayoutParams(row3, col1);
+            mainArea.addView(centerMeIconGrid, centerMeIconGridLayout);
 		}
 
 		return mainArea;

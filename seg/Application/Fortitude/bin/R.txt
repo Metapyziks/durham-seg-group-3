@@ -19,7 +19,7 @@ int drawable bottom 0x7f020003
 int drawable cancel 0x7f020004
 int drawable cancel_pressed 0x7f020005
 int drawable castle 0x7f020006
-int drawable centeer_me 0x7f020007
+int drawable center_me 0x7f020007
 int drawable center_me_active 0x7f020008
 int drawable clear_route 0x7f020009
 int drawable clear_route_pressed 0x7f02000a

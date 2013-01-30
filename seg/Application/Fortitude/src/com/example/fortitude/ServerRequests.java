@@ -52,67 +52,67 @@ public class ServerRequests
 	{
 		return cacheRadius;
 	}
-	
+
 	public static void setCacheRadius(String x)
 	{
 		cacheRadius = x;
 	}
-	
+
 	public static String getStaticLat()
 	{
 		return staticLat;
 	}
-	
+
 	public static void setStaticLat(String x)
 	{
 		staticLat = x;
 	}
-	
+
 	public static String getStaticSessionId()
 	{
 		return staticSessionId;
 	}
-	
+
 	public static String getStaticLon()
 	{
 		return staticLon;
 	}
-	
+
 	public static void setStaticLon(String x)
 	{
 		staticLon = x;
 	}
-	
+
 	public static ArrayList<Cache> getNearbyCaches()
 	{
 		return nearbyCaches;
 	}
-	
+
 	public static void setNearbyCaches(ArrayList<Cache> x)
 	{
 		nearbyCaches = x;
 	}
-	
+
 	public static String getStaticCacheCount()
 	{
 		return staticCacheCount;
 	}
-	
+
 	public static void setStaticCacheCount(String x)
 	{
 		staticCacheCount = x;
 	}
-	
+
 	public static int getGetNearbyCachesInfoStatus()
 	{
 		return getNearbyCachesInfoStatus;
 	}
-	
+
 	public static void setGetNearbyCachesInfoStatus(int x)
 	{
 		getNearbyCachesInfoStatus = x;
 	}
-	
+
 	public static MessageBox getTheMessageBox()
 	{
 		return theMessageBox;
@@ -127,12 +127,12 @@ public class ServerRequests
 	{
 		return staticTotalUnits;
 	}
-	
+
 	public static void setStaticTotalUnits(String x)
 	{
 		staticTotalUnits = x;
 	}
-	
+
 	public static String getStaticUname()
 	{
 		return staticUname;
@@ -348,7 +348,10 @@ public class ServerRequests
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
-																			ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+																			if(ServerRequests.getTheMessageBox() != null)
+																			{
+																				ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+																			}
 																			//ServerRequests.getTheMessageBox().killMe();
 																			//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
 																		}
@@ -365,7 +368,10 @@ public class ServerRequests
 																			{
 
 																			}
-																			ServerRequests.getTheMessageBox().killMe();
+																			if(ServerRequests.getTheMessageBox() != null)
+																			{
+																				ServerRequests.getTheMessageBox().killMe();
+																			}
 																			MainLoginScreen.getMe().killMe();
 																			TheMap.newTheMap(Fortitude.getFortitude());
 																			new MainScreen();
@@ -646,7 +652,7 @@ public class ServerRequests
 	public static void resetPassReset(String email)
 	{
 		staticEmail = email;
-		
+
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -698,7 +704,7 @@ public class ServerRequests
 				rt.setURL("http://" + ServerIP + "/api/sendpassreset?email=" + ServerRequests.getStaticEmail());
 				Thread thread = new Thread(rt);
 				thread.start();
-				
+
 				boolean connecting = false; //wait for response
 				while(connecting == false)
 				{
@@ -732,7 +738,7 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//getUserInfo
@@ -845,7 +851,7 @@ public class ServerRequests
 		Thread thread = new Thread(runnable);
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//getNearbyCaches
@@ -876,7 +882,7 @@ public class ServerRequests
 						{
 							if(ServerRequests.getTheMessageBox() != null)
 							{
-							    ServerRequests.getTheMessageBox().killMe();
+								ServerRequests.getTheMessageBox().killMe();
 							}
 							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
 						}
@@ -946,7 +952,7 @@ public class ServerRequests
 							{
 								if(ServerRequests.getTheMessageBox() != null)
 								{
-								    ServerRequests.getTheMessageBox().killMe();
+									ServerRequests.getTheMessageBox().killMe();
 								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
@@ -957,6 +963,15 @@ public class ServerRequests
 					else if(rt.getSuccess().equals("2"))
 					{
 						connecting = true;
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+							});
+						}
 						ServerRequests.setGetNearbyCachesInfoStatus(2);
 					}
 				}

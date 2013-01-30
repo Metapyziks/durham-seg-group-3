@@ -109,20 +109,14 @@ public class TheMap extends GridLayout
 
 	public void updateCachePositions()
 	{
-		if(!getGotInitialLocation())
-		{
-			return;
-		}
-		else
-		{
-			Fortitude.getFortitude().runOnUiThread(new Runnable() {
-				public void run()
-				{
-		            ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
-				}
-			});
-			updateMap();
-		}
+		Fortitude.getFortitude().runOnUiThread(new Runnable() {
+			public void run()
+			{
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+			}
+		});a
+
+		updateMap();
 	}
 
 	private void updateMap()
@@ -154,7 +148,6 @@ public class TheMap extends GridLayout
 							TheMap.getMe().setMarkers(new ArrayList<Marker>());
 							for(Cache cache: caches)
 							{
-								System.out.println(cache.getGarrison() + " " + cache.getOwnerId());
 								if(cache.getGarrison().equals("-1"))
 								{
 									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));

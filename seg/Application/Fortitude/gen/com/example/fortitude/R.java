@@ -135,7 +135,7 @@ containing a value of this type.
         public static final int cancel=0x7f020004;
         public static final int cancel_pressed=0x7f020005;
         public static final int castle=0x7f020006;
-        public static final int centeer_me=0x7f020007;
+        public static final int center_me=0x7f020007;
         public static final int center_me_active=0x7f020008;
         public static final int clear_route=0x7f020009;
         public static final int clear_route_pressed=0x7f02000a;
