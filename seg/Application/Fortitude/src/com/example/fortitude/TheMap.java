@@ -103,7 +103,7 @@ public class TheMap extends GridLayout
 		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 			public boolean onMarkerClick(Marker marker)
 			{
-				MainScreen.getMe().killMe();
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 				int x = 0;
 				boolean found = false;
 				for(Marker m : TheMap.getMe().getMarkers())
@@ -123,16 +123,15 @@ public class TheMap extends GridLayout
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
+							ServerRequests.getTheMessageBox().killMe();
 							MessageBox.newMsgBox("Error Loading Cache Data", true);
 						}
 					});
-					return false;
+					return true;
 				}
 		    	
 				setMarkerToBePassed(marker);
 				setMarkerPositionToBePassed(x);
-				
-				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 				
 		    	ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(x).getOwnerId(), false); 
 		    	Thread thread = new Thread(new Runnable() {
@@ -150,6 +149,7 @@ public class TheMap extends GridLayout
 		    						ServerRequests.getTheMessageBox().killMe();
 		    						if(!ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
 		    						{
+		    							MainScreen.getMe().killMe();
 		    						    new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
 		    						}
 		    						else
@@ -159,10 +159,19 @@ public class TheMap extends GridLayout
 		    					}
 		    				});
 		    			}
+		    			else
+		    			{
+		    			    Fortitude.getFortitude().runOnUiThread(new Runnable() {
+		    			    	public void run()
+		    			    	{
+		    			    		ServerRequests.getTheMessageBox().killMe();
+		    			    	}
+		    			    });
+		    			}
 		    		}
 		    	});
 		    	thread.start();
-				return false;
+				return true;
 			}
 		});
 

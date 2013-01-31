@@ -71,7 +71,6 @@ public class MainScreen extends Window
 		super();
 		me = this;
 		addContentToContentPane(createWindowPane());
-		TheMap.getMe().zoomToMyPosition();
 	}
 
 	////////
