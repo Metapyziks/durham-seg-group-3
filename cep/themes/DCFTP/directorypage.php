@@ -29,22 +29,33 @@
 			<?php the_content( ); ?>
 		<?php endwhile; ?>
 		
+		<?PHP
+			$sql = "SELECT * FROM dcftp_directory ORDER BY name ASC";
+			$data = $wpdb->get_results($sql, ARRAY_A);
+		?>
+
 		<!-- The map, with controls and search function -->
 		
 		<div style="text-align: center;">
 			<form name="searchplace" action="/" method="get">
 				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
-				<input type="text" id="location" name="search" style="height: 22px;" />
-				<input type="submit" value="Search" class="button" />
+				<input type="text" id="location" name="search" style="width: 70%; height: 22px;" />
+				<input type="button" value="Find" onclick="moveToLocation()" class="button" />
 			</form>
 		</div>
 
-		<div id="mapCanvas" style="margin-left: auto; margin-right: auto; margin-top: 16px; width:90%; height:320px; text-shadow: 0px 0px #000000;"></div>
-		
-		<div id="entries">
-			<!-- The search results would display here -->
+		<form id="hidden_locations">
+			<?PHP
+				foreach ($data as $entry) {
+					echo '<input type="hidden" id="loc'.$entry['outletID'].'" value="'.$entry['latitude'].','.$entry['longitude'].','.$entry['name'].'" />';
+				}
+			?>
+		</form>
+
+		<div id="mapCanvas" style="margin-left: auto; margin-right: auto; margin-top: 16px; width:90%; height:320px; text-shadow: 0px 0px #000000;">
 		</div>
-			
+
+		<?PHP display_entries($data); ?> 
 	</div>
 	
 	<div class="main-margin">

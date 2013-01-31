@@ -1,7 +1,7 @@
 -- Search results by location
 * PHP function to calculate dist between two locations (any format: post code, place name, long lat etc)
 * Function to search the database for all locations within a given distance from a certain location
-* Ability to display locations of outlets on a map
+- Ability to display locations of outlets on a map
 
 -- Search results by first letter
 - Ability to seach DB by first letter or substring in name

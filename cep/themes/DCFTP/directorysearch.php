@@ -35,13 +35,6 @@
 
 		<p style="text-align: center;">
 <?PHP
-    function starImages($rating) {
-        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
-        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
-
-        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
-    }
-
 	$sql = "SELECT * FROM dcftp_directory";
 	if ($_GET['search']) {
 		$sql = $sql.' WHERE name LIKE \'%'.$_GET['search'].'%\'';
@@ -90,41 +83,7 @@
 	}
 ?>
 		</p>
-		<div id="entries">
-<?PHP
-	foreach ($data as $entry) {
-?>
-			<div class="entry">
-				<div class="entry-left">
-					<div class="entry-name">
-						<div class="entry-rating">
-							<?PHP echo starImages($entry['stars']); ?>
-						</div>
-						<?PHP echo $entry['name']; ?>
-					</div>
-					<p>
-						<?PHP echo $entry['information']; ?>
-					</p>
-				</div>
-				<div class="entry-right">
-					<p>
-						<?PHP echo $entry['addressline1']; ?><br />
-						<?PHP echo $entry['addressline2']; ?><br />
-						<?PHP echo $entry['city']; ?><br />
-						<?PHP echo $entry['postcode']; ?>
-					</p>
-					<p>
-						<?PHP echo $entry['phone']; ?>
-					</p>
-					<p>
-						<a href="<?PHP echo $entry['url']; ?>">Website</a>
-					</p>
-				</div>
-			</div>
-<?PHP
-	}
-?>
-		</div>
+		<?PHP display_entries($data); ?> 
 			
 	</div>
 	<div class="main-margin">

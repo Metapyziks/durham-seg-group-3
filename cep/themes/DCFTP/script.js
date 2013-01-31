@@ -24,8 +24,10 @@ function updateMarkerStatus(str) {
 }
 
 function updateMarkerPosition(latLng) {
-  document.getElementById('latitude').value = latLng.lat();
-  document.getElementById('longitude').value = latLng.lng();
+  if (document.getElementById('latitude')) {
+    document.getElementById('latitude').value = latLng.lat();
+    document.getElementById('longitude').value = latLng.lng();
+  }
 }
 
 function findAddress() {
@@ -34,8 +36,6 @@ function findAddress() {
     document.getElementById('city').value = address.city;
     document.getElementById('county').value = address.county;
     document.getElementById('postcode').value = address.postcode;
-  } else {
-    document.getElementById('location').value = address.
   }
 }
 
@@ -55,42 +55,105 @@ function updateMarkerAddress(info) {
         address.postcode = comp.long_name;
       }
     };
-    //document.getElementById('address').innerHTML = str;
+    if (document.getElementById('location')) {
+      document.getElementById('location').value = info.formatted_address;
+    }
   }
 }
 
+function addClickListener(markers, marker, id) {
+  google.maps.event.addListener(marker, 'click', function(pos) {
+    for (var i = markers.length - 1; i >= 0; i--) {
+      if (markers[i] == marker) {
+        markers[i].setAnimation(google.maps.Animation.BOUNCE);
+      } else {
+        markers[i].setAnimation(null);
+      }
+    };
+    var entries = document.getElementById('entries').childNodes;
+    for (var i = entries.length - 1; i >= 0; i--) {
+      var entry = entries.item(i);
+      if (!entry.id) continue;
+      if (entry.id.substr(5) == id) {
+        entry.className = 'entry';
+      } else {
+        entry.className = 'entry-hidden';
+      }
+    }
+  });
+}
+
+function moveToLocation() {
+  geocoder.geocode({
+    address: document.getElementById('location').value
+  }, function(responses) {
+    if (responses && responses.length > 0) {
+      _map.setCenter(responses[0].geometry.location);
+    } else {
+      // some error here
+    }
+  });
+}
+
+var _map;
 function initialize() {
   var latLng = new google.maps.LatLng(54.776842,-1.575454);
-  var map = new google.maps.Map(document.getElementById('mapCanvas'), {
+  _map = new google.maps.Map(document.getElementById('mapCanvas'), {
     zoom: 16,
     center: latLng,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
-  var marker = new google.maps.Marker({
-    position: latLng,
-    title: 'New Retailer',
-    map: map,
-    draggable: true
-  });
-  
-  // Update current position info.
-  updateMarkerPosition(latLng);
-  geocodePosition(latLng);
-  
-  // Add dragging event listeners.
-  google.maps.event.addListener(marker, 'dragstart', function() {
-    updateMarkerAddress('Dragging...');
-  });
-  
-  google.maps.event.addListener(marker, 'drag', function() {
-    updateMarkerStatus('Dragging...');
-    updateMarkerPosition(marker.getPosition());
-  });
-  
-  google.maps.event.addListener(marker, 'dragend', function() {
-    updateMarkerStatus('Drag ended');
-    geocodePosition(marker.getPosition());
-  });
+
+  if (document.getElementById('hidden_locations')) {
+    var entries = document.getElementById('entries').childNodes;
+    for (var i = entries.length - 1; i >= 0; i--) {
+      var entry = entries.item(i);
+      if (!entry.id) continue;
+      entry.className = 'entry-hidden';
+    }
+    var locations = document.getElementById('hidden_locations').childNodes;
+    var markers = new Array();
+    for (var i = locations.length - 1; i >= 0; i--) {
+      var item = locations.item(i);
+      if (!item.id) continue;
+      var id = item.id.substr(3);
+      var loc = item.value.split(",");
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(parseFloat(loc[0]), parseFloat(loc[1])),
+        title: loc[2],
+        map: _map,
+        draggable: false
+      });
+      markers.push(marker);
+      addClickListener(markers, marker, id);
+    };
+  } else {
+    var marker = new google.maps.Marker({
+      position: latLng,
+      title: 'New Retailer',
+      map: _map,
+      draggable: true
+    });
+
+    // Update current position info.
+    updateMarkerPosition(latLng);
+    geocodePosition(latLng);
+    
+    // Add dragging event listeners.
+    google.maps.event.addListener(marker, 'dragstart', function() {
+      updateMarkerAddress('Dragging...');
+    });
+    
+    google.maps.event.addListener(marker, 'drag', function() {
+      updateMarkerStatus('Dragging...');
+      updateMarkerPosition(marker.getPosition());
+    });
+    
+    google.maps.event.addListener(marker, 'dragend', function() {
+      updateMarkerStatus('Drag ended');
+      geocodePosition(marker.getPosition());
+    });
+  }
 }
 
 // Onload handler to fire off the app.
