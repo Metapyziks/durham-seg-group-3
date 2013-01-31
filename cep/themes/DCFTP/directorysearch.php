@@ -36,7 +36,9 @@
 		<p style="text-align: center;">
 <?PHP
 	$sql = "SELECT * FROM dcftp_directory";
-	if ($_GET['search']) {
+	if ($_GET['retailer_id']) {
+		$sql = $sql.' WHERE outletID = \''.$_GET['retailer_id'].'\'';
+	} elseif ($_GET['search']) {
 		$sql = $sql.' WHERE name LIKE \'%'.$_GET['search'].'%\'';
 	} elseif ($_GET['letter']) {
 		if($_GET['letter'] == '0-9') {
@@ -52,7 +54,9 @@
 
     $data = $wpdb->get_results($sql, ARRAY_A);
 
-	if ($_GET['search']) {
+    if ($_GET['retailer_id']) {
+    	echo 'Showing single entry | <a href="'.$thisPage.'">All Entries</a>';
+	} elseif ($_GET['search']) {
 		echo 'Showing retailers containing \''.strtolower($_GET['search']).'\' | <a href="'.$thisPage.'">All Entries</a>';
 	} elseif ($_GET['letter']) {
     	echo 'Showing retailers beggining with \''.strtoupper($_GET['letter']).'\' | <a href="'.$thisPage.'">All Entries</a>';

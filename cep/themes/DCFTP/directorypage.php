@@ -37,11 +37,8 @@
 		<!-- The map, with controls and search function -->
 		
 		<div style="text-align: center;">
-			<form name="searchplace" action="/" method="get">
-				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
-				<input type="text" id="location" name="search" style="width: 70%; height: 22px;" />
-				<input type="button" value="Find" onclick="moveToLocation()" class="button" />
-			</form>
+			<input type="text" id="location" name="search" style="height: 22px;" />
+			<input type="button" value="Find" onclick="moveToLocation()" class="button" />
 		</div>
 
 		<form id="hidden_locations">
