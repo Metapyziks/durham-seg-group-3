@@ -12,95 +12,95 @@ public abstract class Window extends GridLayout
 {
 	private int positionalSpaceX = 0; //width of the positional space
 	private int positionalSpaceY = 0; //height of the positional space
-	
+
 	private int windowHeight = 0; //Visible window height
 	private int windowWidth = 0; //Visible window width
-	
+
 	private BackgroundImage backgroundImage;
-	
-    private Spec row1 = GridLayout.spec(0);
-    private Spec row2 = GridLayout.spec(1);
-    
-    private Spec col1 = GridLayout.spec(0);
-    private Spec col2 = GridLayout.spec(1);
-	
+
+	private Spec row1 = GridLayout.spec(0);
+	private Spec row2 = GridLayout.spec(1);
+
+	private Spec col1 = GridLayout.spec(0);
+	private Spec col2 = GridLayout.spec(1);
+
 	////////
 	//
 	//Constructor for full screen window
 	//
 	////////
-    public Window()
-    {
-    	super(Fortitude.getFortitude());
-    	setWindowDimensions();
-    	setColsAndRows();
-    	createPositionalSpace();
-    }
-    
-    ////////
-    //
-    //Constructor for full screen window with set background image
-    //
-    ////////
-    public Window(int imageID)
-    {
-    	super(Fortitude.getFortitude());
-    	setWindowDimensions();
-    	setColsAndRows();
-    	createPositionalSpace();
-        addBackgroundImage(imageID);
-    }
-    
-    ////////
-    //
-    //Constructor where you can set window width and window position
-    //
-    ////////
-    public Window(int windowWidth, int positionalSpaceX, int positionalSpaceY)
-    {
-    	super(Fortitude.getFortitude());
-    	this.windowWidth = windowWidth;
-    	this.windowHeight = 0;
-    	this.positionalSpaceX = positionalSpaceX;
-    	this.positionalSpaceY = positionalSpaceY;
-    	setColsAndRows();
-    	createPositionalSpace();
-    }
-    
-    ////////
-    //
-    //Constructor where you can set window width and position and its background image
-    //
-    ////////
-    public Window(int windowWidth, int positionalSpaceX, int positionalSpaceY, int imageID)
-    {
-    	super(Fortitude.getFortitude());
-    	this.windowWidth = windowWidth;
-    	this.windowHeight = 0;
-    	this.positionalSpaceX = positionalSpaceX;
-    	this.positionalSpaceY = positionalSpaceY;
-    	setColsAndRows();
-    	createPositionalSpace();
-        addBackgroundImage(imageID);
-    }
-    
-    ////////
-    //
-    //addContentToContentPane
-    //
-    //Adds GridLayout to the screen
-    //
-    ////////
-    public void addContentToContentPane(GridLayout viewToAdd)
-    {
-    	if(viewToAdd != null)
-    	{
-            LayoutParams windowLayout = new LayoutParams(row2, col2);
-            addView(viewToAdd, windowLayout);
-    	}
-    	addThisToDisplay();
-    }
-    
+	public Window()
+	{
+		super(Fortitude.getFortitude());
+		setWindowDimensions();
+		setColsAndRows();
+		createPositionalSpace();
+	}
+
+	////////
+	//
+	//Constructor for full screen window with set background image
+	//
+	////////
+	public Window(int imageID)
+	{
+		super(Fortitude.getFortitude());
+		setWindowDimensions();
+		setColsAndRows();
+		createPositionalSpace();
+		addBackgroundImage(imageID);
+	}
+
+	////////
+	//
+	//Constructor where you can set window width and window position
+	//
+	////////
+	public Window(int windowWidth, int positionalSpaceX, int positionalSpaceY)
+	{
+		super(Fortitude.getFortitude());
+		this.windowWidth = windowWidth;
+		this.windowHeight = 0;
+		this.positionalSpaceX = positionalSpaceX;
+		this.positionalSpaceY = positionalSpaceY;
+		setColsAndRows();
+		createPositionalSpace();
+	}
+
+	////////
+	//
+	//Constructor where you can set window width and position and its background image
+	//
+	////////
+	public Window(int windowWidth, int positionalSpaceX, int positionalSpaceY, int imageID)
+	{
+		super(Fortitude.getFortitude());
+		this.windowWidth = windowWidth;
+		this.windowHeight = 0;
+		this.positionalSpaceX = positionalSpaceX;
+		this.positionalSpaceY = positionalSpaceY;
+		setColsAndRows();
+		createPositionalSpace();
+		addBackgroundImage(imageID);
+	}
+
+	////////
+	//
+	//addContentToContentPane
+	//
+	//Adds GridLayout to the screen
+	//
+	////////
+	public void addContentToContentPane(GridLayout viewToAdd)
+	{
+		if(viewToAdd != null)
+		{
+			LayoutParams windowLayout = new LayoutParams(row2, col2);
+			addView(viewToAdd, windowLayout);
+		}
+		addThisToDisplay();
+	}
+
 	////////
 	//
 	//addThisToDisplay
@@ -110,10 +110,10 @@ public abstract class Window extends GridLayout
 	////////
 	private void addThisToDisplay()
 	{
-        LayoutParams windowParams = new LayoutParams();
-        Fortitude.getFortitude().addContentView(this, windowParams);
+		LayoutParams windowParams = new LayoutParams();
+		Fortitude.getFortitude().addContentView(this, windowParams);
 	}
-    
+
 	////////
 	//
 	//createPositionalSpace
@@ -126,14 +126,14 @@ public abstract class Window extends GridLayout
 	////////
 	private void createPositionalSpace()
 	{
-        LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
-        spaceLayout.width = positionalSpaceX;
-        spaceLayout.height = positionalSpaceY;
-        Space space = new Space(Fortitude.getFortitude());
-        space.setLayoutParams(spaceLayout);
-        addView(space, spaceLayout);
+		LayoutParams spaceLayout = new LayoutParams(row1, col1); //Top left to dictate main layout
+		spaceLayout.width = positionalSpaceX;
+		spaceLayout.height = positionalSpaceY;
+		Space space = new Space(Fortitude.getFortitude());
+		space.setLayoutParams(spaceLayout);
+		addView(space, spaceLayout);
 	}
-    
+
 	////////
 	//
 	//setColsAndRows
@@ -144,10 +144,10 @@ public abstract class Window extends GridLayout
 	////////
 	private void setColsAndRows()
 	{
-        setColumnCount(2);
-        setRowCount(2);
+		setColumnCount(2);
+		setRowCount(2);
 	}
-    
+
 	////////
 	//
 	//setWindowDimensions
@@ -157,10 +157,10 @@ public abstract class Window extends GridLayout
 	////////
 	private void setWindowDimensions()
 	{
-	    windowWidth = GUI.calculateWindowWidth();
-	    windowHeight = GUI.calculateWindowHeight();
+		windowWidth = GUI.calculateWindowWidth();
+		windowHeight = GUI.calculateWindowHeight();
 	}
-	
+
 	////////
 	//
 	//addBackgroundImage
@@ -170,19 +170,19 @@ public abstract class Window extends GridLayout
 	////////
 	public void addBackgroundImage(int imageID)
 	{
-        LayoutParams backgroundImageLayout = new LayoutParams(row2, col2);
-        backgroundImageLayout.width = windowWidth;
-        backgroundImageLayout.height = windowHeight;
-        backgroundImage = new BackgroundImage(imageID);
-        backgroundImage.setLayoutParams(backgroundImageLayout);
-        addView(backgroundImage, backgroundImageLayout);
+		LayoutParams backgroundImageLayout = new LayoutParams(row2, col2);
+		backgroundImageLayout.width = windowWidth;
+		backgroundImageLayout.height = windowHeight;
+		backgroundImage = new BackgroundImage(imageID);
+		backgroundImage.setLayoutParams(backgroundImageLayout);
+		addView(backgroundImage, backgroundImageLayout);
 	}
-	
+
 	public BackgroundImage getBackgroundImage()
 	{
 		return backgroundImage;
 	}
-	
+
 	////////
 	//
 	//getWindowWidth
@@ -194,7 +194,7 @@ public abstract class Window extends GridLayout
 	{
 		return windowWidth;
 	}
-	
+
 	////////
 	//
 	//getWindowHeight
@@ -206,7 +206,7 @@ public abstract class Window extends GridLayout
 	{
 		return windowHeight;
 	}
-	
+
 	////////
 	//
 	//getPositionalSpaceX
@@ -218,7 +218,7 @@ public abstract class Window extends GridLayout
 	{
 		return positionalSpaceX;
 	}
-	
+
 	////////
 	//
 	//getPositionalSpaceY
@@ -230,7 +230,7 @@ public abstract class Window extends GridLayout
 	{
 		return positionalSpaceY;
 	}
-	
+
 	////////
 	//
 	//disableAllTheChildren
@@ -243,15 +243,15 @@ public abstract class Window extends GridLayout
 		v.setEnabled(false);
 		if(v instanceof ViewGroup)
 		{
-		    ViewGroup vg = ((ViewGroup) v);
-		    int z = vg.getChildCount();
-		    for(int i = 0; i < z; i++)
-		    {
-			    disableAllTheChildren(vg.getChildAt(i));
-		    }
+			ViewGroup vg = ((ViewGroup) v);
+			int z = vg.getChildCount();
+			for(int i = 0; i < z; i++)
+			{
+				disableAllTheChildren(vg.getChildAt(i));
+			}
 		}
 	}
-	
+
 	////////
 	//
 	//makeAllTheChildrenBetter
@@ -264,12 +264,12 @@ public abstract class Window extends GridLayout
 		v.setEnabled(true);
 		if(v instanceof ViewGroup)
 		{
-		    ViewGroup vg = ((ViewGroup) v);
-		    int z = vg.getChildCount();
-		    for(int i = 0; i < z; i++)
-		    {
-			    makeAllTheChildrenBetter(vg.getChildAt(i));
-		    }
+			ViewGroup vg = ((ViewGroup) v);
+			int z = vg.getChildCount();
+			for(int i = 0; i < z; i++)
+			{
+				makeAllTheChildrenBetter(vg.getChildAt(i));
+			}
 		}
 	}
 }

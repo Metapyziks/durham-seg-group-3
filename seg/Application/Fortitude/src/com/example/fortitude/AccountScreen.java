@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
-public class AccountScreen extends Window 
+public abstract class AccountScreen extends Window 
 {
 	private Spec row1 = GridLayout.spec(0);
 	private Spec row2 = GridLayout.spec(1);
@@ -285,7 +285,7 @@ public class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-    			new MainLoginScreen();
+                showNextScreen();
     		}
     	});
     	signOutButton.setLayoutParams(signOutButtonLayout);
@@ -321,7 +321,7 @@ public class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-    			new MainScreen();
+    			showNextScreen();
     		}
     	});
     	cancelButton.setLayoutParams(cancelButtonLayout);
@@ -332,6 +332,15 @@ public class AccountScreen extends Window
     	
     	return mainArea;
     }
+    
+    ////////
+    //
+    //showNextScreen
+    //
+    //This method is called when the user presses the cancel button.
+    //
+    ////////
+    public abstract void showNextScreen();
     
     ////////
     //

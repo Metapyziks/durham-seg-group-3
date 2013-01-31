@@ -84,7 +84,12 @@ public class MainScreen extends Window
 	public void topBarClicked()
 	{
 		killMe();
-		new AccountScreen();
+		new AccountScreen() {
+			public void showNextScreen()
+			{
+				new MainScreen();
+			}
+		};
 	}
 
 	////////
@@ -455,12 +460,6 @@ public class MainScreen extends Window
             centerMeIcon.setLayoutParams(centerMeIconLayout);
             centerMeIcon.setScaleType(ScaleType.FIT_XY);
             centerMeIcon.setImageResource(R.drawable.center_me);
-            centerMeIcon.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		TheMap.getMe().zoomToMyPositionAtMyZoom();
-            	}
-            });
             centerMeGrid.addView(centerMeIcon, centerMeIconLayout);
             
             LayoutParams centerMeGridLayout = new LayoutParams(row1, col2);
@@ -468,6 +467,32 @@ public class MainScreen extends Window
             
             LayoutParams centerMeIconGridLayout = new LayoutParams(row3, col1);
             mainArea.addView(centerMeIconGrid, centerMeIconGridLayout);
+            
+            GridLayout centerMeClickableAreaGrid = new GridLayout(mainArea.getContext());
+            centerMeClickableAreaGrid.setRowCount(1);
+            centerMeClickableAreaGrid.setColumnCount(3);
+            
+            LayoutParams centerMeClickableAreaSpaceLayout = new LayoutParams(row1, col1);
+            centerMeClickableAreaSpaceLayout.width = (super.getWindowWidth() / 4) + (((super.getWindowWidth() / 4) / 4) * 3);
+            Space centerMeClickableAreaSpace = new Space(centerMeClickableAreaGrid.getContext());
+            centerMeClickableAreaSpace.setLayoutParams(centerMeClickableAreaSpaceLayout);
+            centerMeClickableAreaGrid.addView(centerMeClickableAreaSpace, centerMeClickableAreaSpaceLayout);
+            
+            LayoutParams centerMeClickableAreaLayout = new LayoutParams(row1, col2); //overlay for the center me button to make it more easy
+            centerMeClickableAreaLayout.width = (super.getWindowWidth() / 4);        //to click it
+            centerMeClickableAreaLayout.height = super.getWindowHeight() / 5;
+            ImageView centerMeClickableArea = new ImageView(centerMeClickableAreaGrid.getContext());
+            centerMeClickableArea.setLayoutParams(centerMeClickableAreaLayout);
+            centerMeClickableArea.setOnClickListener(new OnClickListener() {
+            	public void onClick(View v)
+            	{
+            		TheMap.getMe().zoomToMyPositionAtMyZoom();
+            	}
+            });
+            centerMeClickableAreaGrid.addView(centerMeClickableArea, centerMeClickableAreaLayout);
+            
+            LayoutParams centerMeClickableAreaGridLayout = new LayoutParams(row3, col1);
+            mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
 		}
 
 		return mainArea;
