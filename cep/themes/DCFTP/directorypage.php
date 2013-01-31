@@ -16,7 +16,8 @@
 		<!-- The content area; restricted width to leave space for sidebar. -->
 	
 		<div id="page-title">
-			<?php single_post_title(); ?>
+			Testing
+			<!--<?php single_post_title(); ?>-->
 		</div>
 			
 		<!-- Get the page content -->
