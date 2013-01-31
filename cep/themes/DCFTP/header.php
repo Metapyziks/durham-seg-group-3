@@ -25,8 +25,6 @@
 	
 	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 	
-	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/script.js"></script>
-	
 	<!-- Enable threaded comments -->
 	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
 	

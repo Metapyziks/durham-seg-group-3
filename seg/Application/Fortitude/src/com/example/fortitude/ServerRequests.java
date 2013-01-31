@@ -32,6 +32,7 @@ public class ServerRequests
 	private static String staticLon;
 	private static String staticLat;
 	private static String cacheRadius;
+	private static boolean getUserInfoUseUsernames;
 
 	////////
 	//
@@ -58,6 +59,16 @@ public class ServerRequests
 		cacheRadius = x;
 	}
 
+	public static boolean getGetUserInfoUseUsernames()
+	{
+		return getUserInfoUseUsernames;
+	}
+	
+	public static void setGetUserInfoUseUsernames(boolean x)
+	{
+		getUserInfoUseUsernames = x;
+	}
+	
 	public static String getStaticLat()
 	{
 		return staticLat;
@@ -308,7 +319,7 @@ public class ServerRequests
 											public void run()
 											{
 												staticSessionId = staticOutputMessage;
-												ServerRequests.getUserInfo(staticUname); 
+												ServerRequests.getUserInfo(staticUname, true); 
 											}
 										});
 										try
@@ -746,11 +757,12 @@ public class ServerRequests
 	//creates a static arraylist of Users from a given list of users usernames
 	//
 	////////
-	public static void getUserInfo(String users)
+	public static void getUserInfo(String users, boolean useUsernames)
 	{
 		getUserInfoComplete = false;
 		getUserInfoSuccess = false;
-
+		getUserInfoUseUsernames = useUsernames;
+		
 		usersToGet = users;
 		staticUserInfo = new ArrayList<User>();
 
@@ -819,7 +831,14 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
+				if(ServerRequests.getGetUserInfoUseUsernames())
+				{
+				    rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
+				}
+				else
+				{
+					rt.setURL("http://" + ServerIP + "/api/userinfo?uids=" + ServerRequests.getUsersToGet());
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;

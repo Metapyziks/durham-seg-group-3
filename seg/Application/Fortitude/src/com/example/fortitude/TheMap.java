@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap;
 import android.view.ViewGroup;
@@ -41,7 +42,30 @@ public class TheMap extends GridLayout
 	private static TextView gettingLocationTextView;
 
 	private static ArrayList<Marker> markers = new ArrayList<Marker>();
+	
+	private static Marker markerToBePassed;
+	private static int markerPositionToBePassed;
 
+	public static int getMarkerPositionToBePassed()
+	{
+		return markerPositionToBePassed;
+	}
+	
+	public static void setMarkerPositionToBePassed(int x)
+	{
+		markerPositionToBePassed = x;
+	}
+	
+	public static Marker getMarkerToBePassed()
+	{
+		return markerToBePassed;
+	}
+	
+	public static void setMarkerToBePassed(Marker x)
+	{
+		markerToBePassed = x;
+	}
+	
 	////////
 	//
 	//private constructor
@@ -75,6 +99,81 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setZoomControlsEnabled(false); //disable default zoom controls
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
+		
+		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			public boolean onMarkerClick(Marker marker)
+			{
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+				int x = 0;
+				boolean found = false;
+				for(Marker m : TheMap.getMe().getMarkers())
+				{
+					if((marker.getPosition().longitude == m.getPosition().longitude) && (marker.getPosition().latitude == m.getPosition().latitude))
+					{
+						found = true;
+					    break;
+					}
+					else
+					{
+						x++;
+					}
+				}
+				if(!found)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ServerRequests.getTheMessageBox().killMe();
+							MessageBox.newMsgBox("Error Loading Cache Data", true);
+						}
+					});
+					return true;
+				}
+		    	
+				setMarkerToBePassed(marker);
+				setMarkerPositionToBePassed(x);
+				
+		    	ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(x).getOwnerId(), false); 
+		    	Thread thread = new Thread(new Runnable() {
+		    		public void run()
+		    		{
+		    			while(!(ServerRequests.getGetUserInfoComplete()))
+		    			{
+		    				
+		    			}
+		    			if(ServerRequests.getGetUserInfoSuccess())
+		    			{
+		    				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+		    					public void run()
+		    					{
+		    						ServerRequests.getTheMessageBox().killMe();
+		    						if(!ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
+		    						{
+		    							MainScreen.getMe().killMe();
+		    						    new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
+		    						}
+		    						else
+		    						{
+		    							
+		    						}
+		    					}
+		    				});
+		    			}
+		    			else
+		    			{
+		    			    Fortitude.getFortitude().runOnUiThread(new Runnable() {
+		    			    	public void run()
+		    			    	{
+		    			    		ServerRequests.getTheMessageBox().killMe();
+		    			    	}
+		    			    });
+		    			}
+		    		}
+		    	});
+		    	thread.start();
+				return true;
+			}
+		});
 
 		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
 			public void run()                       //location asap
@@ -85,7 +184,7 @@ public class TheMap extends GridLayout
 						public void run()
 						{
 							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
-							if(xx != null)
+							if((xx != null) && (MessageBox.getMe() == null))
 							{
 								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
