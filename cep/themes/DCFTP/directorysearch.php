@@ -24,12 +24,12 @@
 			<?php endwhile; ?>
 
 		<div style="text-align: center;">
-			<form name="searchname" action="/?page_id=7" method="get">
+			<form name="searchname" action="/" method="get">
 				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
-				<input type="text" name="search" />
-				<input type="submit" value="Search" />
+				<input type="text" name="search" style="height: 22px;" />
+				<input type="submit" value="Search" class="button" />
 			</form>
-		</div>	
+		</div>
 		
 		<!-- This should be dynamically generated, so that letters not used don't display -->
 
@@ -55,6 +55,7 @@
 			$sql = $sql.' WHERE name LIKE \''.$_GET['letter'].'%\'';
 		}
 	}
+	$sql = $sql.' ORDER BY name ASC';
 
     $data = $wpdb->get_results($sql, ARRAY_A);
 

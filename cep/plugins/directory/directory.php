@@ -62,7 +62,7 @@ function directory_manager_add_item() {
     global $wpdb;
 
     wp_register_script('google-maps-api', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBsQ0syxq6tKXsyCAoef02pSbrr2PcP0Tw&sensor=false');
-    wp_register_script('add-retailer', '/wp-content/plugins/directory/addretailer.js');
+    wp_register_script('add-retailer', '/wp-content/themes/DCFTP/script.js');
     wp_enqueue_script('google-maps-api');
     wp_enqueue_script('add-retailer');
 
