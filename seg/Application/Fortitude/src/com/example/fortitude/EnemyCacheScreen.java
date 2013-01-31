@@ -15,7 +15,7 @@ import android.graphics.Typeface;
 
 public class EnemyCacheScreen extends Window
 {
-	private EnemyCacheScreen me;
+	private static EnemyCacheScreen me;
 	
 	private static Cache staticTheCache;
 	private static User staticTheUser;
@@ -25,6 +25,12 @@ public class EnemyCacheScreen extends Window
 	private Spec row3 = GridLayout.spec(2);
 	private Spec row4 = GridLayout.spec(3);
 	private Spec row5 = GridLayout.spec(4);
+	private Spec row6 = GridLayout.spec(5);
+	private Spec row7 = GridLayout.spec(6);
+	private Spec row8 = GridLayout.spec(7);
+	private Spec row9 = GridLayout.spec(8);
+	private Spec row10 = GridLayout.spec(9);
+	private Spec row11 = GridLayout.spec(10);
 	
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
@@ -68,7 +74,7 @@ public class EnemyCacheScreen extends Window
 	{
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setColumnCount(1);
-		mainArea.setRowCount(5);
+		mainArea.setRowCount(11);
 		
 		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
 		topBarImageLayout.width = super.getWindowWidth();
@@ -182,7 +188,168 @@ public class EnemyCacheScreen extends Window
     	
     	LayoutParams avatarUsernameGridLayout = new LayoutParams(row4, col1);
     	mainArea.addView(avatarUsernameGrid, avatarUsernameGridLayout);
+    	
+    	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1); //fith row space
+    	fithRowSpaceLayout.height = super.getWindowHeight() / 30;
+    	Space fithRowSpace = new Space(mainArea.getContext());
+    	fithRowSpace.setLayoutParams(fithRowSpaceLayout);
+    	mainArea.addView(fithRowSpace, fithRowSpaceLayout);
+    	
+    	GridLayout sixthRowGrid = new GridLayout(mainArea.getContext());
+    	sixthRowGrid.setRowCount(1);
+    	sixthRowGrid.setColumnCount(5);
+    	
+    	LayoutParams sixthLeftSpacerLayout = new LayoutParams(row1, col1); //sixth row left spacer
+    	sixthLeftSpacerLayout.width = (super.getWindowWidth() / 10) - (super.getWindowWidth() / 40);
+    	Space sixthLeftSpacer = new Space(sixthRowGrid.getContext());
+    	sixthLeftSpacer.setLayoutParams(sixthLeftSpacerLayout);
+    	sixthRowGrid.addView(sixthLeftSpacer, sixthLeftSpacerLayout);
+    	
+    	LayoutParams seeProfileButtonLayout = new LayoutParams(row1, col2); //seeProfileButton
+    	seeProfileButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	seeProfileButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton seeProfileButton = (new FortitudeButton(R.drawable.see_profile, R.drawable.see_profile_pressed) {
+    		public void preClickActions()
+    		{
+    			
+    		}
+    		public void whenClicked()
+    		{
+    			
+    		}
+    	});
+    	seeProfileButton.setLayoutParams(seeProfileButtonLayout);
+    	sixthRowGrid.addView(seeProfileButton, seeProfileButtonLayout);
+    	
+    	LayoutParams sixthRowMiddleSpacerLayout = new LayoutParams(row1, col3); //sixth row middle spacer
+    	sixthRowMiddleSpacerLayout.width = super.getWindowWidth() / 15;
+    	Space sixthRowMiddleSpacer = new Space(sixthRowGrid.getContext());
+    	sixthRowMiddleSpacer.setLayoutParams(sixthRowMiddleSpacerLayout);
+    	sixthRowGrid.addView(sixthRowMiddleSpacer, sixthRowMiddleSpacerLayout);
+    	
+    	LayoutParams sendMessageButtonLayout = new LayoutParams(row1, col4); //send message button
+    	sendMessageButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	seeProfileButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton sendMessageButton = (new FortitudeButton(R.drawable.send_message, R.drawable.send_message_pressed) {
+    		public void preClickActions()
+    		{
+    			
+    		}
+    		public void whenClicked()
+    		{
+    			
+    		}
+    	});
+    	sendMessageButton.setLayoutParams(sendMessageButtonLayout);
+    	sixthRowGrid.addView(sendMessageButton, sendMessageButtonLayout);
+    	
+    	LayoutParams sixthRowGridLayout = new LayoutParams(row6, col1);
+    	mainArea.addView(sixthRowGrid, sixthRowGridLayout);
+    	
+    	LayoutParams seventhRowTextViewLayout = new LayoutParams(row7, col1);
+    	seventhRowTextViewLayout.width = super.getWindowWidth();
+    	seventhRowTextViewLayout.height = super.getWindowHeight() / 20;
+    	TextView seventhRowTextView = new TextView(mainArea.getContext());
+    	seventhRowTextView.setGravity(Gravity.CENTER);
+    	seventhRowTextView.setTextSize(12);
+    	seventhRowTextView.setTextColor(Color.WHITE);
+    	seventhRowTextView.setText("Stuff about distances between caches here :)");
+    	seventhRowTextView.setLayoutParams(seventhRowTextViewLayout);
+    	mainArea.addView(seventhRowTextView, seventhRowTextViewLayout);
+    	
+    	LayoutParams eighthRowSpaceLayout = new LayoutParams(row8, col1);
+    	eighthRowSpaceLayout.height = super.getWindowHeight() / 40;
+    	Space eighthRowSpace = new Space(mainArea.getContext());
+    	eighthRowSpace.setLayoutParams(eighthRowSpaceLayout);
+    	mainArea.addView(eighthRowSpace, eighthRowSpaceLayout);
+    	
+    	GridLayout ninthRowGrid = new GridLayout(mainArea.getContext());
+    	ninthRowGrid.setColumnCount(4);
+    	ninthRowGrid.setRowCount(1);
+    	
+    	LayoutParams ninthLeftSpacerLayout = new LayoutParams(row1, col1); //ninth row left spacer
+    	ninthLeftSpacerLayout.width = (super.getWindowWidth() / 10) - (super.getWindowWidth() / 40);
+    	Space ninthLeftSpacer = new Space(ninthRowGrid.getContext());
+    	ninthLeftSpacer.setLayoutParams(ninthLeftSpacerLayout);
+    	ninthRowGrid.addView(ninthLeftSpacer, ninthLeftSpacerLayout);
+    	
+    	LayoutParams planRouteButtonLayout = new LayoutParams(row1, col2); //plan route button
+    	planRouteButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	planRouteButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton planRouteButton = (new FortitudeButton(R.drawable.plan_route, R.drawable.plan_route_pressed) {
+    		public void preClickActions()
+    		{
+    			
+    		}
+    		public void whenClicked()
+    		{
+    			
+    		}
+    	});
+    	planRouteButton.setLayoutParams(planRouteButtonLayout);
+    	ninthRowGrid.addView(planRouteButton, planRouteButtonLayout);
+    	
+    	LayoutParams ninthRowMiddleSpaceLayout = new LayoutParams(row1, col3); //ninth row middle space
+    	ninthRowMiddleSpaceLayout.width = super.getWindowWidth() / 15;
+    	Space ninthRowMiddleSpace = new Space(ninthRowGrid.getContext());
+    	ninthRowMiddleSpace.setLayoutParams(ninthRowMiddleSpaceLayout);
+    	ninthRowGrid.addView(ninthRowMiddleSpace, ninthRowMiddleSpaceLayout);
+    	
+    	LayoutParams cancelButtonLayout = new LayoutParams(row1, col4); //cancel button
+    	cancelButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	cancelButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
+    		public void preClickActions()
+    		{
     		
+    		}
+    		public void whenClicked()
+    		{
+    			EnemyCacheScreen.getMe().killMe();
+    			new MainScreen();
+    		}
+    	});
+    	cancelButton.setLayoutParams(cancelButtonLayout);
+    	ninthRowGrid.addView(cancelButton, cancelButtonLayout);
+    	
+    	LayoutParams ninthRowGridLayout = new LayoutParams(row9, col1);
+    	mainArea.addView(ninthRowGrid, ninthRowGridLayout);
+    	
+    	LayoutParams tenthRowSpaceLayout = new LayoutParams(row10, col1);
+    	tenthRowSpaceLayout.height = super.getWindowWidth() / 20;
+    	Space tenthRowSpace = new Space(mainArea.getContext());
+    	tenthRowSpace.setLayoutParams(tenthRowSpaceLayout);
+    	mainArea.addView(tenthRowSpace, tenthRowSpaceLayout);
+    	
+    	GridLayout reportCacheGrid = new GridLayout(mainArea.getContext());
+    	reportCacheGrid.setColumnCount(3);
+    	reportCacheGrid.setRowCount(1);
+    	
+    	LayoutParams reportCacheGridLeftSpaceLayout = new LayoutParams(row1, col1);
+    	reportCacheGridLeftSpaceLayout.width = super.getWindowWidth() / 4;
+    	Space reportCacheGridLeftSpace = new Space(reportCacheGrid.getContext());
+    	reportCacheGridLeftSpace.setLayoutParams(reportCacheGridLeftSpaceLayout);
+    	reportCacheGrid.addView(reportCacheGridLeftSpace, reportCacheGridLeftSpaceLayout);
+    	
+    	LayoutParams reportCacheButtonLayout = new LayoutParams(row1, col2);
+    	reportCacheButtonLayout.width = super.getWindowWidth() / 2;
+    	reportCacheButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton reportCacheButton = (new FortitudeButton(R.drawable.report_cache, R.drawable.report_cache_pressed) {
+    		public void preClickActions()
+    		{
+    			
+    		}
+    		public void whenClicked()
+    		{
+    			
+    		}
+    	});
+    	reportCacheButton.setLayoutParams(reportCacheButtonLayout);
+    	reportCacheGrid.addView(reportCacheButton, reportCacheButtonLayout);
+    	
+    	LayoutParams reportCacheGridLayout = new LayoutParams(row11, col1);
+    	mainArea.addView(reportCacheGrid, reportCacheGridLayout);
+    	
 		return mainArea;
 	}
 	
@@ -211,7 +378,7 @@ public class EnemyCacheScreen extends Window
 	//returns the last created instance of this class, could be null
 	//
 	////////
-	public EnemyCacheScreen getMe()
+	public static EnemyCacheScreen getMe()
 	{
 		return me;
 	}
