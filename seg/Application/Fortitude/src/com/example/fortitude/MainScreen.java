@@ -16,6 +16,7 @@ import android.widget.ImageView;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.model.Marker;
 
 public class MainScreen extends Window
 {
@@ -48,6 +49,8 @@ public class MainScreen extends Window
 	private ImageView flagIcon;
     private ImageView castleIcon;
     private ImageView refreshIcon;
+    
+    private static boolean castleClickable = false;
 
 	////////
 	//
@@ -367,7 +370,7 @@ public class MainScreen extends Window
             castleIconLayout.width = (super.getWindowWidth() / 4);
             castleIcon = new ImageView(bottomBarCastleIconGrid.getContext());
             castleIcon.setScaleType(ScaleType.FIT_XY);
-            castleIcon.setImageResource(R.drawable.castle);
+            castleIcon.setImageResource(R.drawable.castle_grey);
             castleIcon.setLayoutParams(castleIconLayout);
             bottomBarCastleIconGrid.addView(castleIcon, castleIconLayout);
             
@@ -392,7 +395,66 @@ public class MainScreen extends Window
             clickableCastleArea.setOnClickListener(new OnClickListener() {
             	public void onClick(View v)
             	{
-            	    MessageBox.newMsgBox("Castle Was Clicked", true);
+            		if(castleClickable)
+            		{
+            	        MessageBox.newMsgBox("Loading Cache Details", true);
+            	        try
+            	        {
+            	        	if(TheMap.getMe().getGoogleMap() == null)
+            	        	{
+            	        		throw new Exception();
+            	        	}
+            	        	if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
+            	        	{
+            	        		throw new Exception();
+            	        	}
+            	        	double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
+            	        	double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
+            	        	double closestSoFar = 100;
+            	        	int xx = 0;
+            	        	int yy = 0;
+            	        	for(Marker m : TheMap.getMe().getMarkers())
+            	        	{
+            	        		double latlat = m.getPosition().latitude;
+            	        		double lonlon = m.getPosition().longitude;
+            	        		if(myLat > latlat)
+            	        		{
+            	        			latlat = myLat - latlat;
+            	        		}
+            	        		else
+            	        		{
+            	        			latlat = latlat - myLat;
+            	        		}
+            	        		
+            	        		if(myLon > lonlon)
+            	        		{
+            	        			lonlon = myLon - lonlon;
+            	        		}
+            	        		else
+            	        		{
+            	        			lonlon = lonlon - myLon;
+            	        		}
+            	        		
+            	        		if((latlat + lonlon) < closestSoFar)
+            	        		{
+            	        			closestSoFar = (latlat + lonlon);
+            	        			yy = xx;
+            	        		}
+            	        		xx++;
+            	        	}
+            	        	if(closestSoFar == 100)
+            	        	{
+            	        		throw new Exception();
+            	        	}
+            	        	MainScreen.getMe().killMe();
+            	        	new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
+            	        }
+            	        catch(Exception e)
+            	        {
+            	        	MessageBox.getMe().killMe();
+            	        	MessageBox.newMsgBox("Sorry, we can't work out what cache you are at!", true);
+            	        }
+            		}
             	}
             });
             clickableCastleAreaGrid.addView(clickableCastleArea, clickableCastleAreaLayout);
@@ -478,7 +540,7 @@ public class MainScreen extends Window
             centerMeClickableAreaGrid.addView(centerMeClickableAreaSpace, centerMeClickableAreaSpaceLayout);
             
             LayoutParams centerMeClickableAreaLayout = new LayoutParams(row1, col2); //overlay for the center me button to make it more easy
-            centerMeClickableAreaLayout.width = (super.getWindowWidth() / 4);        //to click it
+            centerMeClickableAreaLayout.width = (super.getWindowWidth() / 4) / 2;    //to click it
             centerMeClickableAreaLayout.height = super.getWindowHeight() / 5;
             ImageView centerMeClickableArea = new ImageView(centerMeClickableAreaGrid.getContext());
             centerMeClickableArea.setLayoutParams(centerMeClickableAreaLayout);
@@ -492,8 +554,10 @@ public class MainScreen extends Window
             
             LayoutParams centerMeClickableAreaGridLayout = new LayoutParams(row3, col1);
             mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
+            
+    		IconUpdater.newIconUpdater();
 		}
-
+		
 		return mainArea;
 	}
 
@@ -507,6 +571,7 @@ public class MainScreen extends Window
 	public void killMe()
 	{
 		me = null;
+		IconUpdater.setShouldIRun(false);
 		TheMap.getMe().removeMeFromMyParent();
 		this.removeAllViews();
 	}
@@ -546,5 +611,15 @@ public class MainScreen extends Window
     public ImageView getRefreshIcon()
     {
     	return refreshIcon;
+    }
+    
+    public static synchronized boolean getCastleClickable()
+    {
+    	return castleClickable;
+    }
+    
+    public static synchronized void setCastleClickable(boolean x)
+    {
+    	castleClickable = x;
     }
 }

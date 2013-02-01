@@ -367,7 +367,7 @@ public class ServerRequests
 																			//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
 																		}
 																	});
-																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, staticUserBalance, "2130837506", ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
+																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
@@ -824,7 +824,7 @@ public class ServerRequests
 							String uname = response.get("users").get(i).get("uname").asString();
 							String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
 							String rank = response.get("users").get(i).get("rank").asString();
-							User u = new User(accountid, uname, joindate, rank, "2130837506");
+							User u = new User(accountid, uname, joindate, rank);
 							ServerRequests.getStaticUserInfo().add(u);
 						}
 						this.setSuccess("2");

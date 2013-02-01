@@ -35,6 +35,8 @@ public abstract class AccountScreen extends Window
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
 	
+	private Spec allcols = GridLayout.spec(0,2);
+	
 	private AccountScreen me;
 	
 	////////
@@ -62,44 +64,16 @@ public abstract class AccountScreen extends Window
     	positionalSpace.setLayoutParams(positionalSpaceLayout);
     	mainArea.addView(positionalSpace, positionalSpaceLayout);
     	
-    	GridLayout avatarUsernameGrid = new GridLayout(mainArea.getContext());
-    	avatarUsernameGrid.setRowCount(1);
-    	avatarUsernameGrid.setColumnCount(4);
-    	
-    	LayoutParams secondRowLeftSpaceLayout = new LayoutParams(row1, col1); 
-    	secondRowLeftSpaceLayout.width = super.getWindowWidth() / 40;
-    	Space secondRowLeftSpace = new Space(avatarUsernameGrid.getContext());
-    	secondRowLeftSpace.setLayoutParams(secondRowLeftSpaceLayout);
-    	avatarUsernameGrid.addView(secondRowLeftSpace, secondRowLeftSpaceLayout);
-    	
-    	LayoutParams avatarImageLayout = new LayoutParams(row1, col2); //avatar image
-    	avatarImageLayout.width = super.getWindowWidth() / 4;
-    	avatarImageLayout.height = super.getWindowWidth() / 4;
-    	ImageView avatarImage = new ImageView(avatarUsernameGrid.getContext());
-    	avatarImage.setScaleType(ScaleType.FIT_XY);
-    	avatarImage.setLayoutParams(avatarImageLayout);
-    	avatarImage.setImageResource(CurrentUser.getMe().getIntAvatarId());
-    	avatarUsernameGrid.addView(avatarImage, avatarImageLayout);
-    	
-    	LayoutParams avatarImageMiddleSpaceLayout = new LayoutParams(row1, col3); //avatar username spacer
-    	avatarImageMiddleSpaceLayout.width = super.getWindowWidth() / 20;
-    	Space avatarImageMiddleSpace = new Space(avatarUsernameGrid.getContext());
-    	avatarImageMiddleSpace.setLayoutParams(avatarImageMiddleSpaceLayout);
-    	avatarUsernameGrid.addView(avatarImageMiddleSpace, avatarImageMiddleSpaceLayout);
-    	
-    	LayoutParams usernameTextViewLayout = new LayoutParams(row1, col4); //USERNAME TEXTVIEW
-    	usernameTextViewLayout.width = (super.getWindowWidth() - (super.getWindowWidth() / 40) - (super.getWindowWidth() / 4) - (super.getWindowWidth() / 20) - (super.getWindowWidth() / 10) - ((super.getWindowWidth() / 10) - (super.getWindowWidth() / 40))) + (super.getWindowWidth() / 40);
+    	LayoutParams usernameTextViewLayout = new LayoutParams(row2, allcols); //USERNAME TEXTVIEW
+    	usernameTextViewLayout.width = super.getWindowWidth();
     	usernameTextViewLayout.height = super.getWindowWidth() / 4;
-    	TextView usernameTextView = new TextView(avatarUsernameGrid.getContext());
+    	TextView usernameTextView = new TextView(mainArea.getContext());
     	usernameTextView.setTextSize(26);
     	usernameTextView.setTextColor(Color.rgb(218, 218, 218));
     	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
     	usernameTextView.setText(CurrentUser.getMe().getUserName());
-    	avatarUsernameGrid.addView(usernameTextView, usernameTextViewLayout);
-    	
-    	LayoutParams avatarUsernameGridLayout = new LayoutParams(row2, col2);
-    	mainArea.addView(avatarUsernameGrid, avatarUsernameGridLayout);
+    	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
     	LayoutParams thirdRowSpacerLayout = new LayoutParams(row3, col1); //third row spacer
     	thirdRowSpacerLayout.height = (super.getWindowHeight() / 20) + (super.getWindowHeight() / 120);
@@ -285,7 +259,7 @@ public abstract class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-                showNextScreen();
+    			new MainLoginScreen();
     		}
     	});
     	signOutButton.setLayoutParams(signOutButtonLayout);

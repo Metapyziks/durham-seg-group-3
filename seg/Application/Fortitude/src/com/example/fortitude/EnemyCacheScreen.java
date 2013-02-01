@@ -150,44 +150,16 @@ public class EnemyCacheScreen extends Window
     	LayoutParams cacheNameGridLayout = new LayoutParams(row3, col1);
     	mainArea.addView(cacheNameGrid, cacheNameGridLayout);
     	
-    	GridLayout avatarUsernameGrid = new GridLayout(mainArea.getContext());
-    	avatarUsernameGrid.setRowCount(1);
-    	avatarUsernameGrid.setColumnCount(4);
-    	
-    	LayoutParams fourthRowLeftSpacerLayout = new LayoutParams(row1, col1);
-    	fourthRowLeftSpacerLayout.width = (super.getWindowWidth() / 9);
-    	Space fourthRowLeftSpacer = new Space(avatarUsernameGrid.getContext());
-    	fourthRowLeftSpacer.setLayoutParams(fourthRowLeftSpacerLayout);
-    	avatarUsernameGrid.addView(fourthRowLeftSpacer, fourthRowLeftSpacerLayout);
-    	
-    	LayoutParams avatarImageLayout = new LayoutParams(row1, col2); //avatar image
-    	avatarImageLayout.width = super.getWindowWidth() / 4;
-    	avatarImageLayout.height = super.getWindowWidth() / 4;
-    	ImageView avatarImage = new ImageView(avatarUsernameGrid.getContext());
-    	avatarImage.setScaleType(ScaleType.FIT_XY);
-    	avatarImage.setLayoutParams(avatarImageLayout);
-    	avatarImage.setImageResource(EnemyCacheScreen.getTheUser().getIntAvatarId());
-    	avatarUsernameGrid.addView(avatarImage, avatarImageLayout);
-    	
-    	LayoutParams avatarImageMiddleSpaceLayout = new LayoutParams(row1, col3); //avatar username spacer
-    	avatarImageMiddleSpaceLayout.width = super.getWindowWidth() / 22;
-    	Space avatarImageMiddleSpace = new Space(avatarUsernameGrid.getContext());
-    	avatarImageMiddleSpace.setLayoutParams(avatarImageMiddleSpaceLayout);
-    	avatarUsernameGrid.addView(avatarImageMiddleSpace, avatarImageMiddleSpaceLayout);
-    	
-    	LayoutParams usernameTextViewLayout = new LayoutParams(row1, col4); //USERNAME TEXTVIEW
-    	usernameTextViewLayout.width = (super.getWindowWidth() / 2);
+    	LayoutParams usernameTextViewLayout = new LayoutParams(row4, col1); //USERNAME TEXTVIEW
+    	usernameTextViewLayout.width = (super.getWindowWidth());
     	usernameTextViewLayout.height = super.getWindowWidth() / 4;
-    	TextView usernameTextView = new TextView(avatarUsernameGrid.getContext());
+    	TextView usernameTextView = new TextView(mainArea.getContext());
     	usernameTextView.setTextSize(24);
     	usernameTextView.setTextColor(Color.rgb(160, 160, 160));
-    	usernameTextView.setGravity(Gravity.CENTER_VERTICAL);
+    	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
     	usernameTextView.setText(EnemyCacheScreen.getTheUser().getUserName());
-    	avatarUsernameGrid.addView(usernameTextView, usernameTextViewLayout);
-    	
-    	LayoutParams avatarUsernameGridLayout = new LayoutParams(row4, col1);
-    	mainArea.addView(avatarUsernameGrid, avatarUsernameGridLayout);
+    	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
     	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1); //fith row space
     	fithRowSpaceLayout.height = super.getWindowHeight() / 30;

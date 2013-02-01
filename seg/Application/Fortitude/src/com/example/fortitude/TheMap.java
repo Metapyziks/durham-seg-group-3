@@ -154,7 +154,8 @@ public class TheMap extends GridLayout
 		    						}
 		    						else
 		    						{
-		    							
+		    							MainScreen.getMe().killMe();
+		    							new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
 		    						}
 		    					}
 		    				});
