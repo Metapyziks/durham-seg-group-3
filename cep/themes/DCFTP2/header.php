@@ -1,4 +1,50 @@
 <!DOCTYPE html>
+
+<?php
+    function star_images($rating) {
+        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
+        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
+
+        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
+    }
+
+	function display_entries($data)
+	{
+		echo '<div id="entries">';
+		foreach ($data as $entry) {
+			echo '<a name="entry'.$entry['outletID'].'"></a>';
+			echo '<div class="entry" id="entry'.$entry['outletID'].'">';
+			echo '<div class="entry-left">';
+			echo '<div class="entry-name">';
+			echo '<div class="entry-rating">';
+			echo star_images($entry['stars']);
+			echo '</div>';
+			echo $entry['name'];
+			echo '</div>';
+			echo '<p>';
+			echo $entry['information'];
+			echo '</p>';
+			echo '</div>';
+			echo '<div class="entry-right">';
+			echo '<p>';
+			echo $entry['addressline1'].'<br />';
+			echo $entry['addressline2'].'<br />';
+			echo $entry['city'].'<br />';
+			echo $entry['postcode'];
+			echo '</p>';
+			echo '<p>';
+			echo $entry['phone'];
+			echo '</p>';
+			echo '<p>';
+			echo '<a href="'.$entry['url'].'">Website</a>';
+			echo '</p>';
+			echo '</div>';
+			echo '</div>';
+		}
+		echo '</div>';
+	}
+?>
+
 <html>
 <head>
 	<title><?php
@@ -24,8 +70,6 @@
 	?></title>
 	
 	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
-	
-	<script type="text/javascript" src="<?php bloginfo('stylesheet_directory'); ?>/script.js"></script>
 	
 	<!-- Get the favicon -->
 	<link rel="shortcut icon" type="image/x-icon" href="<?php bloginfo('stylesheet_directory'); ?>/favicon.ico">

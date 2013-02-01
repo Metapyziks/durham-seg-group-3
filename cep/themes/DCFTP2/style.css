@@ -660,6 +660,10 @@ Version: 1.0
 		overflow: auto; /* used to clear the floats */
 	}
 	
+	.entry-hidden {
+		display: none;
+	}
+	
 	.entry-left {
 		width: 73%;
 		float: left;
