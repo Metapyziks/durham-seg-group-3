@@ -22,6 +22,9 @@ function directory_manager_menu() {
     add_submenu_page(null, 'Directory Manager - Edit Retailer',
         'Edit Retailer', 'publish_pages', 'directory-manager-edit',
         'directory_manager_edit_item');
+    add_submenu_page(null, 'Directory Manager - Delete Retailer',
+        'Delete Retailer', 'publish_pages', 'directory-manager-delete',
+        'directory_manager_delete_item');
 }
 
 function directory_admin_header() {
@@ -218,6 +221,41 @@ function directory_manager_edit_item() {
 
     directory_manager_construct_form($entry, 'Update Retailer');
 
+    echo '</div>';
+}
+
+function directory_manager_delete_item() {
+    global $wpdb;
+
+    if (!current_user_can('publish_pages')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    $sql = "SELECT * FROM dcftp_directory WHERE outletID = '".$_GET['retailer_id']."'";
+    $data = $wpdb->get_results($sql, ARRAY_A);
+    if (count($data) == 0) {
+        wp_die(__( 'Can\'t delete directory entry, entry does not exist!' ));
+    }
+
+    $data = $data[0];
+
+    echo '<div class="wrap">';
+    echo '<h2>Delete Retailer</h2>';
+
+    if ($_POST['submitted']) {
+        $sql = "DELETE FROM dcftp_directory WHERE outletID = '".$_GET['retailer_id']."'";
+        $wpdb->query($sql);
+        
+        echo '<p>Deleted '.$data['name'].' from the directory!</p>';
+        echo '<a href="admin.php?page=directory-manager">Back to manager</a>';
+    } else {
+        echo '<p><b>Are you sure you want to permanently delete '.$data['name'].' from the directory?</b></p>';
+        echo '<form name="deleteretailer" action="admin.php?page='.$_GET['page'].'&retailer_id='.$_GET['retailer_id'].'" method="post">';
+        echo '<input type="hidden" value="1" name="submitted" />';
+        echo '<input type="submit" value="Delete" />';
+        echo '<input type="button" value="Cancel" onclick="window.location.href=\'admin.php?page=directory-manager\';" />';
+        echo '</form>';
+    }
     echo '</div>';
 }
 ?>

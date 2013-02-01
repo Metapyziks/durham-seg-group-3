@@ -33,7 +33,7 @@ class WP_Directory_List_Table extends WP_List_Table
         return
             '<a href="/?page_id=7&retailer_id='.$item['outletID'].'"><img title="View" src="/wp-content/plugins/directory/images/magnifier.png" /></a>&nbsp;'.
             '<a href="admin.php?page=directory-manager-edit&retailer_id='.$item['outletID'].'"><img title="Edit" src="/wp-content/plugins/directory/images/pencil.png" /></a>&nbsp;'.
-            '<img title="Delete" src="/wp-content/plugins/directory/images/delete.png" />';
+            '<a href="admin.php?page=directory-manager-delete&retailer_id='.$item['outletID'].'"><img title="Delete" src="/wp-content/plugins/directory/images/delete.png" /></a>';
     }
 
     function column_default($item, $column_name) {
