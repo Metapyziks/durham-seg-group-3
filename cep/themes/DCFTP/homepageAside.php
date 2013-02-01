@@ -18,7 +18,7 @@
 					
 		<div id="key-links">
 			<?php
-					$keylinks = new WP_Query('pagename=home/keylinks');
+					$keylinks = new WP_Query('pagename=home/key-links');
 					while($keylinks->have_posts()) : $keylinks->the_post();
 						the_content();
 					endwhile;

@@ -12,54 +12,32 @@
 ?>
 
 <div id="comments">
-	
+
 	<?php if ( have_comments() ) : ?>
-		
+
 		<ol class="commentlist">
-			<?php foreach ($comments as $comment) : ?>
-				
-				<li>
-					
-					<div class="commenttext">
-						<cite>
-							<?php comment_author_link() ?>
-						</cite>
-						
-						<?php comment_text() ?>
-						<div style="float: right;">
-							<?php edit_comment_link('Edit','&nbsp;&nbsp;',''); ?>
-						</div>
-						<span class="date">
-							<a href="#comment-<?php comment_ID() ?>" title=""><?php comment_time() ?> on <?php comment_date('n/j/y') ?></a>
-						</span>
-						
-						
-					</div>
-					
-					<?php if ($comment->comment_approved == '0') : ?>
-						<div class="awaiting_moderation">
-							Your comment is awaiting moderation.
-						</div>
-					<?php endif; ?>
-				</li>			
-			<?php endforeach; /* end for each comment */ ?>
-		</ol>
-		
-		<?php if ($wp_query->max_num_pages > 1) : ?>
-			<div class="pagination">
-				<ul>
-					<li class="older"><?php previous_comments_link('Older') ?></li>
-					<li class="newer"><?php next_comments_link('Newer') ?></li>
-				</ul>
+			<?php wp_list_comments('type=comment&callback=advanced_comment'); ?>
+			<div class="comment-navigation">
+				<div class="older"><?php previous_comments_link() ?></div>
+				<div class="newer"><?php next_comments_link() ?></div>
 			</div>
-		<?php endif; ?> <!-- end if pagination -->
+		</ol><!-- .commentlist -->
 		
-	<?php endif; ?> <!-- end if have comments -->
+		
+		<?php
+		/* If there are no comments and comments are closed, let's leave a note.
+		 * But we only want the note on posts and pages that had comments in the first place.
+		 */
+		if ( ! comments_open() && get_comments_number() ) : ?>
+		<p class="nocomments"><?php _e( 'Comments are closed.' , 'twentytwelve' ); ?></p>
+		<?php endif; ?>
+
+	<?php endif; // have_comments() ?>
 	
 	<?php if (comments_open() ) : ?>
 	
 		<div id="leaveComment">
-			<div id="respondPadding">
+			<div class="respondPadding">
 				<span id="respondLeaveComment">Leave a comment?</span>
 				<?php comment_form(); ?>	
 			</div>
@@ -67,5 +45,5 @@
 	<?php else : ?>
 		<p> Comments are now closed.</p>		
 	<?php endif; ?> <!-- Comments are open -->
-	
-</div>
+
+</div><!-- #comments .comments-area -->
