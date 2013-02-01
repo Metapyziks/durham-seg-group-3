@@ -71,8 +71,14 @@
 	
 	<link rel="stylesheet" type="text/css" media="all" href="<?php bloginfo( 'stylesheet_url' ); ?>" />
 	
+	<!-- Get the favicon -->
+	<link rel="shortcut icon" type="image/x-icon" href="<?php bloginfo('stylesheet_directory'); ?>/favicon.ico">
+	<!-- for IE7 -->
+	<link rel="shortcut icon" href="<?php bloginfo('stylesheet_directory'); ?>/favicon.ico">
+	<link rel="icon" type="image/ico" href="<?php bloginfo('stylesheet_directory'); ?>/favicon.ico">
+	
 	<!-- Enable threaded comments -->
-	<?php if ( is_singular() ) wp_enqueue_script( 'comment-reply' ); ?>
+	<?php if ( is_page() ) wp_enqueue_script( 'comment-reply' ); ?>
 	
 	<?php wp_head(); ?>
 </head>
