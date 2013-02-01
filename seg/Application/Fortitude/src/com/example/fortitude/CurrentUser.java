@@ -20,6 +20,21 @@ public class CurrentUser extends User
 		me = this;
 	}
 	
+	public void setBalance(String x)
+	{
+		balance = truncateBalance(x);
+	}
+	
+	public void setNumberOfCaches(String x)
+	{
+		numberOfCaches = truncateBalance(x);
+	}
+	
+	public void setTotalBalance(String x)
+	{
+		totalBalance = truncateBalance(x);
+	}
+		
 	public String getTotalBalance()
 	{
 		return totalBalance;

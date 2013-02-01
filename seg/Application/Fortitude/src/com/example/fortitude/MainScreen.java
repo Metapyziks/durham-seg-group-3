@@ -44,13 +44,13 @@ public class MainScreen extends Window
 	FortitudeButton zoomOutButton;
 
 	private static MainScreen me = null;
-	
+
 	private ImageView mailIcon;
 	private ImageView flagIcon;
-    private ImageView castleIcon;
-    private ImageView refreshIcon;
-    
-    private static boolean castleClickable = false;
+	private ImageView castleIcon;
+	private ImageView refreshIcon;
+
+	private static boolean castleClickable = false;
 
 	////////
 	//
@@ -160,13 +160,13 @@ public class MainScreen extends Window
 
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-		
+
 		LayoutParams theMapLayout = new LayoutParams(row2, col1); //The map
 		theMapLayout.width = super.getWindowWidth();
 		theMapLayout.height = super.getWindowHeight() - (super.getWindowHeight() / 5) - (super.getWindowHeight() / 20);
 		try
 		{
-		    mainArea.addView(TheMap.getMe(), theMapLayout);
+			mainArea.addView(TheMap.getMe(), theMapLayout);
 		}
 		catch(IllegalStateException e)
 		{
@@ -195,7 +195,7 @@ public class MainScreen extends Window
 			}
 			public void whenClicked()
 			{
-				
+
 			}
 		});
 		zoomInButton.setLayoutParams(zoomInButtonLayout);
@@ -269,295 +269,298 @@ public class MainScreen extends Window
 		}
 		else
 		{
-            LayoutParams bottomBarImageLayout = new LayoutParams(row3, col1);
-            bottomBarImageLayout.width = super.getWindowWidth();
-            bottomBarImageLayout.height = super.getWindowHeight() / 5;
-            ImageView bottomBarImage = new ImageView(mainArea.getContext());
-            bottomBarImage.setLayoutParams(bottomBarImageLayout);
-            bottomBarImage.setScaleType(ScaleType.FIT_XY);
-            bottomBarImage.setImageResource(R.drawable.bottom);
-            mainArea.addView(bottomBarImage, bottomBarImageLayout);
-            
-            GridLayout bottomBarIconGrid = new GridLayout(mainArea.getContext());
-            bottomBarIconGrid.setColumnCount(4);
-            bottomBarIconGrid.setRowCount(1);
-            
-            GridLayout bottomBarMailIconGrid = new GridLayout(bottomBarIconGrid.getContext());
-            bottomBarMailIconGrid.setColumnCount(3);
-            bottomBarMailIconGrid.setRowCount(3);
-            
-            LayoutParams firstTopLeftSpaceLayout = new LayoutParams(row1, col1);
-            //firstTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
-            firstTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
-            Space firstLeftSpace = new Space(bottomBarMailIconGrid.getContext());
-            firstLeftSpace.setLayoutParams(firstTopLeftSpaceLayout);
-            bottomBarMailIconGrid.addView(firstLeftSpace, firstTopLeftSpaceLayout);
-            
-            LayoutParams mailIconLayout = new LayoutParams(row2, col1); //mailIcon
-            mailIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
-            mailIconLayout.width = (super.getWindowWidth() / 4);
-            mailIcon = new ImageView(bottomBarMailIconGrid.getContext());
-            mailIcon.setScaleType(ScaleType.FIT_XY);
-            mailIcon.setImageResource(R.drawable.mail);
-            mailIcon.setLayoutParams(mailIconLayout);
-            mailIcon.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		MessageBox.newMsgBox("Mail Was Clicked", true);
-            	}
-            });
-            bottomBarMailIconGrid.addView(mailIcon, mailIconLayout);
-            
-            LayoutParams bottomBarMailIconGridLayout = new LayoutParams(row1, col1);
-            bottomBarIconGrid.addView(bottomBarMailIconGrid, bottomBarMailIconGridLayout);
-            
-            GridLayout bottomBarflagIconGrid = new GridLayout(bottomBarIconGrid.getContext());
-            bottomBarflagIconGrid.setColumnCount(3);
-            bottomBarflagIconGrid.setRowCount(3);
-            
-            LayoutParams secondTopLeftSpaceLayout = new LayoutParams(row1, col1);
-            //secondTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
-            secondTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
-            Space secondLeftSpace = new Space(bottomBarflagIconGrid.getContext());
-            secondLeftSpace.setLayoutParams(secondTopLeftSpaceLayout);
-            bottomBarflagIconGrid.addView(secondLeftSpace, secondTopLeftSpaceLayout);
-            
-            LayoutParams flagIconLayout = new LayoutParams(row2, col1); //flagIcon
-            flagIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
-            flagIconLayout.width = (super.getWindowWidth() / 4);
-            flagIcon = new ImageView(bottomBarMailIconGrid.getContext());
-            flagIcon.setScaleType(ScaleType.FIT_XY);
-            flagIcon.setImageResource(R.drawable.flag);
-            flagIcon.setLayoutParams(flagIconLayout);
-            bottomBarflagIconGrid.addView(flagIcon, flagIconLayout);
-            
-            LayoutParams flagIconGridLayout = new LayoutParams(row1, col2);
-            bottomBarIconGrid.addView(bottomBarflagIconGrid, flagIconGridLayout);
-            
-            GridLayout clickableFlagAreaGrid = new GridLayout(bottomBarIconGrid.getContext());
-            clickableFlagAreaGrid.setColumnCount(2);
-            clickableFlagAreaGrid.setRowCount(1);
-            
-            LayoutParams clickableFlagAreaLayout = new LayoutParams(row1, col1);
-            clickableFlagAreaLayout.width = ((super.getWindowWidth() / 4) / 4) * 3;
-            clickableFlagAreaLayout.height = super.getWindowHeight() / 5;
-            ImageView clickableFlagArea = new ImageView(clickableFlagAreaGrid.getContext());
-            clickableFlagArea.setLayoutParams(clickableFlagAreaLayout);
-            clickableFlagArea.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		MessageBox.newMsgBox("Flag Was Clicked", true);
-            	}
-            });
-            clickableFlagAreaGrid.addView(clickableFlagArea, clickableFlagAreaLayout);
-            
-            LayoutParams clickableFlagAreaGridLayout = new LayoutParams(row1, col2);
-            bottomBarIconGrid.addView(clickableFlagAreaGrid, clickableFlagAreaGridLayout);
-            
-            GridLayout bottomBarCastleIconGrid = new GridLayout(bottomBarIconGrid.getContext());
-            bottomBarCastleIconGrid.setColumnCount(3);
-            bottomBarCastleIconGrid.setRowCount(3);
-            
-            LayoutParams thirdTopLeftSpaceLayout = new LayoutParams(row1, col1);
-            //thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
-            thirdTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
-            Space thirdLeftSpace = new Space(bottomBarCastleIconGrid.getContext());
-            thirdLeftSpace.setLayoutParams(thirdTopLeftSpaceLayout);
-            bottomBarCastleIconGrid.addView(thirdLeftSpace, thirdTopLeftSpaceLayout);
-            
-            LayoutParams castleIconLayout = new LayoutParams(row2, col1); //castleIcon
-            castleIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
-            castleIconLayout.width = (super.getWindowWidth() / 4);
-            castleIcon = new ImageView(bottomBarCastleIconGrid.getContext());
-            castleIcon.setScaleType(ScaleType.FIT_XY);
-            castleIcon.setImageResource(R.drawable.castle_grey);
-            castleIcon.setLayoutParams(castleIconLayout);
-            bottomBarCastleIconGrid.addView(castleIcon, castleIconLayout);
-            
-            LayoutParams bottomBarCastleIconGridLayout = new LayoutParams(row1, col3);
-            bottomBarIconGrid.addView(bottomBarCastleIconGrid, bottomBarCastleIconGridLayout);
-            
-            GridLayout clickableCastleAreaGrid = new GridLayout(bottomBarIconGrid.getContext());
-            clickableCastleAreaGrid.setColumnCount(2);
-            clickableCastleAreaGrid.setRowCount(1);
-            
-            LayoutParams unclickableCastleAreaLayout = new LayoutParams(row1, col1);
-            unclickableCastleAreaLayout.width = (super.getWindowWidth() / 4) / 4;
-            Space unclickableCastleArea = new Space(clickableCastleAreaGrid.getContext());
-            unclickableCastleArea.setLayoutParams(unclickableCastleAreaLayout);
-            clickableCastleAreaGrid.addView(unclickableCastleArea, unclickableCastleAreaLayout);
-            
-            LayoutParams clickableCastleAreaLayout = new LayoutParams(row1, col2);
-            clickableCastleAreaLayout.width = ((super.getWindowWidth() / 4) / 4) * 3;
-            clickableCastleAreaLayout.height = (super.getWindowHeight() / 5);
-            ImageView clickableCastleArea = new ImageView(clickableCastleAreaGrid.getContext());
-            clickableCastleArea.setLayoutParams(clickableCastleAreaLayout);
-            clickableCastleArea.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		if(castleClickable)
-            		{
-            	        MessageBox.newMsgBox("Loading Cache Details", true);
-            	        try
-            	        {
-            	        	if(TheMap.getMe().getGoogleMap() == null)
-            	        	{
-            	        		throw new Exception();
-            	        	}
-            	        	if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
-            	        	{
-            	        		throw new Exception();
-            	        	}
-            	        	double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
-            	        	double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
-            	        	double closestSoFar = 100;
-            	        	int xx = 0;
-            	        	int yy = 0;
-            	        	for(Marker m : TheMap.getMe().getMarkers())
-            	        	{
-            	        		double latlat = m.getPosition().latitude;
-            	        		double lonlon = m.getPosition().longitude;
-            	        		if(myLat > latlat)
-            	        		{
-            	        			latlat = myLat - latlat;
-            	        		}
-            	        		else
-            	        		{
-            	        			latlat = latlat - myLat;
-            	        		}
-            	        		
-            	        		if(myLon > lonlon)
-            	        		{
-            	        			lonlon = myLon - lonlon;
-            	        		}
-            	        		else
-            	        		{
-            	        			lonlon = lonlon - myLon;
-            	        		}
-            	        		
-            	        		if((latlat + lonlon) < closestSoFar)
-            	        		{
-            	        			closestSoFar = (latlat + lonlon);
-            	        			yy = xx;
-            	        		}
-            	        		xx++;
-            	        	}
-            	        	if(closestSoFar == 100)
-            	        	{
-            	        		throw new Exception();
-            	        	}
-            	        	MainScreen.getMe().killMe();
-            	        	new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
-            	        }
-            	        catch(Exception e)
-            	        {
-            	        	MessageBox.getMe().killMe();
-            	        	MessageBox.newMsgBox("Sorry, we can't work out what cache you are at!", true);
-            	        }
-            		}
-            	}
-            });
-            clickableCastleAreaGrid.addView(clickableCastleArea, clickableCastleAreaLayout);
-            
-            LayoutParams clickableCastleAreaLayoutLayout = new LayoutParams(row1, col3);
-            bottomBarIconGrid.addView(clickableCastleAreaGrid, clickableCastleAreaLayoutLayout);
-            
-            GridLayout bottomBarRefreshIconGrid = new GridLayout(bottomBarIconGrid.getContext());
-            bottomBarRefreshIconGrid.setColumnCount(3);
-            bottomBarRefreshIconGrid.setRowCount(3);
-            
-            LayoutParams fourthTopLeftSpaceLayout = new LayoutParams(row1, col1);
-            //thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
-            fourthTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
-            Space fourthLeftSpace = new Space(bottomBarRefreshIconGrid.getContext());
-            fourthLeftSpace.setLayoutParams(fourthTopLeftSpaceLayout);
-            bottomBarRefreshIconGrid.addView(fourthLeftSpace, fourthTopLeftSpaceLayout);
-            
-            LayoutParams refreshIconLayout = new LayoutParams(row2, col1); //refreshIcon
-            refreshIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
-            refreshIconLayout.width = (super.getWindowWidth() / 4);
-            refreshIcon = new ImageView(bottomBarRefreshIconGrid.getContext());
-            refreshIcon.setScaleType(ScaleType.FIT_XY);
-            refreshIcon.setImageResource(R.drawable.refresh);
-            refreshIcon.setLayoutParams(refreshIconLayout);
-            refreshIcon.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		TheMap.getMe().updateCachePositions();
-            	}
-            });
-            bottomBarRefreshIconGrid.addView(refreshIcon, refreshIconLayout);
-            
-            LayoutParams bottomBarRefreshIconGridLayout = new LayoutParams(row1, col4);
-            bottomBarIconGrid.addView(bottomBarRefreshIconGrid, bottomBarRefreshIconGridLayout);
-            
-            LayoutParams bottomBarIconGridLayout = new LayoutParams(row3, col1);
-            mainArea.addView(bottomBarIconGrid, bottomBarIconGridLayout);
-            
-            GridLayout centerMeIconGrid = new GridLayout(mainArea.getContext());
-            centerMeIconGrid.setRowCount(1);
-            centerMeIconGrid.setColumnCount(3);
-            
-            LayoutParams centerMeIconLeftSpaceLayout = new LayoutParams(row1, col1);
-            centerMeIconLeftSpaceLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 28);
-            Space centerMeIconLeftSpace = new Space(centerMeIconGrid.getContext());
-            centerMeIconLeftSpace.setLayoutParams(centerMeIconLeftSpaceLayout);
-            centerMeIconGrid.addView(centerMeIconLeftSpace, centerMeIconLeftSpaceLayout);
-            
-            GridLayout centerMeGrid = new GridLayout(centerMeIconGrid.getContext());
-            centerMeGrid.setColumnCount(1);
-            centerMeGrid.setRowCount(3);
-            
-            LayoutParams centerMeIconTopSpaceLayout = new LayoutParams(row1, col1);
-            centerMeIconTopSpaceLayout.height = ((super.getWindowHeight() / 5) / 2) - (super.getWindowWidth() / 30);
-            Space centerMeIconTopSpace = new Space(centerMeGrid.getContext());
-            centerMeIconTopSpace.setLayoutParams(centerMeIconTopSpaceLayout);
-            centerMeGrid.addView(centerMeIconTopSpace, centerMeIconTopSpaceLayout);
-            
-            LayoutParams centerMeIconLayout = new LayoutParams(row2, col1); // center me icon
-            centerMeIconLayout.width = super.getWindowWidth() / 15;
-            centerMeIconLayout.height = super.getWindowWidth() / 15;
-            ImageView centerMeIcon = new ImageView(centerMeIconGrid.getContext());
-            centerMeIcon.setLayoutParams(centerMeIconLayout);
-            centerMeIcon.setScaleType(ScaleType.FIT_XY);
-            centerMeIcon.setImageResource(R.drawable.center_me);
-            centerMeGrid.addView(centerMeIcon, centerMeIconLayout);
-            
-            LayoutParams centerMeGridLayout = new LayoutParams(row1, col2);
-            centerMeIconGrid.addView(centerMeGrid, centerMeGridLayout);
-            
-            LayoutParams centerMeIconGridLayout = new LayoutParams(row3, col1);
-            mainArea.addView(centerMeIconGrid, centerMeIconGridLayout);
-            
-            GridLayout centerMeClickableAreaGrid = new GridLayout(mainArea.getContext());
-            centerMeClickableAreaGrid.setRowCount(1);
-            centerMeClickableAreaGrid.setColumnCount(3);
-            
-            LayoutParams centerMeClickableAreaSpaceLayout = new LayoutParams(row1, col1);
-            centerMeClickableAreaSpaceLayout.width = (super.getWindowWidth() / 4) + (((super.getWindowWidth() / 4) / 4) * 3);
-            Space centerMeClickableAreaSpace = new Space(centerMeClickableAreaGrid.getContext());
-            centerMeClickableAreaSpace.setLayoutParams(centerMeClickableAreaSpaceLayout);
-            centerMeClickableAreaGrid.addView(centerMeClickableAreaSpace, centerMeClickableAreaSpaceLayout);
-            
-            LayoutParams centerMeClickableAreaLayout = new LayoutParams(row1, col2); //overlay for the center me button to make it more easy
-            centerMeClickableAreaLayout.width = (super.getWindowWidth() / 4) / 2;    //to click it
-            centerMeClickableAreaLayout.height = super.getWindowHeight() / 5;
-            ImageView centerMeClickableArea = new ImageView(centerMeClickableAreaGrid.getContext());
-            centerMeClickableArea.setLayoutParams(centerMeClickableAreaLayout);
-            centerMeClickableArea.setOnClickListener(new OnClickListener() {
-            	public void onClick(View v)
-            	{
-            		TheMap.getMe().zoomToMyPositionAtMyZoom();
-            	}
-            });
-            centerMeClickableAreaGrid.addView(centerMeClickableArea, centerMeClickableAreaLayout);
-            
-            LayoutParams centerMeClickableAreaGridLayout = new LayoutParams(row3, col1);
-            mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
-            
-    		IconUpdater.newIconUpdater();
+			LayoutParams bottomBarImageLayout = new LayoutParams(row3, col1);
+			bottomBarImageLayout.width = super.getWindowWidth();
+			bottomBarImageLayout.height = super.getWindowHeight() / 5;
+			ImageView bottomBarImage = new ImageView(mainArea.getContext());
+			bottomBarImage.setLayoutParams(bottomBarImageLayout);
+			bottomBarImage.setScaleType(ScaleType.FIT_XY);
+			bottomBarImage.setImageResource(R.drawable.bottom);
+			mainArea.addView(bottomBarImage, bottomBarImageLayout);
+
+			GridLayout bottomBarIconGrid = new GridLayout(mainArea.getContext());
+			bottomBarIconGrid.setColumnCount(4);
+			bottomBarIconGrid.setRowCount(1);
+
+			GridLayout bottomBarMailIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+			bottomBarMailIconGrid.setColumnCount(3);
+			bottomBarMailIconGrid.setRowCount(3);
+
+			LayoutParams firstTopLeftSpaceLayout = new LayoutParams(row1, col1);
+			//firstTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+			firstTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+			Space firstLeftSpace = new Space(bottomBarMailIconGrid.getContext());
+			firstLeftSpace.setLayoutParams(firstTopLeftSpaceLayout);
+			bottomBarMailIconGrid.addView(firstLeftSpace, firstTopLeftSpaceLayout);
+
+			LayoutParams mailIconLayout = new LayoutParams(row2, col1); //mailIcon
+			mailIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+			mailIconLayout.width = (super.getWindowWidth() / 4);
+			mailIcon = new ImageView(bottomBarMailIconGrid.getContext());
+			mailIcon.setScaleType(ScaleType.FIT_XY);
+			mailIcon.setImageResource(R.drawable.mail);
+			mailIcon.setLayoutParams(mailIconLayout);
+			mailIcon.setOnClickListener(new OnClickListener() {
+				public void onClick(View v)
+				{
+					MessageBox.newMsgBox("Mail Was Clicked", true);
+				}
+			});
+			bottomBarMailIconGrid.addView(mailIcon, mailIconLayout);
+
+			LayoutParams bottomBarMailIconGridLayout = new LayoutParams(row1, col1);
+			bottomBarIconGrid.addView(bottomBarMailIconGrid, bottomBarMailIconGridLayout);
+
+			GridLayout bottomBarflagIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+			bottomBarflagIconGrid.setColumnCount(3);
+			bottomBarflagIconGrid.setRowCount(3);
+
+			LayoutParams secondTopLeftSpaceLayout = new LayoutParams(row1, col1);
+			//secondTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+			secondTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+			Space secondLeftSpace = new Space(bottomBarflagIconGrid.getContext());
+			secondLeftSpace.setLayoutParams(secondTopLeftSpaceLayout);
+			bottomBarflagIconGrid.addView(secondLeftSpace, secondTopLeftSpaceLayout);
+
+			LayoutParams flagIconLayout = new LayoutParams(row2, col1); //flagIcon
+			flagIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+			flagIconLayout.width = (super.getWindowWidth() / 4);
+			flagIcon = new ImageView(bottomBarMailIconGrid.getContext());
+			flagIcon.setScaleType(ScaleType.FIT_XY);
+			flagIcon.setImageResource(R.drawable.flag);
+			flagIcon.setLayoutParams(flagIconLayout);
+			bottomBarflagIconGrid.addView(flagIcon, flagIconLayout);
+
+			LayoutParams flagIconGridLayout = new LayoutParams(row1, col2);
+			bottomBarIconGrid.addView(bottomBarflagIconGrid, flagIconGridLayout);
+
+			GridLayout clickableFlagAreaGrid = new GridLayout(bottomBarIconGrid.getContext());
+			clickableFlagAreaGrid.setColumnCount(2);
+			clickableFlagAreaGrid.setRowCount(1);
+
+			LayoutParams clickableFlagAreaLayout = new LayoutParams(row1, col1);
+			clickableFlagAreaLayout.width = ((super.getWindowWidth() / 4) / 4) * 3;
+			clickableFlagAreaLayout.height = super.getWindowHeight() / 5;
+			ImageView clickableFlagArea = new ImageView(clickableFlagAreaGrid.getContext());
+			clickableFlagArea.setLayoutParams(clickableFlagAreaLayout);
+			clickableFlagArea.setOnClickListener(new OnClickListener() {
+				public void onClick(View v)
+				{
+					MessageBox.newMsgBox("Flag Was Clicked", true);
+				}
+			});
+			clickableFlagAreaGrid.addView(clickableFlagArea, clickableFlagAreaLayout);
+
+			LayoutParams clickableFlagAreaGridLayout = new LayoutParams(row1, col2);
+			bottomBarIconGrid.addView(clickableFlagAreaGrid, clickableFlagAreaGridLayout);
+
+			GridLayout bottomBarCastleIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+			bottomBarCastleIconGrid.setColumnCount(3);
+			bottomBarCastleIconGrid.setRowCount(3);
+
+			LayoutParams thirdTopLeftSpaceLayout = new LayoutParams(row1, col1);
+			//thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+			thirdTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+			Space thirdLeftSpace = new Space(bottomBarCastleIconGrid.getContext());
+			thirdLeftSpace.setLayoutParams(thirdTopLeftSpaceLayout);
+			bottomBarCastleIconGrid.addView(thirdLeftSpace, thirdTopLeftSpaceLayout);
+
+			LayoutParams castleIconLayout = new LayoutParams(row2, col1); //castleIcon
+			castleIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+			castleIconLayout.width = (super.getWindowWidth() / 4);
+			castleIcon = new ImageView(bottomBarCastleIconGrid.getContext());
+			castleIcon.setScaleType(ScaleType.FIT_XY);
+			castleIcon.setImageResource(R.drawable.castle_grey);
+			castleIcon.setLayoutParams(castleIconLayout);
+			bottomBarCastleIconGrid.addView(castleIcon, castleIconLayout);
+
+			LayoutParams bottomBarCastleIconGridLayout = new LayoutParams(row1, col3);
+			bottomBarIconGrid.addView(bottomBarCastleIconGrid, bottomBarCastleIconGridLayout);
+
+			GridLayout clickableCastleAreaGrid = new GridLayout(bottomBarIconGrid.getContext());
+			clickableCastleAreaGrid.setColumnCount(2);
+			clickableCastleAreaGrid.setRowCount(1);
+
+			LayoutParams unclickableCastleAreaLayout = new LayoutParams(row1, col1);
+			unclickableCastleAreaLayout.width = (super.getWindowWidth() / 4) / 4;
+			Space unclickableCastleArea = new Space(clickableCastleAreaGrid.getContext());
+			unclickableCastleArea.setLayoutParams(unclickableCastleAreaLayout);
+			clickableCastleAreaGrid.addView(unclickableCastleArea, unclickableCastleAreaLayout);
+
+			LayoutParams clickableCastleAreaLayout = new LayoutParams(row1, col2);
+			clickableCastleAreaLayout.width = ((super.getWindowWidth() / 4) / 4) * 3;
+			clickableCastleAreaLayout.height = (super.getWindowHeight() / 5);
+			ImageView clickableCastleArea = new ImageView(clickableCastleAreaGrid.getContext());
+			clickableCastleArea.setLayoutParams(clickableCastleAreaLayout);
+			clickableCastleArea.setOnClickListener(new OnClickListener() {
+				public void onClick(View v)
+				{
+					if(castleClickable) //if the castle is clickable then find the closest cache to the user
+					{                   //and display the relevant user
+						MessageBox.newMsgBox("Loading Cache Details", true);
+						int yy = -1;
+						try
+						{
+							if(TheMap.getMe().getGoogleMap() == null)
+							{
+								throw new Exception("can't get map");
+							}
+							if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
+							{
+								throw new Exception("can't get location");
+							}
+							double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
+							double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
+							double closestSoFar = 100;
+							int xx = 0;
+							for(Marker m : TheMap.getMe().getMarkers())
+							{
+								double latlat = m.getPosition().latitude;
+								double lonlon = m.getPosition().longitude;
+								if(myLat > latlat)
+								{
+									latlat = myLat - latlat;
+								}
+								else
+								{
+									latlat = latlat - myLat;
+								}
+
+								if(myLon > lonlon)
+								{
+									lonlon = myLon - lonlon;
+								}
+								else
+								{
+									lonlon = lonlon - myLon;
+								}
+
+								if((latlat + lonlon) < closestSoFar)
+								{
+									closestSoFar = (latlat + lonlon);
+									yy = xx;
+								}
+								xx++;
+							}
+							if(closestSoFar == 100)
+							{
+								throw new Exception("none less than 100");
+							}
+						}
+						catch(Exception e)
+						{
+							MessageBox.getMe().killMe();
+							MessageBox.newMsgBox("Sorry, we can't work out what cache you are at! : " + e.toString(), true);
+						}
+						if(yy != -1)
+						{
+							MainScreen.getMe().killMe();
+							new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
+						}
+					}
+				}
+			});
+			clickableCastleAreaGrid.addView(clickableCastleArea, clickableCastleAreaLayout);
+
+			LayoutParams clickableCastleAreaLayoutLayout = new LayoutParams(row1, col3);
+			bottomBarIconGrid.addView(clickableCastleAreaGrid, clickableCastleAreaLayoutLayout);
+
+			GridLayout bottomBarRefreshIconGrid = new GridLayout(bottomBarIconGrid.getContext());
+			bottomBarRefreshIconGrid.setColumnCount(3);
+			bottomBarRefreshIconGrid.setRowCount(3);
+
+			LayoutParams fourthTopLeftSpaceLayout = new LayoutParams(row1, col1);
+			//thirdTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
+			fourthTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+			Space fourthLeftSpace = new Space(bottomBarRefreshIconGrid.getContext());
+			fourthLeftSpace.setLayoutParams(fourthTopLeftSpaceLayout);
+			bottomBarRefreshIconGrid.addView(fourthLeftSpace, fourthTopLeftSpaceLayout);
+
+			LayoutParams refreshIconLayout = new LayoutParams(row2, col1); //refreshIcon
+			refreshIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+			refreshIconLayout.width = (super.getWindowWidth() / 4);
+			refreshIcon = new ImageView(bottomBarRefreshIconGrid.getContext());
+			refreshIcon.setScaleType(ScaleType.FIT_XY);
+			refreshIcon.setImageResource(R.drawable.refresh);
+			refreshIcon.setLayoutParams(refreshIconLayout);
+			refreshIcon.setOnClickListener(new OnClickListener() {
+				public void onClick(View v)
+				{
+					ServerRequests.refreshData();
+				}
+			});
+			bottomBarRefreshIconGrid.addView(refreshIcon, refreshIconLayout);
+
+			LayoutParams bottomBarRefreshIconGridLayout = new LayoutParams(row1, col4);
+			bottomBarIconGrid.addView(bottomBarRefreshIconGrid, bottomBarRefreshIconGridLayout);
+
+			LayoutParams bottomBarIconGridLayout = new LayoutParams(row3, col1);
+			mainArea.addView(bottomBarIconGrid, bottomBarIconGridLayout);
+
+			GridLayout centerMeIconGrid = new GridLayout(mainArea.getContext());
+			centerMeIconGrid.setRowCount(1);
+			centerMeIconGrid.setColumnCount(3);
+
+			LayoutParams centerMeIconLeftSpaceLayout = new LayoutParams(row1, col1);
+			centerMeIconLeftSpaceLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 28);
+			Space centerMeIconLeftSpace = new Space(centerMeIconGrid.getContext());
+			centerMeIconLeftSpace.setLayoutParams(centerMeIconLeftSpaceLayout);
+			centerMeIconGrid.addView(centerMeIconLeftSpace, centerMeIconLeftSpaceLayout);
+
+			GridLayout centerMeGrid = new GridLayout(centerMeIconGrid.getContext());
+			centerMeGrid.setColumnCount(1);
+			centerMeGrid.setRowCount(3);
+
+			LayoutParams centerMeIconTopSpaceLayout = new LayoutParams(row1, col1);
+			centerMeIconTopSpaceLayout.height = ((super.getWindowHeight() / 5) / 2) - (super.getWindowWidth() / 30);
+			Space centerMeIconTopSpace = new Space(centerMeGrid.getContext());
+			centerMeIconTopSpace.setLayoutParams(centerMeIconTopSpaceLayout);
+			centerMeGrid.addView(centerMeIconTopSpace, centerMeIconTopSpaceLayout);
+
+			LayoutParams centerMeIconLayout = new LayoutParams(row2, col1); // center me icon
+			centerMeIconLayout.width = super.getWindowWidth() / 15;
+			centerMeIconLayout.height = super.getWindowWidth() / 15;
+			ImageView centerMeIcon = new ImageView(centerMeIconGrid.getContext());
+			centerMeIcon.setLayoutParams(centerMeIconLayout);
+			centerMeIcon.setScaleType(ScaleType.FIT_XY);
+			centerMeIcon.setImageResource(R.drawable.center_me);
+			centerMeGrid.addView(centerMeIcon, centerMeIconLayout);
+
+			LayoutParams centerMeGridLayout = new LayoutParams(row1, col2);
+			centerMeIconGrid.addView(centerMeGrid, centerMeGridLayout);
+
+			LayoutParams centerMeIconGridLayout = new LayoutParams(row3, col1);
+			mainArea.addView(centerMeIconGrid, centerMeIconGridLayout);
+
+			GridLayout centerMeClickableAreaGrid = new GridLayout(mainArea.getContext());
+			centerMeClickableAreaGrid.setRowCount(1);
+			centerMeClickableAreaGrid.setColumnCount(3);
+
+			LayoutParams centerMeClickableAreaSpaceLayout = new LayoutParams(row1, col1);
+			centerMeClickableAreaSpaceLayout.width = (super.getWindowWidth() / 4) + (((super.getWindowWidth() / 4) / 4) * 3);
+			Space centerMeClickableAreaSpace = new Space(centerMeClickableAreaGrid.getContext());
+			centerMeClickableAreaSpace.setLayoutParams(centerMeClickableAreaSpaceLayout);
+			centerMeClickableAreaGrid.addView(centerMeClickableAreaSpace, centerMeClickableAreaSpaceLayout);
+
+			LayoutParams centerMeClickableAreaLayout = new LayoutParams(row1, col2); //overlay for the center me button to make it more easy
+			centerMeClickableAreaLayout.width = (super.getWindowWidth() / 4) / 2;    //to click it
+			centerMeClickableAreaLayout.height = super.getWindowHeight() / 5;
+			ImageView centerMeClickableArea = new ImageView(centerMeClickableAreaGrid.getContext());
+			centerMeClickableArea.setLayoutParams(centerMeClickableAreaLayout);
+			centerMeClickableArea.setOnClickListener(new OnClickListener() {
+				public void onClick(View v)
+				{
+					TheMap.getMe().zoomToMyPositionAtMyZoom();
+				}
+			});
+			centerMeClickableAreaGrid.addView(centerMeClickableArea, centerMeClickableAreaLayout);
+
+			LayoutParams centerMeClickableAreaGridLayout = new LayoutParams(row3, col1);
+			mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
+
+			IconUpdater.newIconUpdater();
 		}
-		
+
 		return mainArea;
 	}
 
@@ -592,34 +595,34 @@ public class MainScreen extends Window
 	{
 		return zoomInButton;
 	}
-	
-    public ImageView getMailIcon()
-    {
-    	return mailIcon;
-    }
-    
-    public ImageView getFlagIcon()
-    {
-    	return flagIcon;
-    }
-    
-    public ImageView getCastleIcon()
-    {
-    	return castleIcon;
-    }
-    
-    public ImageView getRefreshIcon()
-    {
-    	return refreshIcon;
-    }
-    
-    public static synchronized boolean getCastleClickable()
-    {
-    	return castleClickable;
-    }
-    
-    public static synchronized void setCastleClickable(boolean x)
-    {
-    	castleClickable = x;
-    }
+
+	public ImageView getMailIcon()
+	{
+		return mailIcon;
+	}
+
+	public ImageView getFlagIcon()
+	{
+		return flagIcon;
+	}
+
+	public ImageView getCastleIcon()
+	{
+		return castleIcon;
+	}
+
+	public ImageView getRefreshIcon()
+	{
+		return refreshIcon;
+	}
+
+	public static synchronized boolean getCastleClickable()
+	{
+		return castleClickable;
+	}
+
+	public static synchronized void setCastleClickable(boolean x)
+	{
+		castleClickable = x;
+	}
 }
