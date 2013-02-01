@@ -1,4 +1,4 @@
-<?php //this function will be called in the next section
+<?php // Apply custom styling to comments.
 function advanced_comment($comment, $args, $depth) {
    $GLOBALS['comment'] = $comment; ?>
  
@@ -39,4 +39,43 @@ function advanced_comment($comment, $args, $depth) {
 		</div>
 	</div>
 	</div>
-<?php } ?>
+<?php } 
+
+	// Add a welcome widget to the dashboard.
+	
+	add_action('wp_dashboard_setup', 'my_custom_dashboard_widgets');
+	
+	function my_custom_dashboard_widgets() {
+		global $wp_meta_boxes;
+		wp_add_dashboard_widget('custom_help_widget', 'Theme Support', 'custom_dashboard_help');
+	}
+
+	function custom_dashboard_help() {
+		echo '<p>Hello! Welcome to the Durham City Fair Trade Partnership dashboard.</p><p>From here you can manage your website, including adding (or removing) pages, moderating comments and changing some settings. You can find a brief guide for some features at the page Hello Kathryn! (which is only visible to you through the dashboard).</p><p>We hope you enjoy using the website!</p><p>-- Emma, James, Alice, James and Charles</p>';
+	}
+	
+	function comicpress_copyright() {
+		global $wpdb;
+		
+		$copyright_dates = $wpdb->get_results("
+			SELECT
+			YEAR(min(post_date_gmt)) AS firstdate,
+			YEAR(max(post_date_gmt)) AS lastdate
+			FROM
+			$wpdb->posts
+			WHERE
+			post_status = 'publish'
+			");
+		$output = '';
+		
+		if($copyright_dates) {
+			$copyright = "&copy; " . $copyright_dates[0]->firstdate;
+			if($copyright_dates[0]->firstdate != $copyright_dates[0]->lastdate) {
+				$copyright .= '-' . $copyright_dates[0]->lastdate;
+				}
+			$output = $copyright;
+		}
+		return $output;
+	}
+
+?>
