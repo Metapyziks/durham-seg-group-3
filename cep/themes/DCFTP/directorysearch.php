@@ -3,7 +3,7 @@
 <?php get_header(); ?>
 
 <?PHP
-	$thisPage = $_SERVER["PHP_SELF"].'?page_id='.$_GET['page_id'];
+	$thisPage = '/directory/';
 ?>
 
 <div id="main-section">
@@ -24,7 +24,7 @@
 			<?php endwhile; ?>
 
 		<div style="text-align: center;">
-			<form name="searchname" action="/" method="get">
+			<form name="searchname" action="<?PHP echo $thisPage; ?>" method="get">
 				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
 				<input type="text" name="search" style="height: 22px;" />
 				<input type="submit" value="Search" class="button" />
@@ -73,13 +73,13 @@
 	    }
 
 	    if ($cats['0-9']) {
-	    	echo '<a href="'.$thisPage.'&letter=0-9">0-9</a> ';
+	    	echo '<a href="'.$thisPage.'?letter=0-9">0-9</a> ';
 		} else {
 			echo '0-9 ';
 		}
 		foreach (range('A', 'Z') as $char) {
 			if ($cats[strtolower($char)]) {
-				echo '| <a href="'.$thisPage.'&letter='.strtolower($char).'">'.$char.'</a> ';
+				echo '| <a href="'.$thisPage.'?letter='.strtolower($char).'">'.$char.'</a> ';
 			} else {
 				echo '| '.$char.' ';
 			}
