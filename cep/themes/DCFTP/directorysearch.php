@@ -24,26 +24,21 @@
 			<?php endwhile; ?>
 
 		<div style="text-align: center;">
-			<form name="searchname" action="/?page_id=7" method="get">
+			<form name="searchname" action="/" method="get">
 				<input type="hidden" name="page_id" value="<?PHP echo $_GET['page_id']; ?>" />
-				<input type="text" name="search" />
-				<input type="submit" value="Search" />
+				<input type="text" name="search" style="height: 22px;" />
+				<input type="submit" value="Search" class="button" />
 			</form>
-		</div>	
+		</div>
 		
 		<!-- This should be dynamically generated, so that letters not used don't display -->
 
 		<p style="text-align: center;">
 <?PHP
-    function starImages($rating) {
-        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
-        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
-
-        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
-    }
-
 	$sql = "SELECT * FROM dcftp_directory";
-	if ($_GET['search']) {
+	if ($_GET['retailer_id']) {
+		$sql = $sql.' WHERE outletID = \''.$_GET['retailer_id'].'\'';
+	} elseif ($_GET['search']) {
 		$sql = $sql.' WHERE name LIKE \'%'.$_GET['search'].'%\'';
 	} elseif ($_GET['letter']) {
 		if($_GET['letter'] == '0-9') {
@@ -55,10 +50,13 @@
 			$sql = $sql.' WHERE name LIKE \''.$_GET['letter'].'%\'';
 		}
 	}
+	$sql = $sql.' ORDER BY name ASC';
 
     $data = $wpdb->get_results($sql, ARRAY_A);
 
-	if ($_GET['search']) {
+    if ($_GET['retailer_id']) {
+    	echo 'Showing single entry | <a href="'.$thisPage.'">All Entries</a>';
+	} elseif ($_GET['search']) {
 		echo 'Showing retailers containing \''.strtolower($_GET['search']).'\' | <a href="'.$thisPage.'">All Entries</a>';
 	} elseif ($_GET['letter']) {
     	echo 'Showing retailers beggining with \''.strtoupper($_GET['letter']).'\' | <a href="'.$thisPage.'">All Entries</a>';
@@ -89,41 +87,7 @@
 	}
 ?>
 		</p>
-		<div id="entries">
-<?PHP
-	foreach ($data as $entry) {
-?>
-			<div class="entry">
-				<div class="entry-left">
-					<div class="entry-name">
-						<div class="entry-rating">
-							<?PHP echo starImages($entry['stars']); ?>
-						</div>
-						<?PHP echo $entry['name']; ?>
-					</div>
-					<p>
-						<?PHP echo $entry['information']; ?>
-					</p>
-				</div>
-				<div class="entry-right">
-					<p>
-						<?PHP echo $entry['addressline1']; ?><br />
-						<?PHP echo $entry['addressline2']; ?><br />
-						<?PHP echo $entry['city']; ?><br />
-						<?PHP echo $entry['postcode']; ?>
-					</p>
-					<p>
-						<?PHP echo $entry['phone']; ?>
-					</p>
-					<p>
-						<a href="<?PHP echo $entry['url']; ?>">Website</a>
-					</p>
-				</div>
-			</div>
-<?PHP
-	}
-?>
-		</div>
+		<?PHP display_entries($data); ?> 
 			
 	</div>
 	<div class="main-margin">

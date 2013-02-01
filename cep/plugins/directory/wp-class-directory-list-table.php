@@ -29,11 +29,11 @@ class WP_Directory_List_Table extends WP_List_Table
         return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
     }
 
-    function actionButtons($id) {
+    function actionButtons($item) {
         return
-            '<img src="/wp-content/plugins/directory/images/magnifier.png" />&nbsp;'.
-            '<img src="/wp-content/plugins/directory/images/pencil.png" />&nbsp;'.
-            '<img src="/wp-content/plugins/directory/images/delete.png" />';
+            '<a href="/?page_id=7&retailer_id='.$item['outletID'].'"><img title="View" src="/wp-content/plugins/directory/images/magnifier.png" /></a>&nbsp;'.
+            '<a href="admin.php?page=directory-manager-edit&retailer_id='.$item['outletID'].'"><img title="Edit" src="/wp-content/plugins/directory/images/pencil.png" /></a>&nbsp;'.
+            '<a href="admin.php?page=directory-manager-delete&retailer_id='.$item['outletID'].'"><img title="Delete" src="/wp-content/plugins/directory/images/delete.png" /></a>';
     }
 
     function column_default($item, $column_name) {
@@ -49,7 +49,7 @@ class WP_Directory_List_Table extends WP_List_Table
             case 'stars':
                 return $this->starImages($item[$column_name]);
             case 'action':
-                return $this->actionButtons($item['outletID']);
+                return $this->actionButtons($item);
             default:
                 return print_r($item,true);
         }
