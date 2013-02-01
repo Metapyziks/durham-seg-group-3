@@ -519,6 +519,10 @@ Description: A website based on the blue and green of fair trade colours,
 		background: #ccc;
 		overflow: auto; /* used to clear the floats */
 	}
+
+	.entry-hidden {
+		display: none;
+	}
 	
 	.entry-left {
 		width: 73%;
