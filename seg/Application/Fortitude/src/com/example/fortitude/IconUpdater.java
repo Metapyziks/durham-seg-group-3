@@ -68,7 +68,6 @@ public class IconUpdater
 										}
 										if((lonlon < 0.00013) && (latlat < 0.00013))
 										{
-											System.out.println(lonlon + " " + latlat);
 											onLocation = true;
 										}
 									}
@@ -104,7 +103,6 @@ public class IconUpdater
 					}
 					catch(Exception e)
 					{
-						System.out.println(e.toString());
 						xx++;
 						if(xx > 10)
 						{

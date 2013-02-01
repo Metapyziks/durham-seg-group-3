@@ -33,6 +33,8 @@ public class ServerRequests
 	private static String staticLat;
 	private static String cacheRadius;
 	private static boolean getUserInfoUseUsernames;
+	private static boolean refreshDataComplete;
+	private static boolean refreshDataSuccess;
 
 	////////
 	//
@@ -49,6 +51,26 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static boolean getRefreshDataComplete()
+	{
+		return refreshDataComplete;
+	}
+
+	public static void setRefreshDataComplete(boolean x)
+	{
+		refreshDataComplete = x;
+	}
+
+	public static boolean getRefreshDataSuccess()
+	{
+		return refreshDataSuccess;
+	}
+
+	public static void setRefreshDataSuccess(boolean x)
+	{
+		refreshDataSuccess = x;
+	}
+
 	public static String getCacheRadius()
 	{
 		return cacheRadius;
@@ -63,12 +85,12 @@ public class ServerRequests
 	{
 		return getUserInfoUseUsernames;
 	}
-	
+
 	public static void setGetUserInfoUseUsernames(boolean x)
 	{
 		getUserInfoUseUsernames = x;
 	}
-	
+
 	public static String getStaticLat()
 	{
 		return staticLat;
@@ -367,7 +389,7 @@ public class ServerRequests
 																			//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
 																		}
 																	});
-																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
+																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
@@ -762,7 +784,7 @@ public class ServerRequests
 		getUserInfoComplete = false;
 		getUserInfoSuccess = false;
 		getUserInfoUseUsernames = useUsernames;
-		
+
 		usersToGet = users;
 		staticUserInfo = new ArrayList<User>();
 
@@ -833,7 +855,7 @@ public class ServerRequests
 				};
 				if(ServerRequests.getGetUserInfoUseUsernames())
 				{
-				    rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
+					rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
 				}
 				else
 				{
@@ -997,6 +1019,74 @@ public class ServerRequests
 			}
 		};
 		Thread thread = new Thread(runnable);
+		thread.start();
+	}
+
+	public static void refreshData()
+	{
+		refreshDataComplete = false;
+		refreshDataSuccess = false;
+		TheMap.getMe().updateCachePositions();
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+				{
+					//WAIT!
+				}
+				if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+				{
+					if(ServerRequests.getTheMessageBox() == null)
+					{
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
+							}
+						});
+					}
+					ServerRequests.getUserStats(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID());
+					while(!(ServerRequests.getGetUserBalanceComplete()))
+					{
+
+					}
+					if(ServerRequests.getGetUserBalanceSuccess())
+					{
+						CurrentUser.getMe().setBalance(ServerRequests.getStaticUserBalance());
+						CurrentUser.getMe().setNumberOfCaches(ServerRequests.getStaticCacheCount());
+						CurrentUser.getMe().setTotalBalance(ServerRequests.getStaticTotalUnits());
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MainScreen.getMe() != null)
+								{
+									if(MainScreen.getMe().getUserBalanceTextView() != null)
+									{
+										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance());
+									}
+								}
+							}
+						});
+						ServerRequests.setRefreshDataSuccess(true);
+						ServerRequests.setRefreshDataComplete(true);
+					}
+					else
+					{
+						ServerRequests.setRefreshDataSuccess(false);
+						ServerRequests.setRefreshDataComplete(true);
+					}
+				}
+				else
+				{
+					ServerRequests.setRefreshDataSuccess(false);
+					ServerRequests.setRefreshDataComplete(true);
+				}
+			}
+		});
 		thread.start();
 	}
 }
