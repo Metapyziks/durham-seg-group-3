@@ -37,7 +37,7 @@
 		<!-- The map, with controls and search function -->
 		
 		<div style="text-align: center;">
-			<input type="text" id="location" name="search" style="height: 22px;" />
+			Enter an address or postcode: <input type="text" id="location" name="search" style="height: 22px;" />
 			<input type="button" value="Find" onclick="moveToLocation()" class="button" />
 		</div>
 

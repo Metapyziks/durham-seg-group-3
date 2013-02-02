@@ -24,6 +24,7 @@
 			echo '<p>';
 			echo $entry['information'];
 			echo '</p>';
+			echo '<div id="dist'.$entry['outletID'].'" class="entry-hidden"></div>';
 			echo '</div>';
 			echo '<div class="entry-right">';
 			echo '<p>';

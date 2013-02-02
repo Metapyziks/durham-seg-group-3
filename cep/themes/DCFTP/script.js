@@ -83,12 +83,43 @@ function addClickListener(markers, marker, id) {
   });
 }
 
+function findDistance(locA, locB)
+{
+  var rad = Math.PI / 180;
+  var R = 6371009;
+  var dLat = (locB.lat()-locA.lat()) * rad;
+  var dLon = (locB.lng()-locA.lng()) * rad;
+  var lat1 = locA.lat() * rad;
+  var lat2 = locB.lat() * rad;
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return R * c;
+}
+
 function moveToLocation() {
+  var locName = document.getElementById('location').value;
   geocoder.geocode({
-    address: document.getElementById('location').value
+    address: locName
   }, function(responses) {
     if (responses && responses.length > 0) {
-      _map.setCenter(responses[0].geometry.location);
+      var loc = responses[0].geometry.location;
+      _map.setCenter(loc);
+      if (document.getElementById('entries')) {
+        var entries = document.getElementById('entries').childNodes;
+        for (var i = entries.length - 1; i >= 0; i--) {
+          var entry = entries.item(i);
+          if (!entry.id) continue;
+          var locNode = document.getElementById('loc' + entry.id.substr(5));
+          var distDiv = document.getElementById('dist' + entry.id.substr(5));
+          var locParts = locNode.value.split(",");
+          var otherLoc = new google.maps.LatLng(parseFloat(locParts[0]), parseFloat(locParts[1]));
+          distDiv.className = 'div';
+          var dist = Math.round(findDistance(loc, otherLoc));
+          distDiv.innerHTML = 'Distance from ' + locName + ': ' + dist + 'm';
+        }
+      }
     } else {
       // some error here
     }
