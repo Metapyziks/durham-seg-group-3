@@ -341,11 +341,6 @@ $string .= '
 <!-- Fast Secure Contact Form plugin '.esc_html($this->ctf_version).' - begin - FastSecureContactForm.com -->
 <div id="FSContact'.$form_id_num.'" '.$this->ctf_form_style.'>';
 
-if ($si_contact_opt['vcita_enabled'] == 'true') {
-  $string .= "
-<div style='float:left;' class='fsc_data_container'>
-";
-}
 if($have_attach) // there are attachment fields on this form
     $have_attach = 'enctype="multipart/form-data" '; // for <form post
 
