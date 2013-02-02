@@ -178,14 +178,17 @@ Version: 1.0
 		line-height: 15px;
 	}
 	
+	/* This line breaks the map */
+	/*
 	#main img {
 		max-width: 90%;
 	}
+	*/
 	
 	#main li {
 		margin-bottom: 8px;
 	}
-	
+
 	#footer {
 		/*	Contains image credits and copyright. */
 		width: 100%;
@@ -360,7 +363,6 @@ Version: 1.0
 		background: #ccc;
 		text-align: center;
 	}
-	
 	
 	/*	-------------------------------------------------------------------------
 	*	Styling links in the main section - navigation and aside are styled
@@ -699,38 +701,6 @@ Version: 1.0
 	}
 	
 	/*	-------------------------------------------------------------------------
-	*	The map divs. The map-wrapper acts as a place holder to ensure the layout
-	*	does not shift as the map loads. The map div locates the map for the javascript
-	*	commands, and also ensures the map is layered below the map commands.
-	*	-------------------------------------------------------------------------	*/	
-	
-	#map-wrapper {
-		width: 600px;
-		height: 300px;
-		margin: 10px auto;
-	}
-	
-	#map {
-		z-index: 1;
-		margin-top: -70px; /* Move map up underneath map controls. */
-	}
-	
-	#map-controls {
-		z-index: 2;
-		position: relative;
-		top: 10px;
-		left: 10px;
-		height: 70px;
-	}
-	
-	#map-controls img {
-		height: 20px;
-		margin-bottom: 10px;
-		cursor: hand;
-		cursor: pointer; /* Required to let the user know these buttons activate commands. */
-	}
-	
-	/*	-------------------------------------------------------------------------
 	*	Styling buttons; these appear on the directory page and any comments sections.
 	*	-------------------------------------------------------------------------	*/	
 	
@@ -746,7 +716,7 @@ Version: 1.0
 		cursor: hand;
 		cursor: pointer;
     }
-	
+
 	.button:active  #submit:active, #fsc-submit-1:active, #fsc-reset-1:active {
 	   border: 1px solid #8ec1da;
 	   background-color: #ddeef6;

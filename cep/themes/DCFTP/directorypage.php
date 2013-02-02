@@ -37,14 +37,18 @@
 		<!-- The map, with controls and search function -->
 		
 		<div style="text-align: center;">
-			<input type="text" id="location" name="search" style="height: 22px;" />
+			Enter an address or postcode: <input type="text" id="location" name="search" style="height: 22px;" />
 			<input type="button" value="Find" onclick="moveToLocation()" class="button" />
 		</div>
 
 		<form id="hidden_locations">
 			<?PHP
 				foreach ($data as $entry) {
-					echo '<input type="hidden" id="loc'.$entry['outletID'].'" value="'.$entry['latitude'].','.$entry['longitude'].','.$entry['name'].'" />';
+					$curString = 'false';
+					if ($entry['outletID'] == $_GET['retailer_id']) {
+						$curString = 'true';
+					}
+					echo '<input type="hidden" id="loc'.$entry['outletID'].'" value="'.$entry['latitude'].','.$entry['longitude'].','.$entry['name'].','.$curString.'" />';
 				}
 			?>
 		</form>
