@@ -841,7 +841,6 @@ $string .= '
 }
 
 $string .= '</div>';
-}
 $string .= '
 <!-- Fast Secure Contact Form plugin '.esc_attr($this->ctf_version).' - end - FastSecureContactForm.com -->';
 ?>
