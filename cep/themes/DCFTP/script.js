@@ -83,21 +83,76 @@ function addClickListener(markers, marker, id) {
   });
 }
 
+function findDistance(locA, locB)
+{
+  var rad = Math.PI / 180;
+  var R = 6371009;
+  var dLat = (locB.lat()-locA.lat()) * rad;
+  var dLon = (locB.lng()-locA.lng()) * rad;
+  var lat1 = locA.lat() * rad;
+  var lat2 = locB.lat() * rad;
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return R * c;
+}
+
 function moveToLocation() {
+  var locName;
+  if (document.getElementById('location')) {
+    locName = document.getElementById('location').value;
+  } else if (document.getElementById('addressline1')) {
+    locName = document.getElementById('addressline1').value + ' ' + document.getElementById('postcode').value;
+  } else {
+    return;
+  }
   geocoder.geocode({
-    address: document.getElementById('location').value
+    address: locName
   }, function(responses) {
     if (responses && responses.length > 0) {
-      _map.setCenter(responses[0].geometry.location);
+      var loc = responses[0].geometry.location;
+      _map.setCenter(loc);
+      if (document.getElementById('entries')) {
+        var entries = document.getElementById('entries').childNodes;
+        for (var i = entries.length - 1; i >= 0; i--) {
+          var entry = entries.item(i);
+          if (!entry.id) continue;
+          var locNode = document.getElementById('loc' + entry.id.substr(5));
+          var distDiv = document.getElementById('dist' + entry.id.substr(5));
+          var locParts = locNode.value.split(",");
+          var otherLoc = new google.maps.LatLng(parseFloat(locParts[0]), parseFloat(locParts[1]));
+          distDiv.className = 'div';
+          var dist = Math.round(findDistance(loc, otherLoc));
+          distDiv.innerHTML = 'Distance from ' + locName + ': ' + dist + 'm';
+        }
+      } else if (_marker) {
+        _marker.setPosition(loc);
+        updateMarkerPosition(loc);
+      }
     } else {
       // some error here
     }
   });
 }
 
+function finalizeMap() {
+  if (_marker && !_dragged) {
+    moveToLocation();
+  }
+}
+
 var _map;
+var _marker;
+var _dragged = false;
 function initialize() {
   var latLng = new google.maps.LatLng(54.776842,-1.575454);
+  if (document.getElementById('latitude') && document.getElementById('longitude')) {
+    latLng = new google.maps.LatLng(
+      parseFloat(document.getElementById('latitude').value),
+      parseFloat(document.getElementById('longitude').value));
+  }
+
   _map = new google.maps.Map(document.getElementById('mapCanvas'), {
     zoom: 16,
     center: latLng,
@@ -110,6 +165,8 @@ function initialize() {
       var entry = entries.item(i);
       if (!entry.id) continue;
       entry.className = 'entry-hidden';
+      var id = entry.id.substr(5);
+      document.getElementById('maplink' + id).className = 'entry-hidden';
     }
     var locations = document.getElementById('hidden_locations').childNodes;
     var markers = new Array();
@@ -126,9 +183,14 @@ function initialize() {
       });
       markers.push(marker);
       addClickListener(markers, marker, id);
+      if (loc[3] == 'true') {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        _map.setCenter(marker.getPosition());
+        document.getElementById('entry' + id).className = 'entry';
+      }
     };
   } else {
-    var marker = new google.maps.Marker({
+    _marker = new google.maps.Marker({
       position: latLng,
       title: 'New Retailer',
       map: _map,
@@ -140,18 +202,19 @@ function initialize() {
     geocodePosition(latLng);
     
     // Add dragging event listeners.
-    google.maps.event.addListener(marker, 'dragstart', function() {
+    google.maps.event.addListener(_marker, 'dragstart', function() {
+      _dragged = true;
       updateMarkerAddress('Dragging...');
     });
     
-    google.maps.event.addListener(marker, 'drag', function() {
+    google.maps.event.addListener(_marker, 'drag', function() {
       updateMarkerStatus('Dragging...');
-      updateMarkerPosition(marker.getPosition());
+      updateMarkerPosition(_marker.getPosition());
     });
     
-    google.maps.event.addListener(marker, 'dragend', function() {
+    google.maps.event.addListener(_marker, 'dragend', function() {
       updateMarkerStatus('Drag ended');
-      geocodePosition(marker.getPosition());
+      geocodePosition(_marker.getPosition());
     });
   }
 }

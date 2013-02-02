@@ -395,69 +395,7 @@ public class MainScreen extends Window
 			clickableCastleArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					if(castleClickable) //if the castle is clickable then find the closest cache to the user
-					{                   //and display the relevant user
-						MessageBox.newMsgBox("Loading Cache Details", true);
-						int yy = -1;
-						try
-						{
-							if(TheMap.getMe().getGoogleMap() == null)
-							{
-								throw new Exception("can't get map");
-							}
-							if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
-							{
-								throw new Exception("can't get location");
-							}
-							double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
-							double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
-							double closestSoFar = 100;
-							int xx = 0;
-							for(Marker m : TheMap.getMe().getMarkers())
-							{
-								double latlat = m.getPosition().latitude;
-								double lonlon = m.getPosition().longitude;
-								if(myLat > latlat)
-								{
-									latlat = myLat - latlat;
-								}
-								else
-								{
-									latlat = latlat - myLat;
-								}
-
-								if(myLon > lonlon)
-								{
-									lonlon = myLon - lonlon;
-								}
-								else
-								{
-									lonlon = lonlon - myLon;
-								}
-
-								if((latlat + lonlon) < closestSoFar)
-								{
-									closestSoFar = (latlat + lonlon);
-									yy = xx;
-								}
-								xx++;
-							}
-							if(closestSoFar == 100)
-							{
-								throw new Exception("none less than 100");
-							}
-						}
-						catch(Exception e)
-						{
-							MessageBox.getMe().killMe();
-							MessageBox.newMsgBox("Sorry, we can't work out what cache you are at! : " + e.toString(), true);
-						}
-						if(yy != -1)
-						{
-							MainScreen.getMe().killMe();
-							new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
-						}
-					}
+					whenCastleClicked();	
 				}
 			});
 			clickableCastleAreaGrid.addView(clickableCastleArea, clickableCastleAreaLayout);
@@ -559,9 +497,176 @@ public class MainScreen extends Window
 			mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
 
 			IconUpdater.newIconUpdater();
+			MainScreen.setCastleClickable(false);
 		}
 
 		return mainArea;
+	}
+
+	////////
+	//
+	//whenCastleClicked
+	//
+	//called when the castle icon is clicked, finds the cache you are at and displays
+	//the relevant screen
+	//
+	////////
+	public void whenCastleClicked()
+	{
+		if(castleClickable) //if the castle is clickable then find the closest cache to the user
+		{                   //and display the relevant user
+			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
+			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
+			Thread thread2 = new Thread(new Runnable() {
+				public void run()
+				{
+					while(!ServerRequests.getRefreshDataComplete())
+					{
+
+					}
+					if(!ServerRequests.getRefreshDataSuccess())
+					{
+						return;
+					}
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							MessageBox.newMsgBox("Loading Cache Details", true);
+						}
+					});
+					try
+					{
+						Thread.sleep(500);
+					}
+					catch(Exception e)
+					{
+						//wait
+					}
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							int yy = -1;
+							try
+							{
+								if(TheMap.getMe().getGoogleMap() == null)
+								{
+									throw new Exception("can't get map");
+								}
+								if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
+								{
+									throw new Exception("can't get location");
+								}
+								double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
+								double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
+								double closestSoFar = 0.0005;
+								int xx = 0;
+								for(Marker m : TheMap.getMe().getMarkers())
+								{
+									double latlat = m.getPosition().latitude;
+									double lonlon = m.getPosition().longitude;
+									if(myLat > latlat)
+									{
+										latlat = myLat - latlat;
+									}
+									else
+									{
+										latlat = latlat - myLat;
+									}
+
+									if(myLon > lonlon)
+									{
+										lonlon = myLon - lonlon;
+									}
+									else
+									{
+										lonlon = lonlon - myLon;
+									}
+
+									if((latlat + lonlon) < closestSoFar)
+									{
+										closestSoFar = (latlat + lonlon);
+										yy = xx;
+									}
+									xx++;
+								}
+								if(closestSoFar == 0.0005)
+								{
+									throw new Exception();
+								}
+							}
+							catch(Exception e)
+							{
+								MessageBox.getMe().killMe();
+								MessageBox.newMsgBox("Sorry, we can't work out what cache you are at! : " + e.toString(), true);
+							}
+							if(yy != -1)
+							{
+								if(ServerRequests.getNearbyCaches().get(yy).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...	
+									MainScreen.getMe().killMe();
+									new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
+								}
+								else
+								{
+									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false); 
+									Thread thread = new Thread(new Runnable() {
+										public void run()
+										{
+											while(!(ServerRequests.getGetUserInfoComplete()))
+											{
+
+											}
+											if(ServerRequests.getGetUserInfoSuccess())
+											{
+												Fortitude.getFortitude().runOnUiThread(new Runnable() {
+													public void run()
+													{
+														if(ServerRequests.getTheMessageBox() != null)
+														{
+															ServerRequests.getTheMessageBox().killMe();
+														}
+														if(MessageBox.getMe() != null)
+														{
+															MessageBox.getMe().killMe();
+														}
+														GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...			
+														MainScreen.getMe().killMe();
+														new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
+													}
+												});
+											}
+											else
+											{
+												Fortitude.getFortitude().runOnUiThread(new Runnable() {
+													public void run()
+													{
+														if(ServerRequests.getTheMessageBox() != null)
+														{
+															ServerRequests.getTheMessageBox().killMe();
+														}
+													}
+												});
+											}
+										}
+									});
+									thread.start();
+								}
+							}
+						}
+					});
+				}
+			});
+			thread2.start();
+		}
 	}
 
 	////////
@@ -574,7 +679,6 @@ public class MainScreen extends Window
 	public void killMe()
 	{
 		me = null;
-		IconUpdater.setShouldIRun(false);
 		TheMap.getMe().removeMeFromMyParent();
 		this.removeAllViews();
 	}

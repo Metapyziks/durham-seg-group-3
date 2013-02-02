@@ -267,22 +267,22 @@ public class EnemyCacheScreen extends Window
     	ninthRowMiddleSpace.setLayoutParams(ninthRowMiddleSpaceLayout);
     	ninthRowGrid.addView(ninthRowMiddleSpace, ninthRowMiddleSpaceLayout);
     	
-    	LayoutParams cancelButtonLayout = new LayoutParams(row1, col4); //cancel button
-    	cancelButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	cancelButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
+    	LayoutParams reportCacheButtonLayout = new LayoutParams(row1, col4);
+    	reportCacheButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	reportCacheButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton reportCacheButton = (new FortitudeButton(R.drawable.report_cache, R.drawable.report_cache_pressed) {
     		public void preClickActions()
     		{
-    		
+    			
     		}
     		public void whenClicked()
     		{
-    			EnemyCacheScreen.getMe().killMe();
-    			new MainScreen();
+    			
     		}
     	});
-    	cancelButton.setLayoutParams(cancelButtonLayout);
-    	ninthRowGrid.addView(cancelButton, cancelButtonLayout);
+    	reportCacheButton.setLayoutParams(reportCacheButtonLayout);
+    	ninthRowGrid.addView(reportCacheButton, reportCacheButtonLayout);
+
     	
     	LayoutParams ninthRowGridLayout = new LayoutParams(row9, col1);
     	mainArea.addView(ninthRowGrid, ninthRowGridLayout);
@@ -298,26 +298,27 @@ public class EnemyCacheScreen extends Window
     	reportCacheGrid.setRowCount(1);
     	
     	LayoutParams reportCacheGridLeftSpaceLayout = new LayoutParams(row1, col1);
-    	reportCacheGridLeftSpaceLayout.width = super.getWindowWidth() / 4;
+    	reportCacheGridLeftSpaceLayout.width = (super.getWindowWidth() / 4) + (super.getWindowWidth() / 20);
     	Space reportCacheGridLeftSpace = new Space(reportCacheGrid.getContext());
     	reportCacheGridLeftSpace.setLayoutParams(reportCacheGridLeftSpaceLayout);
     	reportCacheGrid.addView(reportCacheGridLeftSpace, reportCacheGridLeftSpaceLayout);
     	
-    	LayoutParams reportCacheButtonLayout = new LayoutParams(row1, col2);
-    	reportCacheButtonLayout.width = super.getWindowWidth() / 2;
-    	reportCacheButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton reportCacheButton = (new FortitudeButton(R.drawable.report_cache, R.drawable.report_cache_pressed) {
+    	LayoutParams cancelButtonLayout = new LayoutParams(row1, col2); //cancel button
+    	cancelButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	cancelButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
     		public void preClickActions()
     		{
-    			
+    		
     		}
     		public void whenClicked()
     		{
-    			
+    			EnemyCacheScreen.getMe().killMe();
+    			new MainScreen();
     		}
     	});
-    	reportCacheButton.setLayoutParams(reportCacheButtonLayout);
-    	reportCacheGrid.addView(reportCacheButton, reportCacheButtonLayout);
+    	cancelButton.setLayoutParams(cancelButtonLayout);
+    	reportCacheGrid.addView(cancelButton, cancelButtonLayout);
     	
     	LayoutParams reportCacheGridLayout = new LayoutParams(row11, col1);
     	mainArea.addView(reportCacheGrid, reportCacheGridLayout);

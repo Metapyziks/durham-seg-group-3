@@ -133,6 +133,8 @@ function directory_manager_form_header($retailer_id) {
             $rating = 2;
             $city = 'Durham';
             $county = 'County Durham';
+            $latitude = 54.776842;
+            $longitude = -1.575454;
         }
     }
 
@@ -156,15 +158,15 @@ function directory_manager_form_header($retailer_id) {
 
 function directory_manager_construct_form($entry, $submitMessage) {
 ?>
-    <form name="addretailer" action="admin.php?page=<?PHP echo $_GET['page']; if ($_GET['retailer_id']) echo '&retailer_id='.$_GET['retailer_id']; ?>" method="post">
+    <form name="addretailer" onsubmit="finalizeMap()" action="admin.php?page=<?PHP echo $_GET['page']; if ($_GET['retailer_id']) echo '&retailer_id='.$_GET['retailer_id']; ?>" method="post">
     <input type="hidden" value="1" name="submitted" />
-    <input type="hidden" value="0.0" id="latitude" name="latitude" />
-    <input type="hidden" value="0.0" id="longitude" name="longitude" />
+    <input type="hidden" value="<?PHP echo $entry['latitude']; ?>" id="latitude" name="latitude" />
+    <input type="hidden" value="<?PHP echo $entry['longitude']; ?>" id="longitude" name="longitude" />
     <table border="0">
     <tr>
     <td align="right">Name:</td><td><input type="text" name="name" value="<?PHP echo $entry['name']; ?>"/></td><td>&nbsp;</td>
     <td align="right">Address Line 1:</td><td><input type="text" id="addressline1" name="addressline1" value="<?PHP echo $entry['addressline1']; ?>"/></td>
-    <td>&nbsp;</td><td><input type="button" value="Find Address" onclick="findAddress()"/></td>
+    <td>&nbsp;</td><td><input type="button" value="Find Address on Map" onclick="moveToLocation()" style="width: 40%"/><input type="button" value="Estimate Address" onclick="findAddress()" style="margin-left: auto; width: 40%"/></td>
     </tr>
     <tr>
     <td align="right">Contact:</td><td><input type="text" name="contact" value="<?PHP echo $entry['contact']; ?>"/></td><td>&nbsp;</td>
@@ -180,7 +182,7 @@ function directory_manager_construct_form($entry, $submitMessage) {
     <td align="right">County:</td><td><input type="text" id="county" name="county" value="<?PHP echo $entry['county']; ?>" /></td>
     </tr>
     <tr>
-    <td align="right">Rating:</td><td><input type="range" min="1" max="3" name="stars" value="<?PHP echo $entry['stars']; ?>"/></td><td>&nbsp;</td>
+    <td align="right">Rating:</td><td><input type="text" name="starstext" value="<?PHP echo $entry['stars']; ?>" style="width: 28px; text-align: center;" readonly />&nbsp;<input type="range" min="1" max="3" name="stars" style="width: 40%; height:6px;" value="<?PHP echo $entry['stars']; ?>" onchange="starstext.value = stars.value;"/></td><td>&nbsp;</td>
     <td align="right">Post Code:</td><td><input type="text" id="postcode" name="postcode" value="<?PHP echo $entry['postcode']; ?>"/></td>
     </tr>
     <tr>
