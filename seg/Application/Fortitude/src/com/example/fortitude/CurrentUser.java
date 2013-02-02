@@ -20,6 +20,11 @@ public class CurrentUser extends User
 		me = this;
 	}
 	
+	public void setSessionID(String x)
+	{
+		sessionID = x;
+	}
+	
 	public void setBalance(String x)
 	{
 		balance = truncateBalance(x);

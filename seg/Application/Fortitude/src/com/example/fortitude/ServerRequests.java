@@ -35,6 +35,8 @@ public class ServerRequests
 	private static boolean getUserInfoUseUsernames;
 	private static boolean refreshDataComplete;
 	private static boolean refreshDataSuccess;
+	private static String staticOriginPosition;
+	private static String staticDestinationPosition;
 
 	////////
 	//
@@ -51,6 +53,16 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static String getStaticDestinationPosition()
+	{
+		return staticDestinationPosition;
+	}
+	
+	public static String getStaticOriginPosition()
+	{
+		return staticOriginPosition;
+	}
+	
 	public static boolean getRefreshDataComplete()
 	{
 		return refreshDataComplete;
@@ -452,7 +464,7 @@ public class ServerRequests
 				{
 					while(connecting == false)
 					{
-						if(!(rt.getSuccess().equals("0")))
+						if(rt.getSuccess().equals("1"))
 						{
 							staticOutputMessage = rt.getOutputMessage();
 							Fortitude.getFortitude().runOnUiThread(new Runnable() {
@@ -463,6 +475,45 @@ public class ServerRequests
 								}
 							});
 							connecting = true;
+						}
+						if(rt.getSuccess().equals("2"))
+						{
+							staticOutputMessage = rt.getOutputMessage();
+							CurrentUser.getMe().setSessionID(ServerRequests.getStaticOutputMessage());
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+									    ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
+									}
+								}
+							});
+							try
+							{
+								Thread.sleep(2000);
+							}
+							catch(Exception e)
+							{
+								//do nothing
+							}
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+								}
+							});
 						}
 					}
 				}
@@ -995,6 +1046,10 @@ public class ServerRequests
 								{
 									ServerRequests.getTheMessageBox().killMe();
 								}
+								else if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
@@ -1084,6 +1139,75 @@ public class ServerRequests
 				{
 					ServerRequests.setRefreshDataSuccess(false);
 					ServerRequests.setRefreshDataComplete(true);
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public static void getGoogleMapRoute(String originPosition, String destinationPosition)
+	{
+		staticOriginPosition = originPosition;
+		staticDestinationPosition = destinationPosition;
+		
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				RequestThread rt = new RequestThread() {
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get Google Directions");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("status") == null)
+						{
+							this.setOutputMessage("Failed To Get Google Directions");
+							this.setSuccess("1");
+							return;
+						}
+						if(!response.get("status").asString().equals("OK"))
+						{
+							this.setOutputMessage("Failed To Get Google Directions");
+							this.setSuccess("1");
+							return;
+						}
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + getStaticOriginPosition() + "&destination=" + getStaticDestinationPosition() + "&sensor=true");
+				Thread thread = new Thread(rt);
+				thread.start();
+
+				boolean connecting = false; //wait for response
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.getTheMessageBox().killMe();
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						connecting = true;
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.getTheMessageBox().killMe();
+								System.out.println(ServerRequests.getStaticOutputMessage());
+							}
+						});
+					}
 				}
 			}
 		});

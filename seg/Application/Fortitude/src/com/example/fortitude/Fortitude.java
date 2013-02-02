@@ -47,6 +47,8 @@ public class Fortitude extends Activity
     {	
     	new MainLoginScreen();
     	
+    	//http://maps.googleapis.com/maps/api/directions/json?origin=54.773366,-1.575928&destination=54.709945,-1.508636&sensor=true
+    	
         /////////////////////////////////////////////// Create Login Screen Example
         //new LoginScreen();
         ///////////////////////////////////////////////
