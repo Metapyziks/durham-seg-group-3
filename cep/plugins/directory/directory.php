@@ -182,7 +182,7 @@ function directory_manager_construct_form($entry, $submitMessage) {
     <td align="right">County:</td><td><input type="text" id="county" name="county" value="<?PHP echo $entry['county']; ?>" /></td>
     </tr>
     <tr>
-    <td align="right">Rating:</td><td><input type="range" min="1" max="3" name="stars" value="<?PHP echo $entry['stars']; ?>"/></td><td>&nbsp;</td>
+    <td align="right">Rating:</td><td><input type="text" name="starstext" value="<?PHP echo $entry['stars']; ?>" style="width: 28px; text-align: center;" readonly />&nbsp;<input type="range" min="1" max="3" name="stars" style="width: 40%; height:6px;" value="<?PHP echo $entry['stars']; ?>" onchange="starstext.value = stars.value;"/></td><td>&nbsp;</td>
     <td align="right">Post Code:</td><td><input type="text" id="postcode" name="postcode" value="<?PHP echo $entry['postcode']; ?>"/></td>
     </tr>
     <tr>

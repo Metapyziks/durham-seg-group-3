@@ -190,7 +190,7 @@ public class VisitEnemyCacheScreen extends Window
     	eighthRowMiddleSpacer.setLayoutParams(eighthRowMiddleSpacerLayout);
     	eighthRowGrid.addView(eighthRowMiddleSpacer, eighthRowMiddleSpacerLayout);
     	
-    	LayoutParams attackCacheLayout = new LayoutParams(row1, col4);
+    	LayoutParams attackCacheLayout = new LayoutParams(row1, col4); //attack cache button
     	attackCacheLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
     	attackCacheLayout.height = super.getWindowHeight() / 10;
     	FortitudeButton attackCacheButton = (new FortitudeButton(R.drawable.decrease_army, R.drawable.decrease_army_pressed) {

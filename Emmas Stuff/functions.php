@@ -54,62 +54,17 @@ function advanced_comment($comment, $args, $depth) {
 		echo '<p>Hello! Welcome to the Durham City Fair Trade Partnership dashboard.</p><p>From here you can manage your website, including adding (or removing) pages, moderating comments and changing some settings. You can find a brief guide for some features at the page Hello Kathryn! (which is only visible to you through the dashboard).</p><p>We hope you enjoy using the website!</p><p>-- Emma, James, Alice, James and Charles</p>';
 	}
 	
-	function star_images($rating) {
-        	$star = '<img src="/wp-content/plugins/directory/images/star.png" />';
-        	$grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
-		return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
-	}
-	
+	// Create the function to use in the action hook
+
 	function example_remove_dashboard_widgets() {
 		remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );
 		remove_meta_box( 'dashboard_secondary', 'dashboard', 'side' );
 		remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
 		remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );
 		remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal' );
-		remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal' );
 	} 
-	
-	add_action( 'admin_init', 'my_remove_menu_pages' );
-	function my_remove_menu_pages() {
-		remove_menu_page('edit.php');  
-	}
 
-	function display_entries($data)
-	{
-		echo '<div id="entries">';
-		foreach ($data as $entry) {
-			echo '<a name="entry'.$entry['outletID'].'"></a>';
-			echo '<div class="entry" id="entry'.$entry['outletID'].'">';
-			echo '<div class="entry-left">';
-			echo '<div class="entry-name">';
-			echo '<div class="entry-rating">';
-			echo star_images($entry['stars']);
-			echo '</div>';
-			echo $entry['name'];
-			echo '</div>';
-			echo '<p>';
-			echo $entry['information'];
-			echo '</p>';
-			echo '<div id="dist'.$entry['outletID'].'" class="entry-hidden"></div>';
-			echo '</div>';
-			echo '<div class="entry-right">';
-			echo '<p>';
-			echo $entry['addressline1'].'<br />';
-			echo $entry['addressline2'].'<br />';
-			echo $entry['city'].'<br />';
-			echo $entry['postcode'];
-			echo '</p>';
-			echo '<p>';
-			echo $entry['phone'];
-			echo '</p>';
-			echo '<p>';
-			echo '<a href="'.$entry['url'].'">Website</a> <a href="/directory/map/?retailer_id='.$entry['outletID'].'" id="maplink'.$entry['outletID'].'">Find on Map</a>';
-			echo '</p>';
-			echo '</div>';
-			echo '</div>';
-		}
-		echo '</div>';
-	}
+	// Hoook into the 'wp_dashboard_setup' action to register our function
 
 	add_action('wp_dashboard_setup', 'example_remove_dashboard_widgets' );
 ?>

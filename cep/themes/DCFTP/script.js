@@ -165,6 +165,8 @@ function initialize() {
       var entry = entries.item(i);
       if (!entry.id) continue;
       entry.className = 'entry-hidden';
+      var id = entry.id.substr(5);
+      document.getElementById('maplink' + id).className = 'entry-hidden';
     }
     var locations = document.getElementById('hidden_locations').childNodes;
     var markers = new Array();
@@ -181,6 +183,11 @@ function initialize() {
       });
       markers.push(marker);
       addClickListener(markers, marker, id);
+      if (loc[3] == 'true') {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        _map.setCenter(marker.getPosition());
+        document.getElementById('entry' + id).className = 'entry';
+      }
     };
   } else {
     _marker = new google.maps.Marker({

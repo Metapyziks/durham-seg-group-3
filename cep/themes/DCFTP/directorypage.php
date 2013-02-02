@@ -44,7 +44,11 @@
 		<form id="hidden_locations">
 			<?PHP
 				foreach ($data as $entry) {
-					echo '<input type="hidden" id="loc'.$entry['outletID'].'" value="'.$entry['latitude'].','.$entry['longitude'].','.$entry['name'].'" />';
+					$curString = 'false';
+					if ($entry['outletID'] == $_GET['retailer_id']) {
+						$curString = 'true';
+					}
+					echo '<input type="hidden" id="loc'.$entry['outletID'].'" value="'.$entry['latitude'].','.$entry['longitude'].','.$entry['name'].','.$curString.'" />';
 				}
 			?>
 		</form>

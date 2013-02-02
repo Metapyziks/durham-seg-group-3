@@ -3,7 +3,6 @@ Theme Name: DCFTP - Durham City Fair Trade Partnership
 Author: Emma Nugee
 Description: A website based on the blue and green of fair trade colours,
 			 designed for Durham City Fair Trade Partnership.
-			 Note - The website is not designed to support blog posts, only static pages.
 Version: 1.0
 */
 
@@ -188,7 +187,7 @@ Version: 1.0
 	#main li {
 		margin-bottom: 8px;
 	}
-
+	
 	#footer {
 		/*	Contains image credits and copyright. */
 		width: 100%;
@@ -364,12 +363,17 @@ Version: 1.0
 		text-align: center;
 	}
 	
+	
 	/*	-------------------------------------------------------------------------
 	*	Styling links in the main section - navigation and aside are styled
 	*	separately. The hover hand applies to all links, and is used for
 	*	<a> elements used to call php or javascript functions.
 	*	-------------------------------------------------------------------------	*/	
 		
+	.gde-text {
+		display: none;
+	}
+	
 	a, a:hover {
 		cursor: hand; 
 		cursor: pointer;
@@ -615,7 +619,7 @@ Version: 1.0
 		margin: 10px 0 4px 0;
 	}
 	
-	.respondPadding, #si_contact_form1{
+	.respondPadding, #si_contact_form1 {
 		margin: 20px;
 	}
 
@@ -696,10 +700,6 @@ Version: 1.0
 		height: 20px;
 	}
 	
-	#report_tools_dt_intfc51083953cd2ef {
-		display: none;
-	}
-	
 	/*	-------------------------------------------------------------------------
 	*	Styling buttons; these appear on the directory page and any comments sections.
 	*	-------------------------------------------------------------------------	*/	
@@ -716,7 +716,7 @@ Version: 1.0
 		cursor: hand;
 		cursor: pointer;
     }
-
+	
 	.button:active  #submit:active, #fsc-submit-1:active, #fsc-reset-1:active {
 	   border: 1px solid #8ec1da;
 	   background-color: #ddeef6;

@@ -207,7 +207,8 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+    			killMe();
+    			new SettingsScreen();
     		}
     	});
     	settingsButton.setLayoutParams(settingsButtonLayout);
