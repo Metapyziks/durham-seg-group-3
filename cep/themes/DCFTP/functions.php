@@ -47,19 +47,26 @@ function advanced_comment($comment, $args, $depth) {
 	
 	function my_custom_dashboard_widgets() {
 		global $wp_meta_boxes;
-		wp_add_dashboard_widget('custom_help_widget', 'Theme Support', 'custom_dashboard_help');
+		wp_add_dashboard_widget('custom_help_widget', 'Hello!', 'custom_dashboard_help');
 	}
 
 	function custom_dashboard_help() {
 		echo '<p>Hello! Welcome to the Durham City Fair Trade Partnership dashboard.</p><p>From here you can manage your website, including adding (or removing) pages, moderating comments and changing some settings. You can find a brief guide for some features at the page Hello Kathryn! (which is only visible to you through the dashboard).</p><p>We hope you enjoy using the website!</p><p>-- Emma, James, Alice, James and Charles</p>';
 	}
 	
-	 function star_images($rating) {
-        $star = '<img src="/wp-content/plugins/directory/images/star.png" />';
-        $grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
-
-        return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
-    }
+	function star_images($rating) {
+        	$star = '<img src="/wp-content/plugins/directory/images/star.png" />';
+        	$grey = '<img src="/wp-content/plugins/directory/images/star_grey.png" />';
+		return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
+	}
+	
+	function example_remove_dashboard_widgets() {
+		remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );
+		remove_meta_box( 'dashboard_secondary', 'dashboard', 'side' );
+		remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
+		remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );
+		remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal' );
+	} 
 
 	function display_entries($data)
 	{
@@ -98,4 +105,5 @@ function advanced_comment($comment, $args, $depth) {
 		echo '</div>';
 	}
 
+	add_action('wp_dashboard_setup', 'example_remove_dashboard_widgets' );
 ?>
