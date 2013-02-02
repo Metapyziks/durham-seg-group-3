@@ -90,7 +90,7 @@ function advanced_comment($comment, $args, $depth) {
 			echo $entry['phone'];
 			echo '</p>';
 			echo '<p>';
-			echo '<a href="'.$entry['url'].'">Website</a> <a href="/directory/map/?retailer_id='.$entry['outletID'].'">Find on Map</a>';
+			echo '<a href="'.$entry['url'].'">Website</a> <a href="/directory/map/?retailer_id='.$entry['outletID'].'" id="maplink'.$entry['outletID'].'">Find on Map</a>';
 			echo '</p>';
 			echo '</div>';
 			echo '</div>';

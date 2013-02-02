@@ -165,6 +165,8 @@ function initialize() {
       var entry = entries.item(i);
       if (!entry.id) continue;
       entry.className = 'entry-hidden';
+      var id = entry.id.substr(5);
+      document.getElementById('maplink' + id).className = 'entry-hidden';
     }
     var locations = document.getElementById('hidden_locations').childNodes;
     var markers = new Array();
