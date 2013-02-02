@@ -808,14 +808,14 @@ $string .= '
      $string .= '\')" ';
     }
      $string .= '/> ';
-   if($si_contact_opt['enable_reset'] == 'true') {
+
      $string .= '<input type="reset" id="fsc-reset-'.$form_id_num.'" '.$this->ctf_reset_style.' value="';
      $string .= esc_attr(($si_contact_opt['title_reset'] != '') ?  $si_contact_opt['title_reset'] : __('Reset', 'si-contact-form'));
      $string .= '" onclick="return confirm(\'';
      $string .= esc_js(__('Do you really want to reset the form?', 'si-contact-form'));
      $string .= '\')"  />
 ';
-    }
+    
 
 $string .= '
 </div>
