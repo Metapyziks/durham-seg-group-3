@@ -48,46 +48,6 @@ public class TheMap extends GridLayout
 	private static boolean staticStillThere;
 	private static boolean staticStillThereDone;
 
-	public static boolean getStaticStillThereDone()
-	{
-		return staticStillThereDone;
-	}
-
-	public static void setStaticStillThereDone(boolean x)
-	{
-		staticStillThereDone = x;
-	}
-
-	public static boolean getStaticStillThere()
-	{
-		return staticStillThere;
-	}
-
-	public static void setStaticStillThere(boolean x)
-	{
-		staticStillThere = x;
-	}
-
-	public static int getMarkerPositionToBePassed()
-	{
-		return markerPositionToBePassed;
-	}
-
-	public static void setMarkerPositionToBePassed(int x)
-	{
-		markerPositionToBePassed = x;
-	}
-
-	public static Marker getMarkerToBePassed()
-	{
-		return markerToBePassed;
-	}
-
-	public static void setMarkerToBePassed(Marker x)
-	{
-		markerToBePassed = x;
-	}
-
 	////////
 	//
 	//private constructor
@@ -121,7 +81,194 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setZoomControlsEnabled(false); //disable default zoom controls
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
+		
+		setOnClickListenerOnGoogleMap();
+		
+		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
+			public void run()                       //location asap
+			{
+				while(!getGotInitialLocation())
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
+							if((xx != null) && (MessageBox.getMe() == null))
+							{
+								setGotInitialLocation(true);
+								TheMap.getMe().zoomToMyPosition();
+								updateCachePositions();
+							}
+						}
+					});
+					try
+					{
+						Thread.sleep(1000);
+					}
+					catch(Exception e)
+					{
 
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public void updateCachePositions()
+	{
+		Fortitude.getFortitude().runOnUiThread(new Runnable() {
+			public void run()
+			{
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+			}
+		});
+
+		updateMap();
+	}
+
+	private void updateMap()
+	{
+		ServerRequests.getNearbyCaches(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID(), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.latitude), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.longitude), "5000");
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+				{
+					// do nothing
+				}
+				if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							ArrayList<Cache> caches = ServerRequests.getNearbyCaches();
+
+							if(caches == null)
+							{
+								return;
+							}
+							for(Marker marker: TheMap.getMe().getMarkers())
+							{
+								marker.remove();
+							}
+
+							TheMap.getMe().setMarkers(new ArrayList<Marker>());
+							for(Cache cache: caches)
+							{
+								if(cache.getGarrison().equals("-1"))
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
+								}
+								if(!cache.getGarrison().equals("-1"))
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+								}
+							}
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+						}
+					});
+				}
+			}
+		});
+		thread.start();
+	}
+
+	////////
+	//
+	//zoomToMyPosition
+	//
+	//if it is possible to get the users current location the camera moves to it and zooms to a default level
+	//
+	////////
+	public void zoomToMyPosition()
+	{
+		if(googleMap.getMyLocation() != null)
+		{
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), 16));
+		}
+		else
+		{
+			if(TheMap.getGotInitialLocation())
+			{
+				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+					public void run()
+					{
+						MessageBox.newMsgBox("Unable To Find Your Location", true);
+					}
+				});
+			}
+		}
+	}
+
+	////////
+	//
+	//zoomToMyPositionAtMyZoom
+	//
+	//if it is possible to get the users current location the camera moves to it and without zooming in or out
+	//
+	////////
+	public void zoomToMyPositionAtMyZoom()
+	{
+		if(googleMap.getMyLocation() != null)
+		{
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), googleMap.getCameraPosition().zoom));
+		}
+	}
+
+	////////
+	//
+	//getMe
+	//
+	//returns the last created instance of this class, could be null
+	//
+	////////
+	public static TheMap getMe()
+	{
+		return me;
+	}
+
+	////////
+	//
+	//removeMeFromMyParent
+	//
+	//removes this view from its parent so it can be reused later
+	//
+	////////
+	public void removeMeFromMyParent()
+	{
+		((ViewGroup)this.getParent()).removeView(this);
+	}
+
+	////////
+	//
+	//getGoogleMap
+	//
+	//returns the googlemaps class from the google map
+	//
+	////////
+	public GoogleMap getGoogleMap()
+	{
+		return googleMap;
+	}
+
+	////////
+	//
+	//getMapView
+	//
+	//returns the view that contains the googlemaps
+	//
+	////////
+	public View getMapView()
+	{
+		return mapView;
+	}
+	
+	private void setOnClickListenerOnGoogleMap()
+	{
 		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 			public boolean onMarkerClick(Marker marker)
 			{
@@ -236,110 +383,63 @@ public class TheMap extends GridLayout
 				return true;
 			}
 		});
-
-		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
-			public void run()                       //location asap
-			{
-				while(!getGotInitialLocation())
-				{
-					Fortitude.getFortitude().runOnUiThread(new Runnable() {
-						public void run()
-						{
-							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
-							if((xx != null) && (MessageBox.getMe() == null))
-							{
-								setGotInitialLocation(true);
-								TheMap.getMe().zoomToMyPosition();
-								updateCachePositions();
-							}
-						}
-					});
-					try
-					{
-						Thread.sleep(1000);
-					}
-					catch(Exception e)
-					{
-
-					}
-				}
-			}
-		});
-		thread.start();
 	}
 
-	public void updateCachePositions()
+	public static boolean getStaticStillThereDone()
 	{
-		Fortitude.getFortitude().runOnUiThread(new Runnable() {
-			public void run()
-			{
-				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-			}
-		});
-
-		updateMap();
+		return staticStillThereDone;
 	}
 
-	private void updateMap()
+	public static void setStaticStillThereDone(boolean x)
 	{
-		ServerRequests.getNearbyCaches(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID(), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.latitude), Double.toString(TheMap.getMe().getGoogleMap().getCameraPosition().target.longitude), "5000");
-		Thread thread = new Thread(new Runnable() {
-			public void run()
-			{
-				while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
-				{
-					// do nothing
-				}
-				if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
-				{
-					Fortitude.getFortitude().runOnUiThread(new Runnable() {
-						public void run()
-						{
-							ArrayList<Cache> caches = ServerRequests.getNearbyCaches();
-
-							if(caches == null)
-							{
-								return;
-							}
-							for(Marker marker: TheMap.getMe().getMarkers())
-							{
-								marker.remove();
-							}
-
-							TheMap.getMe().setMarkers(new ArrayList<Marker>());
-							for(Cache cache: caches)
-							{
-								if(cache.getGarrison().equals("-1"))
-								{
-									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-								}
-								if(!cache.getGarrison().equals("-1"))
-								{
-									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
-								}
-							}
-							if(ServerRequests.getTheMessageBox() != null)
-							{
-								ServerRequests.getTheMessageBox().killMe();
-							}
-						}
-					});
-				}
-			}
-		});
-		thread.start();
+		staticStillThereDone = x;
 	}
 
-	public static boolean getFreeToGetCaches()
+	public static boolean getStaticStillThere()
 	{
-		return freeToGetCaches;
+		return staticStillThere;
 	}
 
-	public static void setFreeToGetCaches(boolean x)
+	public static void setStaticStillThere(boolean x)
 	{
-		freeToGetCaches = x;
+		staticStillThere = x;
 	}
 
+	public static int getMarkerPositionToBePassed()
+	{
+		return markerPositionToBePassed;
+	}
+
+	public static void setMarkerPositionToBePassed(int x)
+	{
+		markerPositionToBePassed = x;
+	}
+
+	public static Marker getMarkerToBePassed()
+	{
+		return markerToBePassed;
+	}
+
+	public static void setMarkerToBePassed(Marker x)
+	{
+		markerToBePassed = x;
+	}
+	
+	public TextView getGettingLocationTextView()
+	{
+		return gettingLocationTextView;
+	}
+
+	public synchronized ArrayList<Marker> getMarkers()
+	{
+		return markers;
+	}
+
+	public synchronized void setMarkers(ArrayList<Marker> newMarkers)
+	{
+		markers = newMarkers;
+	}
+	
 	////////
 	//
 	//getGotInitialLocation
@@ -363,109 +463,14 @@ public class TheMap extends GridLayout
 	{
 		gotInitialLocation = x;
 	}
-
-	////////
-	//
-	//zoomToMyPosition
-	//
-	//if it is possible to get the users current location the camera moves to it and zooms to a default level
-	//
-	////////
-	public void zoomToMyPosition()
+	
+	public static boolean getFreeToGetCaches()
 	{
-		if(googleMap.getMyLocation() != null)
-		{
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), 16));
-		}
-		else
-		{
-			if(TheMap.getGotInitialLocation())
-			{
-				Fortitude.getFortitude().runOnUiThread(new Runnable() {
-					public void run()
-					{
-						MessageBox.newMsgBox("Unable To Find Your Location", true);
-					}
-				});
-			}
-		}
+		return freeToGetCaches;
 	}
 
-	////////
-	//
-	//zoomToMyPositionAtMyZoom
-	//
-	//if it is possible to get the users current location the camera moves to it and without zooming in or out
-	//
-	////////
-	public void zoomToMyPositionAtMyZoom()
+	public static void setFreeToGetCaches(boolean x)
 	{
-		if(googleMap.getMyLocation() != null)
-		{
-			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), googleMap.getCameraPosition().zoom));
-		}
-	}
-
-	////////
-	//
-	//getMe
-	//
-	//returns the last created instance of this class, could be null
-	//
-	////////
-	public static TheMap getMe()
-	{
-		return me;
-	}
-
-	////////
-	//
-	//removeMeFromMyParent
-	//
-	//removes this view from its parent so it can be reused later
-	//
-	////////
-	public void removeMeFromMyParent()
-	{
-		((ViewGroup)this.getParent()).removeView(this);
-	}
-
-	////////
-	//
-	//getGoogleMap
-	//
-	//returns the googlemaps class from the google map
-	//
-	////////
-	public GoogleMap getGoogleMap()
-	{
-		return googleMap;
-	}
-
-	////////
-	//
-	//getMapView
-	//
-	//returns the view that contains the googlemaps
-	//
-	////////
-	public View getMapView()
-	{
-		return mapView;
-	}
-
-	public TextView getGettingLocationTextView()
-	{
-		return gettingLocationTextView;
-	}
-
-	public synchronized ArrayList<Marker> getMarkers()
-	{
-		return markers;
-	}
-
-	public synchronized void setMarkers(ArrayList<Marker> newMarkers)
-	{
-		markers = newMarkers;
+		freeToGetCaches = x;
 	}
 }

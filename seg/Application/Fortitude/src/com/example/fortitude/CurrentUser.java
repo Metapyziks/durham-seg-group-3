@@ -32,7 +32,7 @@ public class CurrentUser extends User
 	
 	public void setTotalBalance(String x)
 	{
-		totalBalance = truncateBalance(x);
+		totalBalance = Integer.toString((Integer.parseInt(truncateBalance(x))) + (Integer.parseInt(this.balance)));
 	}
 		
 	public String getTotalBalance()

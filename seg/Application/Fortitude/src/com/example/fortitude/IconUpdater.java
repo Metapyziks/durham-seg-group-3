@@ -66,7 +66,7 @@ public class IconUpdater
 										{
 											lonlon = longitude - marker.getPosition().longitude;
 										}
-										if((lonlon < 0.00013) && (latlat < 0.00013))
+										if((lonlon < 0.00025) && (latlat < 0.00025))
 										{
 											onLocation = true;
 										}
@@ -106,6 +106,12 @@ public class IconUpdater
 						xx++;
 						if(xx > 10)
 						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									MessageBox.newMsgBox("IconUpdater stopped running :(", true);
+								}
+							});
 							return;
 						}
 					}
