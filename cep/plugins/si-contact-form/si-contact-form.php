@@ -2,12 +2,12 @@
 /*
 Plugin Name: Fast Secure Contact Form - Modified for DCFTP
 Description: Fast Secure Contact Form for WordPress. The contact form lets your visitors send you a quick E-mail message. Includes CAPTCHA and Akismet support to block all common spammer tactics. Spam is no longer a problem.
-Version: 3.1.8
+Version: 3000.1.8
 Author: Mike Challis (Emma Nugee)
 Author URI: http://www.642weather.com/weather/scripts.php
 */
 
-$ctf_version = '9999';
+$ctf_version = '3000.1.8';
 
 /*  Copyright (C) 2008-2013 Mike Challis  (http://www.fastsecurecontactform.com/contact)
 

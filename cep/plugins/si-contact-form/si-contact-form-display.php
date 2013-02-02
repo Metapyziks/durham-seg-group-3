@@ -319,12 +319,6 @@ get_currentuserinfo();
         }  // end if label != ''
       } // end foreach
 
-
-     // The welcome is what gets printed just before the form.
-     // It is not printed when there is an input error or after the form is completed
-     $string .= '
-'.$si_contact_opt['welcome'];
-
 // the form is being displayed now
  $this->ctf_notes_style = $this->si_contact_convert_css($si_contact_opt['notes_style']);
  $this->ctf_form_style = $this->si_contact_convert_css($si_contact_opt['form_style']);
