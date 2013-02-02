@@ -129,6 +129,12 @@ function moveToLocation() {
 var _map;
 function initialize() {
   var latLng = new google.maps.LatLng(54.776842,-1.575454);
+  if (document.getElementById('latitude') && document.getElementById('longitude')) {
+    latLng = new google.maps.LatLng(
+      parseFloat(document.getElementById('latitude').value),
+      parseFloat(document.getElementById('longitude').value));
+  }
+
   _map = new google.maps.Map(document.getElementById('mapCanvas'), {
     zoom: 16,
     center: latLng,

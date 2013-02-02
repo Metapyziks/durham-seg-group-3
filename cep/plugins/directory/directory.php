@@ -133,6 +133,8 @@ function directory_manager_form_header($retailer_id) {
             $rating = 2;
             $city = 'Durham';
             $county = 'County Durham';
+            $latitude = 54.776842;
+            $longitude = -1.575454;
         }
     }
 
@@ -158,8 +160,8 @@ function directory_manager_construct_form($entry, $submitMessage) {
 ?>
     <form name="addretailer" action="admin.php?page=<?PHP echo $_GET['page']; if ($_GET['retailer_id']) echo '&retailer_id='.$_GET['retailer_id']; ?>" method="post">
     <input type="hidden" value="1" name="submitted" />
-    <input type="hidden" value="0.0" id="latitude" name="latitude" />
-    <input type="hidden" value="0.0" id="longitude" name="longitude" />
+    <input type="hidden" value="<?PHP echo $entry['latitude']; ?>" id="latitude" name="latitude" />
+    <input type="hidden" value="<?PHP echo $entry['longitude']; ?>" id="longitude" name="longitude" />
     <table border="0">
     <tr>
     <td align="right">Name:</td><td><input type="text" name="name" value="<?PHP echo $entry['name']; ?>"/></td><td>&nbsp;</td>
