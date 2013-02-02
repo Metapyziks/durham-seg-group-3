@@ -86,15 +86,16 @@ public class GUI
 	//removes all GUI elements
 	//
 	////////
-	public static void killAll(View v)
+	public static void killAll()
 	{
+		View v = Fortitude.getFortitude().getWindow().getDecorView();
 		if(v instanceof ViewGroup)
 		{
 		    ViewGroup vg = ((ViewGroup) v);
 		    int z = vg.getChildCount();
 		    for(int i = 0; i < z; i++)
 		    {
-			    vg.removeAllViews();
+		    	((ViewGroup) v).removeView(vg.getChildAt(i));
 		    }
 		}
 	}

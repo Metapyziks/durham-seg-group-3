@@ -47,6 +47,8 @@ public class Fortitude extends Activity
     {	
     	new MainLoginScreen();
     	
+    	//ServerRequests.getGoogleMapRoute("54.773366,-1.575928", "54.709945,-1.508636");
+    	
     	//http://maps.googleapis.com/maps/api/directions/json?origin=54.773366,-1.575928&destination=54.709945,-1.508636&sensor=true
     	
         /////////////////////////////////////////////// Create Login Screen Example

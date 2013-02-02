@@ -175,7 +175,8 @@ class ParseContext
 		return peek() == '"';
 	}
 
-	char nextUnicodeLiteral()
+	char nextUnicodeLiteral() 
+	    throws JSONParserException
 	{
 		if( offset + 4 <= length )
 		{
@@ -195,6 +196,7 @@ class ParseContext
 		{
 			error( "Incomplete unicode literal" );
 		}
+		return '\0';
 	}
 
 	char nextStringChar()
@@ -215,6 +217,8 @@ class ParseContext
 					return '"';
 				case 'u':
 					return nextUnicodeLiteral();
+				case '\\':
+					return '\\';
 				default:
 					error( "Invalid escaped character (\\" + prev() + ")" );
 			}

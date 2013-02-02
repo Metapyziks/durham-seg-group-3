@@ -9,6 +9,7 @@ import android.widget.GridLayout.Spec;
 import android.widget.Space;
 import android.widget.TextView;
 import android.view.Gravity;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
