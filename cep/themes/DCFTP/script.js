@@ -99,7 +99,14 @@ function findDistance(locA, locB)
 }
 
 function moveToLocation() {
-  var locName = document.getElementById('location').value;
+  var locName;
+  if (document.getElementById('location')) {
+    locName = document.getElementById('location').value;
+  } else if (document.getElementById('addressline1')) {
+    locName = document.getElementById('addressline1').value + ' ' + document.getElementById('postcode').value;
+  } else {
+    return;
+  }
   geocoder.geocode({
     address: locName
   }, function(responses) {
