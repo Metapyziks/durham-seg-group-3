@@ -81,9 +81,9 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setZoomControlsEnabled(false); //disable default zoom controls
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
-		
+
 		setOnClickListenerOnGoogleMap();
-		
+
 		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
 			public void run()                       //location asap
 			{
@@ -266,7 +266,7 @@ public class TheMap extends GridLayout
 	{
 		return mapView;
 	}
-	
+
 	private void setOnClickListenerOnGoogleMap()
 	{
 		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
@@ -342,7 +342,7 @@ public class TheMap extends GridLayout
 										{
 											if(ServerRequests.getTheMessageBox() != null)
 											{
-											    ServerRequests.getTheMessageBox().killMe();
+												ServerRequests.getTheMessageBox().killMe();
 											}
 											if(MessageBox.getMe() != null)
 											{
@@ -369,7 +369,7 @@ public class TheMap extends GridLayout
 										{
 											if(ServerRequests.getTheMessageBox() != null)
 											{
-											    ServerRequests.getTheMessageBox().killMe();
+												ServerRequests.getTheMessageBox().killMe();
 											}
 										}
 									});
@@ -424,7 +424,7 @@ public class TheMap extends GridLayout
 	{
 		markerToBePassed = x;
 	}
-	
+
 	public TextView getGettingLocationTextView()
 	{
 		return gettingLocationTextView;
@@ -439,7 +439,7 @@ public class TheMap extends GridLayout
 	{
 		markers = newMarkers;
 	}
-	
+
 	////////
 	//
 	//getGotInitialLocation
@@ -463,7 +463,7 @@ public class TheMap extends GridLayout
 	{
 		gotInitialLocation = x;
 	}
-	
+
 	public static boolean getFreeToGetCaches()
 	{
 		return freeToGetCaches;

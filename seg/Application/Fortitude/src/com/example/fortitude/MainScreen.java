@@ -516,6 +516,7 @@ public class MainScreen extends Window
 		if(castleClickable) //if the castle is clickable then find the closest cache to the user
 		{                   //and display the relevant user
 			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
+			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -531,6 +532,19 @@ public class MainScreen extends Window
 						public void run()
 						{
 							MessageBox.newMsgBox("Loading Cache Details", true);
+						}
+					});
+					try
+					{
+						Thread.sleep(500);
+					}
+					catch(Exception e)
+					{
+						//wait
+					}
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
 							int yy = -1;
 							try
 							{
@@ -544,7 +558,7 @@ public class MainScreen extends Window
 								}
 								double myLat = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
 								double myLon = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
-								double closestSoFar = 100;
+								double closestSoFar = 0.0005;
 								int xx = 0;
 								for(Marker m : TheMap.getMe().getMarkers())
 								{
@@ -575,9 +589,9 @@ public class MainScreen extends Window
 									}
 									xx++;
 								}
-								if(closestSoFar == 100)
+								if(closestSoFar == 0.0005)
 								{
-									throw new Exception("none less than 100");
+									throw new Exception();
 								}
 							}
 							catch(Exception e)
