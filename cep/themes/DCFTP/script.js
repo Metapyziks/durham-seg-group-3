@@ -181,6 +181,11 @@ function initialize() {
       });
       markers.push(marker);
       addClickListener(markers, marker, id);
+      if (loc[3] == 'true') {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        _map.setCenter(marker.getPosition());
+        document.getElementById('entry' + id).className = 'entry';
+      }
     };
   } else {
     _marker = new google.maps.Marker({
