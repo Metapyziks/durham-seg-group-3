@@ -733,6 +733,15 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//resetPassRest
+	//
+	//sends email to the email address provided if it exists on the server
+	//containing the username of the account and a link to the website to
+	//change their password if they want
+	//
+	////////
 	public static void resetPassReset(String email)
 	{
 		staticEmail = email;
@@ -1077,6 +1086,13 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//refreshData
+	//
+	//refreshes markers on the map and updates user balance and cache number
+	//
+	////////
 	public static void refreshData()
 	{
 		refreshDataComplete = false;
@@ -1145,6 +1161,13 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//getGoogleMapRoute
+	//
+	//gets googleMaps route from google maps routes
+	//
+	////////
 	public static void getGoogleMapRoute(String originPosition, String destinationPosition)
 	{
 		staticOriginPosition = originPosition;
@@ -1178,7 +1201,7 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + getStaticOriginPosition() + "&destination=" + getStaticDestinationPosition() + "&sensor=true");
+				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + getStaticOriginPosition() + "&destination=" + getStaticDestinationPosition() + "&sensor=true&mode=walking");
 				Thread thread = new Thread(rt);
 				thread.start();
 
@@ -1191,7 +1214,14 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								ServerRequests.getTheMessageBox().killMe();
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+								    ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
@@ -1200,6 +1230,7 @@ public class ServerRequests
 					else if(rt.getSuccess().equals("2"))
 					{
 						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
