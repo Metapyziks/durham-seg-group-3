@@ -841,21 +841,6 @@ $string .= '
 }
 
 $string .= '</div>';
-
-/* --- vCita Scheduler Display - Start --- */
-if ($si_contact_opt['vcita_enabled'] == 'true') {
-		$confirmation_token = $this->vcita_should_store_expert_confirmation_token($si_contact_opt);
-		
-		$string .= "
-<div class='fscf_vcita_container' ";
-		$string .= empty($confirmation_token) ? "" : "confirmation_token=".$confirmation_token;
-		$string .= (empty($si_contact_opt['vcita_uid']) ? "preview=true" : " vcita_uid = '").$si_contact_opt['vcita_uid']."'>
-</div>";
-        $string .= "
-<div style='clear:both;'></div>
-"; // "Reset" the float properties
-        $string .= '</div>';
-       /* --- vCita Scheduler Display - End --- */
 }
 $string .= '
 <!-- Fast Secure Contact Form plugin '.esc_attr($this->ctf_version).' - end - FastSecureContactForm.com -->';
