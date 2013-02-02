@@ -81,6 +81,7 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setZoomControlsEnabled(false); //disable default zoom controls
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
+		googleMap.getUiSettings().setRotateGesturesEnabled(false);
 
 		setOnClickListenerOnGoogleMap();
 
