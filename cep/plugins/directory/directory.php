@@ -158,7 +158,7 @@ function directory_manager_form_header($retailer_id) {
 
 function directory_manager_construct_form($entry, $submitMessage) {
 ?>
-    <form name="addretailer" action="admin.php?page=<?PHP echo $_GET['page']; if ($_GET['retailer_id']) echo '&retailer_id='.$_GET['retailer_id']; ?>" method="post">
+    <form name="addretailer" onsubmit="finalizeMap()" action="admin.php?page=<?PHP echo $_GET['page']; if ($_GET['retailer_id']) echo '&retailer_id='.$_GET['retailer_id']; ?>" method="post">
     <input type="hidden" value="1" name="submitted" />
     <input type="hidden" value="<?PHP echo $entry['latitude']; ?>" id="latitude" name="latitude" />
     <input type="hidden" value="<?PHP echo $entry['longitude']; ?>" id="longitude" name="longitude" />

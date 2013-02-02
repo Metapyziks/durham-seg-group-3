@@ -128,6 +128,7 @@ function moveToLocation() {
         }
       } else if (_marker) {
         _marker.setPosition(loc);
+        updateMarkerPosition(loc);
       }
     } else {
       // some error here
@@ -135,8 +136,15 @@ function moveToLocation() {
   });
 }
 
+function finalizeMap() {
+  if (_marker && !_dragged) {
+    moveToLocation();
+  }
+}
+
 var _map;
 var _marker;
+var _dragged = false;
 function initialize() {
   var latLng = new google.maps.LatLng(54.776842,-1.575454);
   if (document.getElementById('latitude') && document.getElementById('longitude')) {
@@ -188,6 +196,7 @@ function initialize() {
     
     // Add dragging event listeners.
     google.maps.event.addListener(_marker, 'dragstart', function() {
+      _dragged = true;
       updateMarkerAddress('Dragging...');
     });
     
