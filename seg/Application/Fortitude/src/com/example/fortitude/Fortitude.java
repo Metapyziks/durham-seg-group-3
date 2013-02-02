@@ -46,7 +46,7 @@ public class Fortitude extends Activity
     private void runApp()
     {	
     	new MainLoginScreen();
-
+    	
         /////////////////////////////////////////////// Create Login Screen Example
         //new LoginScreen();
         ///////////////////////////////////////////////

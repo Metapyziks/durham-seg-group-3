@@ -13,16 +13,8 @@ import android.widget.ImageView;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
-public class VisitYourCacheScreen extends Window
+public class VisitEnemyCacheScreen extends Window
 {
-	private static Cache staticTheCache;
-	private static VisitYourCacheScreen me;
-	
-	private Spec col1 = GridLayout.spec(0);
-	private Spec col2 = GridLayout.spec(1);
-	private Spec col3 = GridLayout.spec(2);
-	private Spec col4 = GridLayout.spec(3);
-	
 	private Spec row1 = GridLayout.spec(0);
 	private Spec row2 = GridLayout.spec(1);
 	private Spec row3 = GridLayout.spec(2);
@@ -34,11 +26,21 @@ public class VisitYourCacheScreen extends Window
 	private Spec row9 = GridLayout.spec(8);
 	private Spec row10 = GridLayout.spec(9);
 	
-	public VisitYourCacheScreen(Cache theCache)
+	private Spec col1 = GridLayout.spec(0);
+	private Spec col2 = GridLayout.spec(1);
+	private Spec col3 = GridLayout.spec(2);
+	private Spec col4 = GridLayout.spec(3);
+	
+	private static VisitEnemyCacheScreen me;
+	private static Cache staticTheCache;
+	private static User staticTheUser;
+	
+	public VisitEnemyCacheScreen(Cache theCache, User theUser)
 	{
-		super(R.drawable.allied_cache);
+		super(R.drawable.enemy_cache);
     	me = this;
     	staticTheCache = theCache;
+    	staticTheUser = theUser;
         addContentToContentPane(createWindowPane());
 	}
 	
@@ -65,7 +67,7 @@ public class VisitYourCacheScreen extends Window
 		
 		GridLayout topBarGrid = new GridLayout(mainArea.getContext());
 		topBarGrid.setColumnCount(2);
-		topBarGrid.setRowCount(1);
+		topBarGrid.setRowCount(5);
 		
 		LayoutParams userNameTextViewLayout = new LayoutParams(row1, col1); //username text view
 		userNameTextViewLayout.width = super.getWindowWidth() / 2;
@@ -115,7 +117,7 @@ public class VisitYourCacheScreen extends Window
     	cacheNameTextView.setTextColor(Color.rgb(218, 218, 218));
     	cacheNameTextView.setGravity(Gravity.LEFT);
     	cacheNameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	cacheNameTextView.setText(VisitYourCacheScreen.getStaticTheCache().getCacheName());
+    	cacheNameTextView.setText(VisitEnemyCacheScreen.getStaticTheCache().getCacheName());
     	cacheNameTextView.setLayoutParams(cacheNameTextViewLayout);
     	cacheNameGrid.addView(cacheNameTextView, cacheNameTextViewLayout);
     	
@@ -130,41 +132,28 @@ public class VisitYourCacheScreen extends Window
     	usernameTextView.setTextColor(Color.rgb(160, 160, 160));
     	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	usernameTextView.setText(CurrentUser.getMe().getUserName());
+    	usernameTextView.setText(VisitEnemyCacheScreen.getStaticTheUser().getUserName());
     	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
     	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1); //fith row space
     	fithRowSpaceLayout.height = super.getWindowHeight() / 30;
     	Space fithRowSpace = new Space(mainArea.getContext());
     	fithRowSpace.setLayoutParams(fithRowSpaceLayout);
-    	mainArea.addView(fithRowSpace, fithRowSpaceLayout);
+    	//mainArea.addView(fithRowSpace, fithRowSpaceLayout);
+		
+    	LayoutParams sixthRowTextViewLayout = new LayoutParams(row6, col1);
+    	sixthRowTextViewLayout.width = super.getWindowWidth();
+    	sixthRowTextViewLayout.height = super.getWindowHeight() / 10;
+    	TextView sixthRowTextView = new TextView(mainArea.getContext());
+    	sixthRowTextView.setGravity(Gravity.CENTER);
+    	sixthRowTextView.setTextSize(12);
+    	sixthRowTextView.setTextColor(Color.WHITE);
+    	sixthRowTextView.setText("You and your army arrive at an enemy fortification, what would you like to do?");
+    	sixthRowTextView.setLayoutParams(sixthRowTextViewLayout);
+    	mainArea.addView(sixthRowTextView, sixthRowTextViewLayout);
     	
-    	GridLayout standingArmyGrid = new GridLayout(mainArea.getContext());
-    	standingArmyGrid.setColumnCount(3);
-    	standingArmyGrid.setRowCount(1);
-    	
-    	LayoutParams standingArmyLeftSpaceLayout = new LayoutParams(row1, col1);
-    	standingArmyLeftSpaceLayout.width = super.getWindowWidth() / 2;
-    	Space standingArmyLeftSpace = new Space(standingArmyGrid.getContext());
-    	standingArmyLeftSpace.setLayoutParams(standingArmyLeftSpaceLayout);
-    	standingArmyGrid.addView(standingArmyLeftSpace, standingArmyLeftSpaceLayout);
-    	
-    	LayoutParams standingArmyTextViewLayout = new LayoutParams(row1, col2); //standing army text view
-    	standingArmyTextViewLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 8);
-    	standingArmyTextViewLayout.height = super.getWindowHeight() / 20;
-    	TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
-    	standingArmyTextView.setTextSize(14);
-    	standingArmyTextView.setTextColor(Color.WHITE);
-    	standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
-    	standingArmyTextView.setGravity(Gravity.RIGHT);
-    	standingArmyTextView.setLayoutParams(standingArmyTextViewLayout);
-    	standingArmyGrid.addView(standingArmyTextView, standingArmyTextViewLayout);
-    	
-    	LayoutParams standingArmyGridLayout = new LayoutParams(row6, col1);
-    	mainArea.addView(standingArmyGrid, standingArmyGridLayout);
-    	
-    	LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, col1); //seventh row space
-    	seventhRowSpaceLayout.height = super.getWindowHeight() / 7;
+    	LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, col1);
+    	seventhRowSpaceLayout.height = super.getWindowHeight() / 8;
     	Space seventhRowSpace = new Space(mainArea.getContext());
     	seventhRowSpace.setLayoutParams(seventhRowSpaceLayout);
     	mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);
@@ -179,10 +168,10 @@ public class VisitYourCacheScreen extends Window
     	eighthRowLeftSpace.setLayoutParams(eighthRowLeftSpaceLayout);
     	eighthRowGrid.addView(eighthRowLeftSpace, eighthRowLeftSpaceLayout);
     	
-    	LayoutParams withdrawUnitsButtonLayout = new LayoutParams(row1, col2); //plan route button
-    	withdrawUnitsButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	withdrawUnitsButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton withdrawUnitsButton = (new FortitudeButton(R.drawable.increase_army, R.drawable.increase_army_pressed) {
+    	LayoutParams scoutCacheButtonLayout = new LayoutParams(row1, col2); //plan route button
+    	scoutCacheButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	scoutCacheButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton scoutCacheButton = (new FortitudeButton(R.drawable.increase_army, R.drawable.increase_army_pressed) {
     		public void preClickActions()
     		{
     			
@@ -192,8 +181,8 @@ public class VisitYourCacheScreen extends Window
     			
     		}
     	});
-    	withdrawUnitsButton.setLayoutParams(withdrawUnitsButtonLayout);
-    	eighthRowGrid.addView(withdrawUnitsButton, withdrawUnitsButtonLayout);
+    	scoutCacheButton.setLayoutParams(scoutCacheButtonLayout);
+    	eighthRowGrid.addView(scoutCacheButton, scoutCacheButtonLayout);
     	
     	LayoutParams eighthRowMiddleSpacerLayout = new LayoutParams(row1, col3); //eighth row middle spacer
     	eighthRowMiddleSpacerLayout.width = super.getWindowWidth() / 15;
@@ -201,10 +190,10 @@ public class VisitYourCacheScreen extends Window
     	eighthRowMiddleSpacer.setLayoutParams(eighthRowMiddleSpacerLayout);
     	eighthRowGrid.addView(eighthRowMiddleSpacer, eighthRowMiddleSpacerLayout);
     	
-    	LayoutParams depositUnitsLayout = new LayoutParams(row1, col4);
-    	depositUnitsLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	depositUnitsLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton depositUnits = (new FortitudeButton(R.drawable.decrease_army, R.drawable.decrease_army_pressed) {
+    	LayoutParams attackCacheLayout = new LayoutParams(row1, col4);
+    	attackCacheLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	attackCacheLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton attackCacheButton = (new FortitudeButton(R.drawable.decrease_army, R.drawable.decrease_army_pressed) {
     		public void preClickActions()
     		{
     			
@@ -214,12 +203,12 @@ public class VisitYourCacheScreen extends Window
     			
     		}
     	});
-    	depositUnits.setLayoutParams(depositUnitsLayout);
-    	eighthRowGrid.addView(depositUnits, depositUnitsLayout);
+    	attackCacheButton.setLayoutParams(attackCacheLayout);
+    	eighthRowGrid.addView(attackCacheButton, attackCacheLayout);
     	
     	LayoutParams eighthRowGridLayout = new LayoutParams(row8, col1);
     	mainArea.addView(eighthRowGrid, eighthRowGridLayout);
-		
+    	
     	LayoutParams ninthRowSpaceLayout = new LayoutParams(row9, col1);
     	ninthRowSpaceLayout.height = super.getWindowHeight() / 30;
     	Space ninthRowSpace = new Space(mainArea.getContext());
@@ -266,7 +255,7 @@ public class VisitYourCacheScreen extends Window
 	//returns the last created instance of this class, could be null
 	//
 	////////
-	public static VisitYourCacheScreen getMe()
+	public static VisitEnemyCacheScreen getMe()
 	{
 		return me;
 	}
@@ -297,7 +286,7 @@ public class VisitYourCacheScreen extends Window
 		new AccountScreen() {
 			public void showNextScreen()
 			{
-				new VisitYourCacheScreen(VisitYourCacheScreen.getStaticTheCache());
+				new VisitEnemyCacheScreen(VisitEnemyCacheScreen.getStaticTheCache(), VisitEnemyCacheScreen.getStaticTheUser());
 			}
 		};
 	}
@@ -305,5 +294,10 @@ public class VisitYourCacheScreen extends Window
 	public static Cache getStaticTheCache()
 	{
 		return staticTheCache;
+	}
+	
+	public static User getStaticTheUser()
+	{
+		return staticTheUser;
 	}
 }
