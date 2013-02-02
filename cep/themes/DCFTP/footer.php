@@ -8,9 +8,12 @@
 	<div id="footer">
 		<!-- Contains credit and copywrite information. -->
 		<div class="padding-10">
-			Website copyright Durham City Fair Trade Partnership, all rights reserved<br />
-			Images in header copyright Fair Trade<br />
-			Corn field image copyright <a href="http://mgb-stock.deviantart.com/gallery/246328#/d12eo32">mgb-stock</a>
+			<?php
+				$footer = new WP_Query('pagename=footer/');
+				while($footer->have_posts()) : $footer->the_post();
+					the_content();
+				endwhile;
+			?>
 		</div>
 	</div>
 	

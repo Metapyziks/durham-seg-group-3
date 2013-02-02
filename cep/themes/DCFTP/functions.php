@@ -54,28 +54,6 @@ function advanced_comment($comment, $args, $depth) {
 		echo '<p>Hello! Welcome to the Durham City Fair Trade Partnership dashboard.</p><p>From here you can manage your website, including adding (or removing) pages, moderating comments and changing some settings. You can find a brief guide for some features at the page Hello Kathryn! (which is only visible to you through the dashboard).</p><p>We hope you enjoy using the website!</p><p>-- Emma, James, Alice, James and Charles</p>';
 	}
 	
-	function comicpress_copyright() {
-		global $wpdb;
-		
-		$copyright_dates = $wpdb->get_results("
-			SELECT
-			YEAR(min(post_date_gmt)) AS firstdate,
-			YEAR(max(post_date_gmt)) AS lastdate
-			FROM
-			$wpdb->posts
-			WHERE
-			post_status = 'publish'
-			");
-		$output = '';
-		
-		if($copyright_dates) {
-			$copyright = "&copy; " . $copyright_dates[0]->firstdate;
-			if($copyright_dates[0]->firstdate != $copyright_dates[0]->lastdate) {
-				$copyright .= '-' . $copyright_dates[0]->lastdate;
-				}
-			$output = $copyright;
-		}
-		return $output;
-	}
+	
 
 ?>
