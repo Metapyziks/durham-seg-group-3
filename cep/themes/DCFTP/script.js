@@ -126,6 +126,8 @@ function moveToLocation() {
           var dist = Math.round(findDistance(loc, otherLoc));
           distDiv.innerHTML = 'Distance from ' + locName + ': ' + dist + 'm';
         }
+      } else if (_marker) {
+        _marker.setPosition(loc);
       }
     } else {
       // some error here
@@ -134,6 +136,7 @@ function moveToLocation() {
 }
 
 var _map;
+var _marker;
 function initialize() {
   var latLng = new google.maps.LatLng(54.776842,-1.575454);
   if (document.getElementById('latitude') && document.getElementById('longitude')) {
@@ -172,7 +175,7 @@ function initialize() {
       addClickListener(markers, marker, id);
     };
   } else {
-    var marker = new google.maps.Marker({
+    _marker = new google.maps.Marker({
       position: latLng,
       title: 'New Retailer',
       map: _map,
@@ -184,18 +187,18 @@ function initialize() {
     geocodePosition(latLng);
     
     // Add dragging event listeners.
-    google.maps.event.addListener(marker, 'dragstart', function() {
+    google.maps.event.addListener(_marker, 'dragstart', function() {
       updateMarkerAddress('Dragging...');
     });
     
-    google.maps.event.addListener(marker, 'drag', function() {
+    google.maps.event.addListener(_marker, 'drag', function() {
       updateMarkerStatus('Dragging...');
-      updateMarkerPosition(marker.getPosition());
+      updateMarkerPosition(_marker.getPosition());
     });
     
-    google.maps.event.addListener(marker, 'dragend', function() {
+    google.maps.event.addListener(_marker, 'dragend', function() {
       updateMarkerStatus('Drag ended');
-      geocodePosition(marker.getPosition());
+      geocodePosition(_marker.getPosition());
     });
   }
 }

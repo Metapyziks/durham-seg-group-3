@@ -166,7 +166,7 @@ function directory_manager_construct_form($entry, $submitMessage) {
     <tr>
     <td align="right">Name:</td><td><input type="text" name="name" value="<?PHP echo $entry['name']; ?>"/></td><td>&nbsp;</td>
     <td align="right">Address Line 1:</td><td><input type="text" id="addressline1" name="addressline1" value="<?PHP echo $entry['addressline1']; ?>"/></td>
-    <td>&nbsp;</td><td><input type="button" value="Estimate Address" onclick="findAddress()" style="width: 40%"/><input type="button" value="Find Address on Map" onclick="moveToLocation()" style="width: 40%"/></td>
+    <td>&nbsp;</td><td><input type="button" value="Find Address on Map" onclick="moveToLocation()" style="width: 40%"/><input type="button" value="Estimate Address" onclick="findAddress()" style="margin-left: auto; width: 40%"/></td>
     </tr>
     <tr>
     <td align="right">Contact:</td><td><input type="text" name="contact" value="<?PHP echo $entry['contact']; ?>"/></td><td>&nbsp;</td>
