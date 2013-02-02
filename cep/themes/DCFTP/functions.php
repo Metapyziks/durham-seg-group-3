@@ -66,7 +66,13 @@ function advanced_comment($comment, $args, $depth) {
 		remove_meta_box( 'dashboard_quick_press', 'dashboard', 'side' );
 		remove_meta_box( 'dashboard_incoming_links', 'dashboard', 'normal' );
 		remove_meta_box( 'dashboard_plugins', 'dashboard', 'normal' );
+		remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal' );
 	} 
+	
+	add_action( 'admin_init', 'my_remove_menu_pages' );
+	function my_remove_menu_pages() {
+		remove_menu_page('edit.php');  
+	}
 
 	function display_entries($data)
 	{
