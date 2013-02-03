@@ -19,9 +19,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import android.graphics.Color;
 import android.view.Gravity;
 import java.util.ArrayList;
+import json.*;
 
 public class TheMap extends GridLayout
 {	
@@ -30,6 +33,7 @@ public class TheMap extends GridLayout
 	private Spec col1 = GridLayout.spec(0);
 
 	private GoogleMap googleMap = null; //googlemap options class
+	private Polyline theRoute;
 
 	View mapView; //The container of the googlemaps element
 
@@ -82,6 +86,8 @@ public class TheMap extends GridLayout
 		googleMap.getUiSettings().setMyLocationButtonEnabled(false); //disable default my location button
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
 		googleMap.getUiSettings().setRotateGesturesEnabled(false);
+		googleMap.getUiSettings().setCompassEnabled(false);
+		googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
 		setOnClickListenerOnGoogleMap();
 
@@ -384,6 +390,35 @@ public class TheMap extends GridLayout
 				return true;
 			}
 		});
+	}
+	
+	public void removeRoute()
+	{
+		if(theRoute != null)
+		{
+			theRoute.remove();
+		}
+	}
+	
+	////////
+	//
+	//addRoute
+	//
+	//removes the root currently on the map screen and adds the new one
+	//
+	////////
+	public void addRoute(JSONObject response)
+	{
+		removeRoute();
+		PolylineOptions waypoints = new PolylineOptions();
+		waypoints.add(new LatLng(ServerRequests.getGoogleDirectionsResponse().get("routes").get(0).get("legs").get(0).get("start_location").get("lat").asDouble(), ServerRequests.getGoogleDirectionsResponse().get("routes").get(0).get("legs").get(0).get("start_location").get("lng").asDouble()));
+		for(int i = 0; i < ServerRequests.getGoogleDirectionsResponse().get("routes").get(0).get("legs").get(0).get("steps").length(); i++)
+		{
+			waypoints.add(new LatLng(ServerRequests.getGoogleDirectionsResponse().get("routes").get(0).get("legs").get(0).get("steps").get(i).get("end_location").get("lat").asDouble(), ServerRequests.getGoogleDirectionsResponse().get("routes").get(0).get("legs").get(0).get("steps").get(i).get("end_location").get("lng").asDouble()));
+		}
+		waypoints.color(Color.RED);
+		waypoints.width(5);
+		theRoute = googleMap.addPolyline(waypoints);
 	}
 
 	public static boolean getStaticStillThereDone()

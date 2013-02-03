@@ -37,7 +37,7 @@ public class MainLoginScreen extends Window
     {
     	super(R.drawable.sign_in);
     	me = this;
-        addContentToContentPane(createWindowPane());
+        super.addContentToContentPane(createWindowPane());
     }
     
     ////////
