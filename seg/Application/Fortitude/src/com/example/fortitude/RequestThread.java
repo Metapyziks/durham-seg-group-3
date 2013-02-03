@@ -49,7 +49,7 @@ public abstract class RequestThread implements Runnable
 				setSuccess("1");
 				return;
 			}
-			
+			System.out.println(url);
 			JSONObject obj = makeGetRequest();
 			processResponse(obj);
 		}

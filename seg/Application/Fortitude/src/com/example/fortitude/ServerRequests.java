@@ -1292,6 +1292,10 @@ public class ServerRequests
 								{
 									ServerRequests.getTheMessageBox().killMe();
 								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
 								if(MainScreen.getMe() != null)
 								{
 									if(MainScreen.getMe().getUserBalanceTextView() != null)
@@ -1299,6 +1303,38 @@ public class ServerRequests
 										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance());
 									}
 								}
+								if(TheMap.getMe().getCacheRoutePosition().equals("null"))
+								{
+									return;
+								}
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Mapping Route", false));
+								ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(!ServerRequests.getStaticGoogleRouteComplete())
+										{
+											//wait
+										}
+										if(ServerRequests.getStaticGoogleRouteSuccess())
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+													if(MessageBox.getMe() != null)
+													{
+														MessageBox.getMe().killMe();
+													}
+												}
+											});
+										}
+									}
+								});
+								thread.start();
 							}
 						});
 						ServerRequests.setRefreshDataSuccess(true);
@@ -1408,6 +1444,7 @@ public class ServerRequests
 								{
 									MessageBox.getMe().killMe();
 								}
+								TheMap.getMe().setCacheRoutePosition(ServerRequests.getStaticDestinationPosition());
 								ServerRequests.setStaticGoogleRouteSuccess(true);
 								ServerRequests.setStaticGoogleRouteComplete(true);
 							}

@@ -489,7 +489,14 @@ public class MainScreen extends Window
 			centerMeClickableArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					TheMap.getMe().zoomToMyPositionAtMyZoom();
+					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+					{
+					    TheMap.getMe().zoomToMyPositionAtMyZoom();
+					}
+					else
+					{
+						MessageBox.newMsgBox("Can't Get Your Location!", true);
+					}
 				}
 			});
 			centerMeClickableAreaGrid.addView(centerMeClickableArea, centerMeClickableAreaLayout);

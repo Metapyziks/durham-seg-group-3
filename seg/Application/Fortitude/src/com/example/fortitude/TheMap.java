@@ -34,19 +34,14 @@ public class TheMap extends GridLayout
 
 	private GoogleMap googleMap = null; //googlemap options class
 	private Polyline theRoute;
-
+	private String cacheRoutePosition = "null";
 	View mapView; //The container of the googlemaps element
-
-	private static boolean gotInitialLocation = false; //don't touch me...
-
 	private static TheMap me = null; //holds the last created of this instance
 
+	private static boolean gotInitialLocation = false; //don't touch me...
 	private static boolean freeToGetCaches;
-
 	private static TextView gettingLocationTextView;
-
 	private static ArrayList<Marker> markers = new ArrayList<Marker>();
-
 	private static Marker markerToBePassed;
 	private static int markerPositionToBePassed;
 	private static boolean staticStillThere;
@@ -392,12 +387,15 @@ public class TheMap extends GridLayout
 		});
 	}
 	
-	public void removeRoute()
+	public boolean removeRoute()
 	{
 		if(theRoute != null)
 		{
 			theRoute.remove();
+			cacheRoutePosition = "null";
+			return true;
 		}
+		return false;
 	}
 	
 	////////
@@ -508,5 +506,15 @@ public class TheMap extends GridLayout
 	public static void setFreeToGetCaches(boolean x)
 	{
 		freeToGetCaches = x;
+	}
+	
+	public String getCacheRoutePosition()
+	{
+		return cacheRoutePosition;
+	}
+	
+	public void setCacheRoutePosition(String x)
+	{
+		cacheRoutePosition = x;
 	}
 }

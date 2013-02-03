@@ -237,7 +237,14 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+    			if(TheMap.getMe().removeRoute())
+    			{
+    				MessageBox.newMsgBox("Route Cleared!", true);
+    			}
+    			else
+    			{
+    				MessageBox.newMsgBox("There Is No Route To Clear!", true);
+    			}
     		}
     	});
     	clearRouteButton.setLayoutParams(clearRouteButtonLayout);
