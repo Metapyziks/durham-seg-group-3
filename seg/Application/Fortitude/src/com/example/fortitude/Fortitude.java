@@ -22,10 +22,6 @@ public class Fortitude extends Activity
         //setContentView(R.layout.activity_fortitude);
         //GoogleMap mMap;
         //mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-        
-        fortitude = this;
-        this.setRequestedOrientation(1); //lock application to portrait
-    	GUI.setUpActivityGraphics();
         runApp();
     }
     
@@ -45,6 +41,10 @@ public class Fortitude extends Activity
     ////////
     private void runApp()
     {	
+        fortitude = this;
+        this.setRequestedOrientation(1); //lock application to portrait
+    	GUI.setUpActivityGraphics();
+    	
     	new MainLoginScreen();
     	
     	//ServerRequests.getGoogleMapRoute("54.773366,-1.575928", "54.709945,-1.508636");

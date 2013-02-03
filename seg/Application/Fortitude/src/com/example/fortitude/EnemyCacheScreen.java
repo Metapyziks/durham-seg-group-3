@@ -202,7 +202,7 @@ public class EnemyCacheScreen extends Window
 
 		LayoutParams sendMessageButtonLayout = new LayoutParams(row1, col4); //send message button
 		sendMessageButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-		seeProfileButtonLayout.height = super.getWindowHeight() / 10;
+		sendMessageButtonLayout.height = super.getWindowHeight() / 10;
 		FortitudeButton sendMessageButton = (new FortitudeButton(R.drawable.send_message, R.drawable.send_message_pressed) {
 			public void preClickActions()
 			{

@@ -55,7 +55,7 @@ public abstract class AccountScreen extends Window
     {
     	GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
     	mainArea.setColumnCount(2);
-    	mainArea.setRowCount(12);
+    	mainArea.setRowCount(14);
     	
     	LayoutParams positionalSpaceLayout = new LayoutParams(row1, col1); //positional spacer
     	positionalSpaceLayout.width = (super.getWindowWidth() / 10) - (super.getWindowWidth() / 40);

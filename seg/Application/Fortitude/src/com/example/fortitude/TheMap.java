@@ -288,6 +288,15 @@ public class TheMap extends GridLayout
 						{
 							return;
 						}
+						if(ServerRequests.getTheMessageBox() == null)
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+								}
+							});
+						}
 						TheMap.setStaticStillThere(false);
 						TheMap.setStaticStillThereDone(false);
 						TheMap.setMarkerPositionToBePassed(-1);
