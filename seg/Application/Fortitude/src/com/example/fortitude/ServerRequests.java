@@ -2,11 +2,14 @@ package com.example.fortitude;
 
 import java.net.URL;
 import java.net.URLConnection;
+import java.io.UnsupportedEncodingException;
 import java.lang.StringBuilder;
 import java.net.URLEncoder;
 import java.net.ConnectException;
 import json.*;
 import java.util.ArrayList;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 //A class that handles all requests to the server through static methods.
 public class ServerRequests
@@ -37,6 +40,20 @@ public class ServerRequests
 	private static boolean refreshDataSuccess;
 	private static String staticOriginPosition;
 	private static String staticDestinationPosition;
+	private static boolean scoutCacheComplete;
+	private static boolean scoutCacheSuccess;
+	private static String staticCacheIdToScout;
+	private static boolean placeCacheComplete;
+	private static boolean placeCacheSuccess;
+	private static String unitsToPlace;
+	private static boolean attackCacheComplete;
+	private static boolean attackCacheSuccess;
+	private static String cacheIdToAttack;
+	private static String unitsToAttackWith;
+	private static String staticScoutsSent;
+	private static boolean staticGoogleRouteSuccess;
+	private static boolean staticGoogleRouteComplete;
+	private static JSONObject googleDirectionsResponse;
 
 	////////
 	//
@@ -53,16 +70,151 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static JSONObject getGoogleDirectionsResponse()
+	{
+		return googleDirectionsResponse;
+	}
+
+	public static void setGoogleDirectionsResponse(JSONObject x)
+	{
+		googleDirectionsResponse = x;
+	}
+
+	public static boolean getStaticGoogleRouteComplete()
+	{
+		return staticGoogleRouteComplete;
+	}
+
+	public static void setStaticGoogleRouteComplete(boolean x)
+	{
+		staticGoogleRouteComplete = x;
+	}
+
+	public static boolean getStaticGoogleRouteSuccess()
+	{
+		return staticGoogleRouteSuccess;
+	}
+
+	public static void setStaticGoogleRouteSuccess(boolean x)
+	{
+		staticGoogleRouteSuccess = x;
+	}
+
+	public static String getStaticScoutsSent()
+	{
+		return staticScoutsSent;
+	}
+
+	public static String getUnitsToAttackWith()
+	{
+		return unitsToAttackWith;
+	}
+
+	public void setUnitsToAttackWith(String x)
+	{
+		unitsToAttackWith = x;
+	}
+
+	public static String getCacheIdToAttack()
+	{
+		return cacheIdToAttack;
+	}
+
+	public static void setCacheIdToAttack(String x)
+	{
+		cacheIdToAttack = x;
+	}
+
+	public static boolean getAttackCacheSuccess()
+	{
+		return attackCacheSuccess;
+	}
+
+	public static void setAttackCacheSuccess(boolean x)
+	{
+		attackCacheSuccess = x;
+	}
+
+	public static boolean getAttackCacheComplete()
+	{
+		return attackCacheComplete;
+	}
+
+	public static void setAttackCacheComplete(boolean x)
+	{
+		attackCacheComplete = x;
+	}
+
+	public static String getUnitsToPlace()
+	{
+		return unitsToPlace;
+	}
+
+	public static void setUnitsToPlace(String x)
+	{
+		unitsToPlace = x;
+	}
+
+	public static boolean getPlaceCacheSuccess()
+	{
+		return placeCacheSuccess;
+	}
+
+	public static void setPlaceCacheSuccess(boolean x)
+	{
+		placeCacheSuccess = x;
+	}
+
+	public static boolean getPlaceCacheComplete()
+	{
+		return placeCacheComplete;
+	}
+
+	public static void setPlaceCacheComplete(boolean x)
+	{
+		placeCacheComplete = x;
+	}
+
+	public static String getCacheIdToScout()
+	{
+		return staticCacheIdToScout;
+	}
+
+	public static void setCacheIdToScout(String x)
+	{
+		staticCacheIdToScout = x;
+	}
+
+	public static boolean getScoutCacheSuccess()
+	{
+		return scoutCacheSuccess;	
+	}
+
+	public static void setScoutCacheSuccess(boolean x)
+	{
+		scoutCacheSuccess = x;
+	}
+
+	public static boolean getScoutCacheComplete()
+	{
+		return scoutCacheComplete;
+	}
+
+	public static void setScoutCacheComplete(boolean x)
+	{
+		scoutCacheComplete = x;
+	}
+
 	public static String getStaticDestinationPosition()
 	{
 		return staticDestinationPosition;
 	}
-	
+
 	public static String getStaticOriginPosition()
 	{
 		return staticOriginPosition;
 	}
-	
+
 	public static boolean getRefreshDataComplete()
 	{
 		return refreshDataComplete;
@@ -450,8 +602,7 @@ public class ServerRequests
 									public void run()
 									{
 										ServerRequests.getTheMessageBox().killMe();
-										MainLoginScreen.getMe().killMe();
-										new MainLoginScreen();
+										MainLoginScreen.getMe().getPasswordField().setText("");
 										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 									}
 								});
@@ -485,7 +636,7 @@ public class ServerRequests
 								{
 									if(ServerRequests.getTheMessageBox() != null)
 									{
-									    ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+										ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
 									}
 									else if(MessageBox.getMe() != null)
 									{
@@ -610,8 +761,15 @@ public class ServerRequests
 							Fortitude.getFortitude().runOnUiThread(new Runnable() {
 								public void run()
 								{
-									ServerRequests.getTheMessageBox().killMe();
-									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+									if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+									{
+										sessionExpiredActions();
+									}
+									else
+									{
+										ServerRequests.getTheMessageBox().killMe();
+										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+									}
 								}
 							});
 						}
@@ -733,6 +891,15 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//resetPassRest
+	//
+	//sends email to the email address provided if it exists on the server
+	//containing the username of the account and a link to the website to
+	//change their password if they want
+	//
+	////////
 	public static void resetPassReset(String email)
 	{
 		staticEmail = email;
@@ -831,7 +998,7 @@ public class ServerRequests
 	//
 	////////
 	public static void getUserInfo(String users, boolean useUsernames)
-	{
+	{	
 		getUserInfoComplete = false;
 		getUserInfoSuccess = false;
 		getUserInfoUseUsernames = useUsernames;
@@ -1042,15 +1209,22 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else
 								{
-									MessageBox.getMe().killMe();
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
 						connecting = true;
@@ -1077,6 +1251,13 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//refreshData
+	//
+	//refreshes markers on the map and updates user balance and cache number
+	//
+	////////
 	public static void refreshData()
 	{
 		refreshDataComplete = false;
@@ -1117,6 +1298,10 @@ public class ServerRequests
 								{
 									ServerRequests.getTheMessageBox().killMe();
 								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
 								if(MainScreen.getMe() != null)
 								{
 									if(MainScreen.getMe().getUserBalanceTextView() != null)
@@ -1124,6 +1309,38 @@ public class ServerRequests
 										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance());
 									}
 								}
+								if(TheMap.getMe().getCacheRoutePosition().equals("null"))
+								{
+									return;
+								}
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Mapping Route", false));
+								ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(!ServerRequests.getStaticGoogleRouteComplete())
+										{
+											//wait
+										}
+										if(ServerRequests.getStaticGoogleRouteSuccess())
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+													if(MessageBox.getMe() != null)
+													{
+														MessageBox.getMe().killMe();
+													}
+												}
+											});
+										}
+									}
+								});
+								thread.start();
 							}
 						});
 						ServerRequests.setRefreshDataSuccess(true);
@@ -1145,11 +1362,21 @@ public class ServerRequests
 		thread.start();
 	}
 
+	////////
+	//
+	//getGoogleMapRoute
+	//
+	//gets googleMaps route from google maps routes
+	//
+	////////
 	public static void getGoogleMapRoute(String originPosition, String destinationPosition)
 	{
+		staticGoogleRouteSuccess = false;
+		staticGoogleRouteComplete = false;
+
 		staticOriginPosition = originPosition;
 		staticDestinationPosition = destinationPosition;
-		
+
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -1170,15 +1397,17 @@ public class ServerRequests
 						}
 						if(!response.get("status").asString().equals("OK"))
 						{
+							System.out.println("debug1" + " " + response.get("status").asString());
 							this.setOutputMessage("Failed To Get Google Directions");
 							this.setSuccess("1");
 							return;
 						}
+						ServerRequests.setGoogleDirectionsResponse(response);
 						this.setSuccess("2");
 					}
 
 				};
-				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + getStaticOriginPosition() + "&destination=" + getStaticDestinationPosition() + "&sensor=true");
+				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + ServerRequests.getStaticOriginPosition() + "&destination=" + ServerRequests.getStaticDestinationPosition() + "&sensor=true&mode=walking");
 				Thread thread = new Thread(rt);
 				thread.start();
 
@@ -1191,20 +1420,39 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								ServerRequests.getTheMessageBox().killMe();
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
+						ServerRequests.setStaticGoogleRouteSuccess(false);
+						ServerRequests.setStaticGoogleRouteComplete(true);
 						connecting = true;
 					}
 					else if(rt.getSuccess().equals("2"))
-					{
+					{	
 						connecting = true;
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								ServerRequests.getTheMessageBox().killMe();
-								System.out.println(ServerRequests.getStaticOutputMessage());
+								TheMap.getMe().addRoute(ServerRequests.getGoogleDirectionsResponse());
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								TheMap.getMe().setCacheRoutePosition(ServerRequests.getStaticDestinationPosition());
+								ServerRequests.setStaticGoogleRouteSuccess(true);
+								ServerRequests.setStaticGoogleRouteComplete(true);
 							}
 						});
 					}
@@ -1213,6 +1461,507 @@ public class ServerRequests
 		});
 		thread.start();
 	}
+
+	////////
+	//
+	//placeCache
+	//
+	//places a cache at the given location
+	//
+	////////
+	public static void placeCache(String latitude, String longitude, String numberOfUnits)
+	{
+		placeCacheComplete = false;
+		placeCacheSuccess = false;
+		staticLon = longitude;
+		staticLat = latitude;
+		unitsToPlace = numberOfUnits;
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setPlaceCacheSuccess(false);
+					ServerRequests.setPlaceCacheComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Place Cache");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Place Cache");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("done");
+						this.setSuccess("2");
+					}
+
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/placecache?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToPlace() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+						}
+					});
+					ServerRequests.setPlaceCacheSuccess(false);
+					ServerRequests.setPlaceCacheComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setPlaceCacheSuccess(false);
+						ServerRequests.setPlaceCacheComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setPlaceCacheSuccess(true);
+						ServerRequests.setPlaceCacheComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+
+	////////
+	//
+	//scoutCache
+	//
+	//gets the information on a cache
+	//
+	////////
+	public static void scoutCache(String latitude, String longitude, String cacheIdToScout, String scoutsSent)
+	{
+		ServerRequests.setScoutCacheComplete(false);
+		ServerRequests.setScoutCacheSuccess(false);
+		staticLon = longitude;
+		staticLat = latitude;
+		staticCacheIdToScout = cacheIdToScout;
+		staticScoutsSent = scoutsSent;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setScoutCacheSuccess(false);
+					ServerRequests.setScoutCacheComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Scout Cache");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Scout Cache");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage(response.get("caches").get(0).get("garrison").asString());
+						this.setSuccess("2");
+					}
+
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/scout?units=" + ServerRequests.getStaticScoutsSent() + "&cacheid=" + ServerRequests.getCacheIdToScout() + "&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+						}
+					});
+					ServerRequests.setScoutCacheSuccess(false);
+					ServerRequests.setScoutCacheComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setScoutCacheSuccess(false);
+						ServerRequests.setScoutCacheComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									ServerRequests.getTheMessageBox().killMe();
+									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
+								}
+							});
+						}
+						ServerRequests.setScoutCacheSuccess(true);
+						ServerRequests.setScoutCacheComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+
+	////////
+	//
+	//attackCache
+	//
+	//attacks the cache the user is at with a number of units from the logged in users balance
+	//
+	////////
+	public static void attackCache(String latitude, String longitude, String attackUnits, String cacheId)
+	{
+		attackCacheComplete = false;
+		attackCacheSuccess = false;
+
+		staticLat = latitude;
+		staticLon = longitude;
+		cacheIdToAttack = cacheId;
+		unitsToAttackWith = attackUnits;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setAttackCacheSuccess(false);
+					ServerRequests.setAttackCacheComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Issue Attack Cache Command");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Place Attack Cache Command");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("done");
+						this.setSuccess("2");
+					}
+
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/attack?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToAttackWith() + "&cacheid=" + ServerRequests.getCacheIdToAttack() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+						}
+					});
+					ServerRequests.setAttackCacheSuccess(false);
+					ServerRequests.setAttackCacheComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setAttackCacheSuccess(false);
+						ServerRequests.setAttackCacheComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									ServerRequests.getTheMessageBox().killMe();
+									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
+								}
+							});
+						}
+						ServerRequests.setAttackCacheSuccess(true);
+						ServerRequests.setAttackCacheComplete(true);
+					}
+				}	
+			}
+		});
+		thread.start();
+	}
+
+	////////
+	//
+	//constructLocationUrlStuff
+	//
+	//returns part of the url required for location verification requests (place cache etc...)
+	//
+	////////
+	public static String constructLocationUrlStuff(String latitude, String longitude) throws UnsupportedEncodingException, NoSuchAlgorithmException
+	{
+		final byte[] salt = new byte[] {((byte)0x2a), ((byte)0x1e), ((byte)0x97), ((byte)0xab), ((byte)0x2b), ((byte)0xb1), ((byte)0x3c)};
+
+		int i = 0;
+		int s = 0;
+		String theTimeStamp = Long.toString((System.currentTimeMillis() / 1000));
+		byte[] hashArray = new byte[latitude.length() + longitude.length() + theTimeStamp.length() + salt.length];
+		hashArray[i++] = salt[s++];
+		hashArray[i++] = salt[s++];
+		byte[] tempBytes = latitude.getBytes("UTF-8");
+		for(byte b : tempBytes)
+		{
+			hashArray[i++] = b;
+		}
+		hashArray[i++] = salt[s++];
+		hashArray[i++] = salt[s++];
+		tempBytes = longitude.getBytes("UTF-8");
+		for(byte b : tempBytes)
+		{
+			hashArray[i++] = b;
+		}
+		hashArray[i++] = salt[s++];
+		tempBytes = theTimeStamp.getBytes("UTF-8");
+		for(byte b : tempBytes)
+		{
+			hashArray[i++] = b;
+		}
+		hashArray[i++] = salt[s++];
+		hashArray[i++] = salt[s++];
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		byte[] digest = m.digest(hashArray);
+		StringBuffer builder = new StringBuffer();
+		for(int ii = 0; ii < digest.length; ++ii) {
+			builder.append(Integer.toHexString((digest[ii] & 0xFF) | 0x100).substring(1, 3));
+		}
+		return "lat=" + latitude + "&lng=" + longitude + "&time=" + theTimeStamp + "&hash=" + builder.toString();
+	}
+
+	public static void sessionExpiredActions()
+	{
+		GUI.killAll();
+		MessageBox.newMsgBox("You have been signed out due to inactivity", false);
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch(Exception e)
+				{
+					//do nothing
+				}
+				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+					public void run()
+					{
+						MessageBox.getMe().killMe();
+						new MainLoginScreen();
+					}
+				});
+			}
+		});
+		thread.start();
+	}
 }
+
+
 
 

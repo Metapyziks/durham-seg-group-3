@@ -175,6 +175,30 @@ class ParseContext
 		return peek() == '"';
 	}
 
+	char nextUnicodeLiteral() 
+	    throws JSONParserException
+	{
+		if( offset + 4 <= length )
+		{
+			char[] hexChars = new char[] { next(), next(), next(), next() };
+			String hex = new String( hexChars );
+
+			try
+			{
+				return (char) Short.parseShort( hex, 16 );
+			}
+			catch( NumberFormatException e )
+			{
+				error( "Invalid unicode literal (" + hex + ")" );
+			}
+		}
+		else
+		{
+			error( "Incomplete unicode literal" );
+		}
+		return '\0';
+	}
+
 	char nextStringChar()
 		throws JSONParserException
 	{
@@ -191,6 +215,10 @@ class ParseContext
 					return '\t';
 				case '"':
 					return '"';
+				case 'u':
+					return nextUnicodeLiteral();
+				case '\\':
+					return '\\';
 				default:
 					error( "Invalid escaped character (\\" + prev() + ")" );
 			}

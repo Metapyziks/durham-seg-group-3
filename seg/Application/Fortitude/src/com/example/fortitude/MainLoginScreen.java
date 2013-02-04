@@ -37,7 +37,7 @@ public class MainLoginScreen extends Window
     {
     	super(R.drawable.sign_in);
     	me = this;
-        addContentToContentPane(createWindowPane());
+        super.addContentToContentPane(createWindowPane());
     }
     
     ////////
@@ -287,5 +287,10 @@ public class MainLoginScreen extends Window
     {
     	me = null;
     	this.removeAllViews();
+    }
+    
+    public TextField getPasswordField()
+    {
+    	return passwordField;
     }
 }

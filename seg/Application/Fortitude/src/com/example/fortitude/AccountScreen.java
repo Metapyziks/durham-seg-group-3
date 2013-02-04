@@ -37,7 +37,7 @@ public abstract class AccountScreen extends Window
 	
 	private Spec allcols = GridLayout.spec(0,2);
 	
-	private AccountScreen me;
+	private static AccountScreen me;
 	
 	////////
 	//
@@ -55,7 +55,7 @@ public abstract class AccountScreen extends Window
     {
     	GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
     	mainArea.setColumnCount(2);
-    	mainArea.setRowCount(12);
+    	mainArea.setRowCount(14);
     	
     	LayoutParams positionalSpaceLayout = new LayoutParams(row1, col1); //positional spacer
     	positionalSpaceLayout.width = (super.getWindowWidth() / 10) - (super.getWindowWidth() / 40);
@@ -207,7 +207,8 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+    			killMe();
+    			new SettingsScreen();
     		}
     	});
     	settingsButton.setLayoutParams(settingsButtonLayout);
@@ -236,7 +237,14 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+    			if(TheMap.getMe().removeRoute())
+    			{
+    				MessageBox.newMsgBox("Route Cleared!", true);
+    			}
+    			else
+    			{
+    				MessageBox.newMsgBox("There Is No Route To Clear!", true);
+    			}
     		}
     	});
     	clearRouteButton.setLayoutParams(clearRouteButtonLayout);
@@ -259,6 +267,7 @@ public abstract class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
+    			GUI.killAll();
     			new MainLoginScreen();
     		}
     	});
@@ -336,7 +345,7 @@ public abstract class AccountScreen extends Window
     //returns the last created instance of this class, may be null!
     //
     ////////
-    public AccountScreen getMe()
+    public static AccountScreen getMe()
     {
     	return me;
     }

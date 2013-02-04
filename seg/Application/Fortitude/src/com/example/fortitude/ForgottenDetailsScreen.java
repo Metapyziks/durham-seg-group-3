@@ -1,5 +1,7 @@
 package com.example.fortitude;
 
+import java.util.regex.Pattern;
+
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
@@ -137,6 +139,11 @@ public class ForgottenDetailsScreen extends Window
     		MessageBox.newMsgBox("No email address input", true);
     		return;
     	}
+    	if(!(Pattern.compile("^[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}$").matcher(emailTextField.getText().toString()).matches()))
+		{
+			MessageBox.newMsgBox("Email address entered is not a valid email address", true);
+			return;
+		}
 		ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 		ServerRequests.resetPassReset(this.emailTextField.getText().toString());
     }

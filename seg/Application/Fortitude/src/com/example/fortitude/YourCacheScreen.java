@@ -207,7 +207,41 @@ public class YourCacheScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+				if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
+				{
+					MessageBox.newMsgBox("Unable to get your location!", true);
+					return;
+				}
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Mapping Route", false));
+				ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), YourCacheScreen.getStaticTheCache().getLat() + "," + YourCacheScreen.getStaticTheCache().getLon());
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+						while(!ServerRequests.getStaticGoogleRouteComplete())
+						{
+							//wait
+						}
+						if(ServerRequests.getStaticGoogleRouteSuccess())
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									YourCacheScreen.getMe().killMe();
+									new MainScreen();
+								}
+							});
+						}
+					}
+				});
+				thread.start();
     		}
     	});
     	planRouteButton.setLayoutParams(planRouteButtonLayout);
