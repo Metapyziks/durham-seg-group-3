@@ -177,12 +177,9 @@ Version: 1.0
 		line-height: 15px;
 	}
 	
-	/* This line breaks the map */
-	/*
-	#main img {
+	/*#main img {
 		max-width: 90%;
-	}
-	*/
+	}*/
 	
 	#main li {
 		margin-bottom: 8px;
@@ -698,6 +695,31 @@ Version: 1.0
 	.entry-rating img {
 		float: left;
 		height: 20px;
+	}
+	
+	/*	-------------------------------------------------------------------------
+	*	Styling the weblinks
+	*	-------------------------------------------------------------------------	*/
+	
+	.weblink {
+		width: 45%;
+		margin: 10px;
+		border: 1px solid #000;
+		background: #ccc;
+		overflow: auto; /* used to clear the floats */
+		float: left;
+	}
+	
+	.weblink-padding {
+		margin: 10px;
+	}
+	
+	.weblink a, .weblink a:active, .weblink a:visited {
+		width: 100%;
+		height: 20px;
+		line-height: 20px;
+		font: 14pt georgia;
+		display: block;
 	}
 	
 	/*	-------------------------------------------------------------------------

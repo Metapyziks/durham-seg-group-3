@@ -1,0 +1,138 @@
+	Most recent notes (Monday)
+----------------------------------
+
+Please update "useful weblinks" to refer to the weblinks template, and activate the weblinks plugin.
+
+The plugin stores a database of all the links so that Kathryn does not need to worry about formatting them, as I couldn't find a way to do it automatically through the style sheet that she would understand. I've got it to create a database, add entries to this database and display in on the webpage and settings page for the plugin, but I don't know how to delete or edit entries - is it possible to copy these functions across from your directory? If not let me know and I'll have another go at writing them.
+
+Changes to the stylesheet are only the addition of a .weblinks class and styling.
+
+
+
+	Pages to create
+-----------------------
+
+[subsection] = do not display in sidebar navigtion
+
+
+Hello Kathryn! [comments enabled, private] see notes below
+
+Home [homepage]
+-- Scrolling news page (slug: scroller) [subsection]
+-- Key links (slug: key-links) [subsection
+
+Durham City Fair T-rade Partnership
+-- Who are we?
+-- What do we do?
+-- What have we done?
+-- Meeting minutes
+
+Fairtrade City Status and more
+
+What's on?
+-- Sample event page
+
+[Directory stuff goes here]
+-- View PDF
+
+Useful Weblinks
+
+Feedback [Comments enabled]
+-- Send Email
+
+Footer Information(slug: footer) [subsection]
+
+
+
+	Plugins
+---------------
+
+Fast Secure Contact Form - Modified for DCFTP
+Google Doc Embedder
+Remove default image links
+Remove website field
+WordPress Importer
+WP-Mail-SMTP
+
+Maybe try putting remove default image links and remove website field into the functions.php file? Just for tidyness.
+
+
+	Hello Kathryn!
+----------------------
+
+<p>
+	Welcome to your new website! I've put this page together to show you how a few things will look and work, but feel free to delete it when you've had a look around. Or, you can keep it to test things on - this page won't display in your navigation, so only you can see it!
+</p>
+
+<p>
+	First of all, writing. This is what default text looks like, but you can play around with <span style="color: #ff0000;"><strong>c</strong><strong><span style="color: #008080;">o<span style="color: #008000;">l<span style="color: #ff00ff;">o<span style="color: #ffcc00;"><span style="color: #ff6600;">u</span><span style="color: #0000ff;">r<span style="color: #800080;">s</span></span></span></span></span></span></strong>and the text alignment -
+	
+<p style="text-align: center;">
+	like making it centered!
+</p>
+
+<p>
+	You've got a choice of 6 styles of heading. I've include the "Lorem ipsum" text so you can see how the heading looks with a paragraph after it.
+</p>
+
+<h1 style="text-align: justify;">Heading 1 is the largest</h1>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h2>Then heading 2</h2>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h3>This one's heading 3</h3>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h4>Heading number 4</h4>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h5>And heading 5</h5>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h6>Lastly, this is heading 6</h6>
+<p>
+	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus nec porttitor eros. Vestibulum non orci vitae tellus euismod porta vitae quis tortor. In in arcu in neque convallis rhoncus placerat nec orci. Morbi dignissim molestie molestie. Duis non risus metus, id vehicula elit. Vestibulum sit amet dui ligula. Curabitur vehicula molestie tortor, sit amet adipiscing mauris pulvinar at. Cras adipiscing cursus ornare. Pellentesque mollis odio et magna faucibus a iaculis nisi euismod. Etiam iaculis est in sapien laoreet dignissim condimentum quam iaculis.
+</p>
+
+<h4 style="text-align: center;">Heading 4 again - but centered!</h4>
+<p>
+	You can change whether a heading is left, right or center aligned the same way you would change a paragraph.
+</p>
+
+<blockquote>
+	Clicking the "quote" symbol makes things really stand out!
+</blockquote>
+
+<ul>
+	<li>
+		You can also use bullet points
+	</li>
+</ul>
+
+<ol>
+	<li>
+		Or a numbered list
+	</li>
+</ol>
+
+<p>
+	And you can upload images straight from your files!
+</p>
+
+<img class="aligncenter size-medium wp-image-131" alt="Costa Rican Frog" src="http://localhost/wp-content/uploads/2013/01/Costa-Rican-Frog-300x225.jpg" width="300" height="225" />
+
+	Hello Kathryn! - Comments
+---------------------------------
+
+Default style, nested comment and admin comment.
