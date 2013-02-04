@@ -37,7 +37,7 @@ public abstract class AccountScreen extends Window
 	
 	private Spec allcols = GridLayout.spec(0,2);
 	
-	private AccountScreen me;
+	private static AccountScreen me;
 	
 	////////
 	//
@@ -267,6 +267,7 @@ public abstract class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
+    			GUI.killAll();
     			new MainLoginScreen();
     		}
     	});
@@ -344,7 +345,7 @@ public abstract class AccountScreen extends Window
     //returns the last created instance of this class, may be null!
     //
     ////////
-    public AccountScreen getMe()
+    public static AccountScreen getMe()
     {
     	return me;
     }

@@ -347,7 +347,14 @@ public class MainScreen extends Window
 			clickableFlagArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					MessageBox.newMsgBox("Flag Was Clicked", true);
+					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+					{
+					    new PlaceCacheScreen();
+					}
+					else
+					{
+						MessageBox.newMsgBox("Cannot Get Your GPS Location", true);
+					}
 				}
 			});
 			clickableFlagAreaGrid.addView(clickableFlagArea, clickableFlagAreaLayout);
@@ -524,7 +531,7 @@ public class MainScreen extends Window
 		if(castleClickable) //if the castle is clickable then find the closest cache to the user
 		{                   //and display the relevant user
 			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
-			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
+			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -539,7 +546,7 @@ public class MainScreen extends Window
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
-							MessageBox.newMsgBox("Loading Cache Details", true);
+							MessageBox.newMsgBox("Loading Cache Details", false);
 						}
 					});
 					try

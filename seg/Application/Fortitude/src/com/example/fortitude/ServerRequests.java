@@ -74,147 +74,147 @@ public class ServerRequests
 	{
 		return googleDirectionsResponse;
 	}
-	
+
 	public static void setGoogleDirectionsResponse(JSONObject x)
 	{
 		googleDirectionsResponse = x;
 	}
-	
+
 	public static boolean getStaticGoogleRouteComplete()
 	{
 		return staticGoogleRouteComplete;
 	}
-	
+
 	public static void setStaticGoogleRouteComplete(boolean x)
 	{
 		staticGoogleRouteComplete = x;
 	}
-	
+
 	public static boolean getStaticGoogleRouteSuccess()
 	{
 		return staticGoogleRouteSuccess;
 	}
-	
+
 	public static void setStaticGoogleRouteSuccess(boolean x)
 	{
 		staticGoogleRouteSuccess = x;
 	}
-	
+
 	public static String getStaticScoutsSent()
 	{
 		return staticScoutsSent;
 	}
-	
+
 	public static String getUnitsToAttackWith()
 	{
 		return unitsToAttackWith;
 	}
-	
+
 	public void setUnitsToAttackWith(String x)
 	{
 		unitsToAttackWith = x;
 	}
-	
+
 	public static String getCacheIdToAttack()
 	{
 		return cacheIdToAttack;
 	}
-	
+
 	public static void setCacheIdToAttack(String x)
 	{
 		cacheIdToAttack = x;
 	}
-	
+
 	public static boolean getAttackCacheSuccess()
 	{
 		return attackCacheSuccess;
 	}
-	
+
 	public static void setAttackCacheSuccess(boolean x)
 	{
 		attackCacheSuccess = x;
 	}
-	
+
 	public static boolean getAttackCacheComplete()
 	{
 		return attackCacheComplete;
 	}
-	
+
 	public static void setAttackCacheComplete(boolean x)
 	{
 		attackCacheComplete = x;
 	}
-	
+
 	public static String getUnitsToPlace()
 	{
 		return unitsToPlace;
 	}
-	
+
 	public static void setUnitsToPlace(String x)
 	{
 		unitsToPlace = x;
 	}
-	
+
 	public static boolean getPlaceCacheSuccess()
 	{
 		return placeCacheSuccess;
 	}
-	
+
 	public static void setPlaceCacheSuccess(boolean x)
 	{
 		placeCacheSuccess = x;
 	}
-	
+
 	public static boolean getPlaceCacheComplete()
 	{
 		return placeCacheComplete;
 	}
-	
+
 	public static void setPlaceCacheComplete(boolean x)
 	{
 		placeCacheComplete = x;
 	}
-	
+
 	public static String getCacheIdToScout()
 	{
 		return staticCacheIdToScout;
 	}
-	
+
 	public static void setCacheIdToScout(String x)
 	{
 		staticCacheIdToScout = x;
 	}
-	
+
 	public static boolean getScoutCacheSuccess()
 	{
-	    return scoutCacheSuccess;	
+		return scoutCacheSuccess;	
 	}
-	
+
 	public static void setScoutCacheSuccess(boolean x)
 	{
 		scoutCacheSuccess = x;
 	}
-	
+
 	public static boolean getScoutCacheComplete()
 	{
 		return scoutCacheComplete;
 	}
-	
+
 	public static void setScoutCacheComplete(boolean x)
 	{
 		scoutCacheComplete = x;
 	}
-	
+
 	public static String getStaticDestinationPosition()
 	{
 		return staticDestinationPosition;
 	}
-	
+
 	public static String getStaticOriginPosition()
 	{
 		return staticOriginPosition;
 	}
-	
+
 	public static boolean getRefreshDataComplete()
 	{
 		return refreshDataComplete;
@@ -602,8 +602,7 @@ public class ServerRequests
 									public void run()
 									{
 										ServerRequests.getTheMessageBox().killMe();
-										MainLoginScreen.getMe().killMe();
-										new MainLoginScreen();
+										MainLoginScreen.getMe().getPasswordField().setText("");
 										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 									}
 								});
@@ -637,7 +636,7 @@ public class ServerRequests
 								{
 									if(ServerRequests.getTheMessageBox() != null)
 									{
-									    ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+										ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
 									}
 									else if(MessageBox.getMe() != null)
 									{
@@ -764,12 +763,12 @@ public class ServerRequests
 								{
 									if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 									{
-										//sessionExpiredActions();
+										sessionExpiredActions();
 									}
 									else
 									{
-									    ServerRequests.getTheMessageBox().killMe();
-									    ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+										ServerRequests.getTheMessageBox().killMe();
+										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 									}
 								}
 							});
@@ -1210,15 +1209,22 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else
 								{
-									MessageBox.getMe().killMe();
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
 						connecting = true;
@@ -1367,10 +1373,10 @@ public class ServerRequests
 	{
 		staticGoogleRouteSuccess = false;
 		staticGoogleRouteComplete = false;
-		
+
 		staticOriginPosition = originPosition;
 		staticDestinationPosition = destinationPosition;
-		
+
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -1416,7 +1422,7 @@ public class ServerRequests
 							{
 								if(ServerRequests.getTheMessageBox() != null)
 								{
-								    ServerRequests.getTheMessageBox().killMe();
+									ServerRequests.getTheMessageBox().killMe();
 								}
 								if(MessageBox.getMe() != null)
 								{
@@ -1438,7 +1444,7 @@ public class ServerRequests
 								TheMap.getMe().addRoute(ServerRequests.getGoogleDirectionsResponse());
 								if(ServerRequests.getTheMessageBox() != null)
 								{
-								    ServerRequests.getTheMessageBox().killMe();
+									ServerRequests.getTheMessageBox().killMe();
 								}
 								if(MessageBox.getMe() != null)
 								{
@@ -1455,7 +1461,7 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//placeCache
@@ -1521,7 +1527,7 @@ public class ServerRequests
 				};
 				try
 				{
-				    rt.setURL("http://" + ServerIP + "/api/placecache?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToPlace() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/placecache?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToPlace() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -1555,15 +1561,22 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else
 								{
-									MessageBox.getMe().killMe();
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
 						connecting = true;
@@ -1573,17 +1586,6 @@ public class ServerRequests
 					else if(rt.getSuccess().equals("2"))
 					{
 						connecting = true;
-						staticOutputMessage = rt.getOutputMessage();
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
-								}
-							});
-						}
 						ServerRequests.setPlaceCacheSuccess(true);
 						ServerRequests.setPlaceCacheComplete(true);
 					}
@@ -1592,7 +1594,7 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//scoutCache
@@ -1608,7 +1610,7 @@ public class ServerRequests
 		staticLat = latitude;
 		staticCacheIdToScout = cacheIdToScout;
 		staticScoutsSent = scoutsSent;
-		
+
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -1660,7 +1662,7 @@ public class ServerRequests
 				};
 				try
 				{
-				    rt.setURL("http://" + ServerIP + "/api/scout?units=" + ServerRequests.getStaticScoutsSent() + "&cacheid=" + ServerRequests.getCacheIdToScout() + "&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/scout?units=" + ServerRequests.getStaticScoutsSent() + "&cacheid=" + ServerRequests.getCacheIdToScout() + "&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -1694,15 +1696,22 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else
 								{
-									MessageBox.getMe().killMe();
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
 						connecting = true;
@@ -1731,7 +1740,7 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//attackCache
@@ -1741,14 +1750,14 @@ public class ServerRequests
 	////////
 	public static void attackCache(String latitude, String longitude, String attackUnits, String cacheId)
 	{
-    	attackCacheComplete = false;
+		attackCacheComplete = false;
 		attackCacheSuccess = false;
-		
+
 		staticLat = latitude;
 		staticLon = longitude;
 		cacheIdToAttack = cacheId;
 		unitsToAttackWith = attackUnits;
-		
+
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -1800,7 +1809,7 @@ public class ServerRequests
 				};
 				try
 				{
-				    rt.setURL("http://" + ServerIP + "/api/attack?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToAttackWith() + "&cacheid=" + ServerRequests.getCacheIdToAttack() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/attack?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToAttackWith() + "&cacheid=" + ServerRequests.getCacheIdToAttack() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -1834,15 +1843,22 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else
 								{
-									MessageBox.getMe().killMe();
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 							}
 						});
 						connecting = true;
@@ -1871,7 +1887,7 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	////////
 	//
 	//constructLocationUrlStuff
@@ -1882,7 +1898,7 @@ public class ServerRequests
 	public static String constructLocationUrlStuff(String latitude, String longitude) throws UnsupportedEncodingException, NoSuchAlgorithmException
 	{
 		final byte[] salt = new byte[] {((byte)0x2a), ((byte)0x1e), ((byte)0x97), ((byte)0xab), ((byte)0x2b), ((byte)0xb1), ((byte)0x3c)};
-		
+
 		int i = 0;
 		int s = 0;
 		String theTimeStamp = Long.toString((System.currentTimeMillis() / 1000));
@@ -1912,10 +1928,37 @@ public class ServerRequests
 		MessageDigest m = MessageDigest.getInstance("MD5");
 		byte[] digest = m.digest(hashArray);
 		StringBuffer builder = new StringBuffer();
-        for(int ii = 0; ii < digest.length; ++ii) {
-            builder.append(Integer.toHexString((digest[ii] & 0xFF) | 0x100).substring(1, 3));
-        }
+		for(int ii = 0; ii < digest.length; ++ii) {
+			builder.append(Integer.toHexString((digest[ii] & 0xFF) | 0x100).substring(1, 3));
+		}
 		return "lat=" + latitude + "&lng=" + longitude + "&time=" + theTimeStamp + "&hash=" + builder.toString();
+	}
+
+	public static void sessionExpiredActions()
+	{
+		GUI.killAll();
+		MessageBox.newMsgBox("You have been signed out due to inactivity", false);
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				try
+				{
+					Thread.sleep(2000);
+				}
+				catch(Exception e)
+				{
+					//do nothing
+				}
+				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+					public void run()
+					{
+						MessageBox.getMe().killMe();
+						new MainLoginScreen();
+					}
+				});
+			}
+		});
+		thread.start();
 	}
 }
 

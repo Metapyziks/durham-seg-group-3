@@ -288,4 +288,9 @@ public class MainLoginScreen extends Window
     	me = null;
     	this.removeAllViews();
     }
+    
+    public TextField getPasswordField()
+    {
+    	return passwordField;
+    }
 }
