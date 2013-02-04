@@ -349,6 +349,7 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 					{
+						killMe();
 					    new PlaceCacheScreen();
 					}
 					else
