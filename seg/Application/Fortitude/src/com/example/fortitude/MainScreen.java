@@ -667,18 +667,6 @@ public class MainScreen extends Window
 													}
 												});
 											}
-											else
-											{
-												Fortitude.getFortitude().runOnUiThread(new Runnable() {
-													public void run()
-													{
-														if(ServerRequests.getTheMessageBox() != null)
-														{
-															ServerRequests.getTheMessageBox().killMe();
-														}
-													}
-												});
-											}
 										}
 									});
 									thread.start();
