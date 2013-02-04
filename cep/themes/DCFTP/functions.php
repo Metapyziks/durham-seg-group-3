@@ -60,6 +60,8 @@ function advanced_comment($comment, $args, $depth) {
 		return str_repeat($star, $rating).str_repeat($grey, 3 - $rating);
 	}
 	
+	add_action('wp_dashboard_setup', 'example_remove_dashboard_widgets' );
+	
 	function example_remove_dashboard_widgets() {
 		remove_meta_box( 'dashboard_primary', 'dashboard', 'side' );
 		remove_meta_box( 'dashboard_secondary', 'dashboard', 'side' );
@@ -69,7 +71,8 @@ function advanced_comment($comment, $args, $depth) {
 		remove_meta_box( 'dashboard_right_now', 'dashboard', 'normal' );
 	} 
 	
-	add_action( 'admin_init', 'my_remove_menu_pages' );
+	add_action( 'admin_menu', 'my_remove_menu_pages' );
+	
 	function my_remove_menu_pages() {
 		remove_menu_page('edit.php');  
 	}
@@ -110,6 +113,20 @@ function advanced_comment($comment, $args, $depth) {
 		}
 		echo '</div>';
 	}
-
-	add_action('wp_dashboard_setup', 'example_remove_dashboard_widgets' );
+	
+	// Remove image links
+	
+	update_option('image_default_align', 'none' );
+	update_option('image_default_link_type', 'none' );
+	update_option('image_default_size', 'large' );
+	
+	// Remove website field from comments form
+	
+	add_filter('comment_form_default_fields', 'url_filtered');
+	function url_filtered($fields)
+	{
+	  if(isset($fields['url']))
+	   unset($fields['url']);
+	  return $fields;
+	}
 ?>
