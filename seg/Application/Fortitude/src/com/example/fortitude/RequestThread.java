@@ -7,6 +7,7 @@ import json.JSONObject;
 import java.net.SocketTimeoutException;
 import java.io.FileNotFoundException;
 import java.net.SocketException;
+import java.io.EOFException;
 
 public abstract class RequestThread implements Runnable
 {   
@@ -43,7 +44,7 @@ public abstract class RequestThread implements Runnable
 	{
 		try
 		{
-			if(!(Fortitude.getFortitude().isNetworkAvailable()))
+			if(!(Fortitude.isNetworkAvailable()))
 			{
 				setOutputMessage("Unable to connect to server, no internet connection detected");
 				setSuccess("1");
@@ -71,6 +72,11 @@ public abstract class RequestThread implements Runnable
 		catch(FileNotFoundException e)
 		{
 			setOutputMessage("Unable to connect to server, the server may be down");
+			setSuccess("1");
+		}
+		catch(EOFException e)
+		{
+			setOutputMessage("Unable to connect to server, unable to read response");
 			setSuccess("1");
 		}
 		catch(Exception e)

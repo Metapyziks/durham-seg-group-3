@@ -54,6 +54,7 @@ public class ServerRequests
 	private static boolean staticGoogleRouteSuccess;
 	private static boolean staticGoogleRouteComplete;
 	private static JSONObject googleDirectionsResponse;
+	private static JSONObject scoutCacheResponse;
 
 	////////
 	//
@@ -70,6 +71,16 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static JSONObject getScoutCacheResponse()
+	{
+		return scoutCacheResponse;
+	}
+
+	public static void setScoutCacheResponse(JSONObject x)
+	{
+		scoutCacheResponse = x;
+	}
+
 	public static JSONObject getGoogleDirectionsResponse()
 	{
 		return googleDirectionsResponse;
@@ -554,6 +565,9 @@ public class ServerRequests
 																		}
 																	});
 																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
+																	FileSave fs = new FileSave();
+																	fs.CreateFileDialog("username", CurrentUser.getMe().getUserName());
+																	fs.CreateFileDialog("password", CurrentUser.getMe().getPhash());
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
@@ -1306,7 +1320,7 @@ public class ServerRequests
 								{
 									if(MainScreen.getMe().getUserBalanceTextView() != null)
 									{
-										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance());
+										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance() + " ");
 									}
 								}
 								if(TheMap.getMe().getCacheRoutePosition().equals("null"))
@@ -1655,7 +1669,7 @@ public class ServerRequests
 							this.setSuccess("1");
 							return;
 						}
-						this.setOutputMessage(response.get("caches").get(0).get("garrison").asString());
+						ServerRequests.setScoutCacheResponse(response);
 						this.setSuccess("2");
 					}
 
@@ -1722,18 +1736,13 @@ public class ServerRequests
 					{
 						connecting = true;
 						staticOutputMessage = rt.getOutputMessage();
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
-								}
-							});
-						}
-						ServerRequests.setScoutCacheSuccess(true);
-						ServerRequests.setScoutCacheComplete(true);
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.setScoutCacheSuccess(true);
+								ServerRequests.setScoutCacheComplete(true);
+							}
+						});
 					}
 				}
 			}
@@ -1937,6 +1946,10 @@ public class ServerRequests
 	public static void sessionExpiredActions()
 	{
 		GUI.killAll();
+		if(ServerRequests.getTheMessageBox() != null)
+		{
+			ServerRequests.getTheMessageBox().killMe();
+		}
 		MessageBox.newMsgBox("You have been signed out due to inactivity", false);
 		Thread thread = new Thread(new Runnable() {
 			public void run()
@@ -1952,7 +1965,15 @@ public class ServerRequests
 				Fortitude.getFortitude().runOnUiThread(new Runnable() {
 					public void run()
 					{
-						MessageBox.getMe().killMe();
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							ServerRequests.getTheMessageBox().killMe();
+						}
+						if(MessageBox.getMe() != null)
+						{
+							MessageBox.getMe().killMe();
+						}
+						GUI.killAll();
 						new MainLoginScreen();
 					}
 				});

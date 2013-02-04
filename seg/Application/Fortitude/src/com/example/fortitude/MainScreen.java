@@ -349,8 +349,15 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 					{
-						killMe();
-					    new PlaceCacheScreen();
+						if(CurrentUser.getMe().getIntBalance() < 5)
+						{
+							MessageBox.newMsgBox("You must have atleast 5 soldiers to place a cache", true);
+						}
+						else
+						{
+							killMe();
+							new PlaceCacheScreen();
+						}
 					}
 					else
 					{
@@ -499,7 +506,7 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 					{
-					    TheMap.getMe().zoomToMyPositionAtMyZoom();
+						TheMap.getMe().zoomToMyPositionAtMyZoom();
 					}
 					else
 					{
@@ -531,8 +538,8 @@ public class MainScreen extends Window
 	{
 		if(castleClickable) //if the castle is clickable then find the closest cache to the user
 		{                   //and display the relevant user
-			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
 			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -633,7 +640,7 @@ public class MainScreen extends Window
 								}
 								else
 								{
-									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false); 
+									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(yy).getOwnerId(), false); 
 									Thread thread = new Thread(new Runnable() {
 										public void run()
 										{

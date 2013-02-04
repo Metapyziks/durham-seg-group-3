@@ -266,6 +266,9 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
+    			FileSave fs = new FileSave();
+    			fs.CreateFileDialog("username", "");
+    			fs.CreateFileDialog("password", "");
     			killMe();
     			GUI.killAll();
     			new MainLoginScreen();

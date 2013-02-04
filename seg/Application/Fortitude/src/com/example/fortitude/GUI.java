@@ -88,63 +88,86 @@ public class GUI
 	////////
 	public static void killAll()
 	{
-		if(AccountScreen.getMe() != null)
+		try
 		{
-			AccountScreen.getMe().killMe();
+			if(AccountScreen.getMe() != null)
+			{
+				AccountScreen.getMe().killMe();
+			}
+			if(EnemyCacheScreen.getMe() != null)
+			{
+				EnemyCacheScreen.getMe().killMe();
+			}
+			if(EnemyProfileScreen.getMe() != null)
+			{
+				EnemyProfileScreen.getMe().killMe();
+			}
+			if(ForgottenDetailsScreen.getMe() != null)
+			{
+				ForgottenDetailsScreen.getMe().killMe();
+			}
+			if(GreyScreen.getMe() != null)
+			{
+				GreyScreen.getMe().killMe();
+			}
+			if(MainLoginScreen.getMe() != null)
+			{
+				MainLoginScreen.getMe().killMe();
+			}
+			if(MainScreen.getMe() != null)
+			{
+				MainScreen.getMe().killMe();
+			}
+			if(MessageBox.getMe() != null)
+			{
+				MessageBox.getMe().killMe();
+			}
+			if(NewUserScreen.getMe() != null)
+			{
+				NewUserScreen.getMe().killMe();
+			}
+			if(PlaceCacheScreen.getMe() != null)
+			{
+				PlaceCacheScreen.getMe().killMe();
+			}
+			if(SettingsScreen.getMe() != null)
+			{
+				SettingsScreen.getMe().killMe();
+			}
+			if(VisitEnemyCacheScreen.getMe() != null)
+			{
+				VisitEnemyCacheScreen.getMe().killMe();
+			}
+			if(VisitYourCacheScreen.getMe() != null)
+			{
+				VisitYourCacheScreen.getMe().killMe();
+			}
+			if(YourCacheScreen.getMe() != null)
+			{
+				YourCacheScreen.getMe().killMe();
+			}
+			if(ScoutEnemyCache.getMe() != null)
+			{
+				ScoutEnemyCache.getMe().killMe();
+			}
+			if(ScoutFailureScreen.getMe() != null)
+			{
+				ScoutFailureScreen.getMe().killMe();
+			}
+			if(ScoutSuccessScreen.getMe() != null)
+			{
+				ScoutSuccessScreen.getMe().killMe();
+			}
+			if(AttackCacheScreen.getMe() != null)
+			{
+				AttackCacheScreen.getMe().killMe();
+			}
+			GUI.disableAllTheGUIElements(Fortitude.getFortitude().getWindow().getDecorView());
 		}
-		if(EnemyCacheScreen.getMe() != null)
+		catch(Exception e)
 		{
-			EnemyCacheScreen.getMe().killMe();
+			//do nothing
 		}
-		if(EnemyProfileScreen.getMe() != null)
-		{
-			EnemyProfileScreen.getMe().killMe();
-		}
-		if(ForgottenDetailsScreen.getMe() != null)
-		{
-			ForgottenDetailsScreen.getMe().killMe();
-		}
-		if(GreyScreen.getMe() != null)
-		{
-			GreyScreen.getMe().killMe();
-		}
-		if(MainLoginScreen.getMe() != null)
-		{
-			MainLoginScreen.getMe().killMe();
-		}
-		if(MainScreen.getMe() != null)
-		{
-			MainScreen.getMe().killMe();
-		}
-		if(MessageBox.getMe() != null)
-		{
-			MessageBox.getMe().killMe();
-		}
-		if(NewUserScreen.getMe() != null)
-		{
-			NewUserScreen.getMe().killMe();
-		}
-		if(PlaceCacheScreen.getMe() != null)
-		{
-			PlaceCacheScreen.getMe().killMe();
-		}
-		if(SettingsScreen.getMe() != null)
-		{
-			SettingsScreen.getMe().killMe();
-		}
-		if(VisitEnemyCacheScreen.getMe() != null)
-		{
-			VisitEnemyCacheScreen.getMe().killMe();
-		}
-		if(VisitYourCacheScreen.getMe() != null)
-		{
-			VisitYourCacheScreen.getMe().killMe();
-		}
-		if(YourCacheScreen.getMe() != null)
-		{
-			YourCacheScreen.getMe().killMe();
-		}
-		GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
 	}
 
 	////////
