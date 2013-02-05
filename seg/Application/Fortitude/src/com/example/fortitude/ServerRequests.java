@@ -54,6 +54,8 @@ public class ServerRequests
 	private static boolean staticGoogleRouteSuccess;
 	private static boolean staticGoogleRouteComplete;
 	private static JSONObject googleDirectionsResponse;
+	private static JSONObject scoutCacheResponse;
+	private static JSONObject attackCacheResponse;
 
 	////////
 	//
@@ -70,6 +72,26 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static JSONObject getAttackCacheResponse()
+	{
+		return attackCacheResponse;
+	}
+	
+	public static void setAttackCacheResponse(JSONObject x)
+	{
+		attackCacheResponse = x;
+	}
+	
+	public static JSONObject getScoutCacheResponse()
+	{
+		return scoutCacheResponse;
+	}
+
+	public static void setScoutCacheResponse(JSONObject x)
+	{
+		scoutCacheResponse = x;
+	}
+
 	public static JSONObject getGoogleDirectionsResponse()
 	{
 		return googleDirectionsResponse;
@@ -554,6 +576,9 @@ public class ServerRequests
 																		}
 																	});
 																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
+																	FileSave fs = new FileSave();
+																	fs.CreateFileDialog("username", CurrentUser.getMe().getUserName());
+																	fs.CreateFileDialog("password", CurrentUser.getMe().getPhash());
 																	Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																		public void run()
 																		{
@@ -762,6 +787,10 @@ public class ServerRequests
 								public void run()
 								{
 									if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+									{
+										sessionExpiredActions();
+									}
+									else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
 									{
 										sessionExpiredActions();
 									}
@@ -1213,6 +1242,10 @@ public class ServerRequests
 								{
 									sessionExpiredActions();
 								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
 								else
 								{
 									if(ServerRequests.getTheMessageBox() != null)
@@ -1306,7 +1339,7 @@ public class ServerRequests
 								{
 									if(MainScreen.getMe().getUserBalanceTextView() != null)
 									{
-										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance());
+										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance() + " ");
 									}
 								}
 								if(TheMap.getMe().getCacheRoutePosition().equals("null"))
@@ -1565,6 +1598,10 @@ public class ServerRequests
 								{
 									sessionExpiredActions();
 								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
 								else
 								{
 									if(ServerRequests.getTheMessageBox() != null)
@@ -1655,10 +1692,9 @@ public class ServerRequests
 							this.setSuccess("1");
 							return;
 						}
-						this.setOutputMessage(response.get("caches").get(0).get("garrison").asString());
+						ServerRequests.setScoutCacheResponse(response);
 						this.setSuccess("2");
 					}
-
 				};
 				try
 				{
@@ -1700,6 +1736,10 @@ public class ServerRequests
 								{
 									sessionExpiredActions();
 								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
 								else
 								{
 									if(ServerRequests.getTheMessageBox() != null)
@@ -1722,18 +1762,13 @@ public class ServerRequests
 					{
 						connecting = true;
 						staticOutputMessage = rt.getOutputMessage();
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
-								}
-							});
-						}
-						ServerRequests.setScoutCacheSuccess(true);
-						ServerRequests.setScoutCacheComplete(true);
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								ServerRequests.setScoutCacheSuccess(true);
+								ServerRequests.setScoutCacheComplete(true);
+							}
+						});
 					}
 				}
 			}
@@ -1803,6 +1838,7 @@ public class ServerRequests
 							return;
 						}
 						this.setOutputMessage("done");
+						ServerRequests.setAttackCacheResponse(response);
 						this.setSuccess("2");
 					}
 
@@ -1825,7 +1861,7 @@ public class ServerRequests
 							{
 								MessageBox.getMe().killMe();
 							}
-							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing attack url", true));	
 						}
 					});
 					ServerRequests.setAttackCacheSuccess(false);
@@ -1844,6 +1880,10 @@ public class ServerRequests
 							public void run()
 							{
 								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
 								{
 									sessionExpiredActions();
 								}
@@ -1869,16 +1909,6 @@ public class ServerRequests
 					{
 						connecting = true;
 						staticOutputMessage = rt.getOutputMessage();
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
-								}
-							});
-						}
 						ServerRequests.setAttackCacheSuccess(true);
 						ServerRequests.setAttackCacheComplete(true);
 					}
@@ -1937,7 +1967,11 @@ public class ServerRequests
 	public static void sessionExpiredActions()
 	{
 		GUI.killAll();
-		MessageBox.newMsgBox("You have been signed out due to inactivity", false);
+		if(ServerRequests.getTheMessageBox() != null)
+		{
+			ServerRequests.getTheMessageBox().killMe();
+		}
+		MessageBox.newMsgBox("You have been signed out due to inactivity or because the server has been reset", false);
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{
@@ -1952,7 +1986,15 @@ public class ServerRequests
 				Fortitude.getFortitude().runOnUiThread(new Runnable() {
 					public void run()
 					{
-						MessageBox.getMe().killMe();
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							ServerRequests.getTheMessageBox().killMe();
+						}
+						if(MessageBox.getMe() != null)
+						{
+							MessageBox.getMe().killMe();
+						}
+						GUI.killAll();
 						new MainLoginScreen();
 					}
 				});

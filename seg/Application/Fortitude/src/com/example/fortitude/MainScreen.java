@@ -50,6 +50,7 @@ public class MainScreen extends Window
 	private ImageView flagIcon;
 	private ImageView castleIcon;
 	private ImageView refreshIcon;
+	private static int theMarker = -1;
 
 	private static boolean castleClickable = false;
 
@@ -349,8 +350,15 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 					{
-						killMe();
-					    new PlaceCacheScreen();
+						if(CurrentUser.getMe().getIntBalance() < 5)
+						{
+							MessageBox.newMsgBox("You must have atleast 5 soldiers to place a cache", true);
+						}
+						else
+						{
+							killMe();
+							new PlaceCacheScreen();
+						}
 					}
 					else
 					{
@@ -499,7 +507,7 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 					{
-					    TheMap.getMe().zoomToMyPositionAtMyZoom();
+						TheMap.getMe().zoomToMyPositionAtMyZoom();
 					}
 					else
 					{
@@ -531,8 +539,9 @@ public class MainScreen extends Window
 	{
 		if(castleClickable) //if the castle is clickable then find the closest cache to the user
 		{                   //and display the relevant user
-			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
+			theMarker = -1;
 			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -561,7 +570,6 @@ public class MainScreen extends Window
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
-							int yy = -1;
 							try
 							{
 								if(TheMap.getMe().getGoogleMap() == null)
@@ -601,7 +609,7 @@ public class MainScreen extends Window
 									if((latlat + lonlon) < closestSoFar)
 									{
 										closestSoFar = (latlat + lonlon);
-										yy = xx;
+										theMarker = xx;
 									}
 									xx++;
 								}
@@ -615,9 +623,9 @@ public class MainScreen extends Window
 								MessageBox.getMe().killMe();
 								MessageBox.newMsgBox("Sorry, we can't work out what cache you are at! : " + e.toString(), true);
 							}
-							if(yy != -1)
+							if(theMarker != -1)
 							{
-								if(ServerRequests.getNearbyCaches().get(yy).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
+								if(ServerRequests.getNearbyCaches().get(theMarker).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
 								{
 									if(ServerRequests.getTheMessageBox() != null)
 									{
@@ -629,11 +637,11 @@ public class MainScreen extends Window
 									}
 									GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...	
 									MainScreen.getMe().killMe();
-									new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(yy));
+									new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(theMarker));
 								}
 								else
 								{
-									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false); 
+									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), false); 
 									Thread thread = new Thread(new Runnable() {
 										public void run()
 										{
@@ -656,19 +664,7 @@ public class MainScreen extends Window
 														}
 														GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...			
 														MainScreen.getMe().killMe();
-														new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
-													}
-												});
-											}
-											else
-											{
-												Fortitude.getFortitude().runOnUiThread(new Runnable() {
-													public void run()
-													{
-														if(ServerRequests.getTheMessageBox() != null)
-														{
-															ServerRequests.getTheMessageBox().killMe();
-														}
+														new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(theMarker).getCacheId(), ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), ServerRequests.getNearbyCaches().get(theMarker).getCacheName(), ServerRequests.getNearbyCaches().get(theMarker).getLat(), ServerRequests.getNearbyCaches().get(theMarker).getLon(), ServerRequests.getNearbyCaches().get(theMarker).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
 													}
 												});
 											}
