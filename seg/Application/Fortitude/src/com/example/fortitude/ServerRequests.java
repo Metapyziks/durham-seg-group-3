@@ -55,6 +55,7 @@ public class ServerRequests
 	private static boolean staticGoogleRouteComplete;
 	private static JSONObject googleDirectionsResponse;
 	private static JSONObject scoutCacheResponse;
+	private static JSONObject attackCacheResponse;
 
 	////////
 	//
@@ -71,6 +72,16 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static JSONObject getAttackCacheResponse()
+	{
+		return attackCacheResponse;
+	}
+	
+	public static void setAttackCacheResponse(JSONObject x)
+	{
+		attackCacheResponse = x;
+	}
+	
 	public static JSONObject getScoutCacheResponse()
 	{
 		return scoutCacheResponse;
@@ -779,6 +790,10 @@ public class ServerRequests
 									{
 										sessionExpiredActions();
 									}
+									else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+									{
+										sessionExpiredActions();
+									}
 									else
 									{
 										ServerRequests.getTheMessageBox().killMe();
@@ -1227,6 +1242,10 @@ public class ServerRequests
 								{
 									sessionExpiredActions();
 								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
 								else
 								{
 									if(ServerRequests.getTheMessageBox() != null)
@@ -1579,6 +1598,10 @@ public class ServerRequests
 								{
 									sessionExpiredActions();
 								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
 								else
 								{
 									if(ServerRequests.getTheMessageBox() != null)
@@ -1672,7 +1695,6 @@ public class ServerRequests
 						ServerRequests.setScoutCacheResponse(response);
 						this.setSuccess("2");
 					}
-
 				};
 				try
 				{
@@ -1711,6 +1733,10 @@ public class ServerRequests
 							public void run()
 							{
 								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
 								{
 									sessionExpiredActions();
 								}
@@ -1812,6 +1838,7 @@ public class ServerRequests
 							return;
 						}
 						this.setOutputMessage("done");
+						ServerRequests.setAttackCacheResponse(response);
 						this.setSuccess("2");
 					}
 
@@ -1834,7 +1861,7 @@ public class ServerRequests
 							{
 								MessageBox.getMe().killMe();
 							}
-							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing attack url", true));	
 						}
 					});
 					ServerRequests.setAttackCacheSuccess(false);
@@ -1853,6 +1880,10 @@ public class ServerRequests
 							public void run()
 							{
 								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
 								{
 									sessionExpiredActions();
 								}
@@ -1878,16 +1909,6 @@ public class ServerRequests
 					{
 						connecting = true;
 						staticOutputMessage = rt.getOutputMessage();
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-									MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true);
-								}
-							});
-						}
 						ServerRequests.setAttackCacheSuccess(true);
 						ServerRequests.setAttackCacheComplete(true);
 					}
@@ -1950,7 +1971,7 @@ public class ServerRequests
 		{
 			ServerRequests.getTheMessageBox().killMe();
 		}
-		MessageBox.newMsgBox("You have been signed out due to inactivity", false);
+		MessageBox.newMsgBox("You have been signed out due to inactivity or because the server has been reset", false);
 		Thread thread = new Thread(new Runnable() {
 			public void run()
 			{

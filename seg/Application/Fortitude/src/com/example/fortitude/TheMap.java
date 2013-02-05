@@ -338,7 +338,7 @@ public class TheMap extends GridLayout
 							});
 							return;
 						}
-						ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false); 
+						ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false);
 						Thread thread = new Thread(new Runnable() {
 							public void run()
 							{

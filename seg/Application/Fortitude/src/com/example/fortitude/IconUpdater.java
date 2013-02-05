@@ -66,7 +66,7 @@ public class IconUpdater
 										{
 											lonlon = longitude - marker.getPosition().longitude;
 										}
-										if((lonlon < 0.00025) && (latlat < 0.00025))
+										if((lonlon < 0.00028) && (latlat < 0.00028))
 										{
 											onLocation = true;
 										}

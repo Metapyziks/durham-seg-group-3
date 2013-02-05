@@ -22,16 +22,16 @@ public class ScoutSuccessScreen extends Window
 	private Spec row3 = GridLayout.spec(2);
 	private Spec row4 = GridLayout.spec(3);
 	private Spec row5 = GridLayout.spec(4);
-	
+
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
-	
+
 	private static ScoutSuccessScreen me;
 	private static Cache staticTheCache;
 	private static JSONObject staticTheResponse;
-	
+
 	public ScoutSuccessScreen(Cache theCache, JSONObject theResponse)
 	{
 		super(R.drawable.scout_report_success_bg);
@@ -40,13 +40,13 @@ public class ScoutSuccessScreen extends Window
 		staticTheResponse = theResponse;
 		addContentToContentPane(createWindowPane());
 	}
-	
+
 	private GridLayout createWindowPane()
 	{
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setColumnCount(1);
 		mainArea.setRowCount(6);
-		
+
 		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
 		topBarImageLayout.width = super.getWindowWidth();
 		topBarImageLayout.height = super.getWindowHeight() / 20;
@@ -88,13 +88,13 @@ public class ScoutSuccessScreen extends Window
 
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-		
+
 		LayoutParams firstRowSpaceLayout = new LayoutParams(row1, col1);
 		firstRowSpaceLayout.height = (super.getWindowHeight() / 2) + (super.getWindowHeight() / 20);
 		Space firstRowSpace = new Space(mainArea.getContext());
 		firstRowSpace.setLayoutParams(firstRowSpaceLayout);
 		mainArea.addView(firstRowSpace, firstRowSpaceLayout);
-		
+
 		LayoutParams secondRowTextViewLayout = new LayoutParams(row2, col1);
 		secondRowTextViewLayout.width = super.getWindowWidth();
 		secondRowTextViewLayout.height = super.getWindowHeight() / 10;
@@ -106,7 +106,7 @@ public class ScoutSuccessScreen extends Window
 		scoutsLostTextView.setGravity(Gravity.CENTER);
 		scoutsLostTextView.setLayoutParams(secondRowTextViewLayout);
 		mainArea.addView(scoutsLostTextView, secondRowTextViewLayout);
-		
+
 		LayoutParams thirdRowTextViewLayout = new LayoutParams(row3, col1);
 		thirdRowTextViewLayout.width = super.getWindowWidth();
 		thirdRowTextViewLayout.height = super.getWindowHeight() / 10;
@@ -117,13 +117,13 @@ public class ScoutSuccessScreen extends Window
 		garrisonTextView.setGravity(Gravity.CENTER);
 		garrisonTextView.setLayoutParams(thirdRowTextViewLayout);
 		mainArea.addView(garrisonTextView, thirdRowTextViewLayout);
-		
+
 		LayoutParams fourthRowSpaceLayout = new LayoutParams(row4, col1);
 		fourthRowSpaceLayout.height = super.getWindowHeight() / 10;
 		Space fourthRowSpace = new Space(mainArea.getContext());
 		fourthRowSpace.setLayoutParams(fourthRowSpaceLayout);
 		mainArea.addView(fourthRowSpace, fourthRowSpaceLayout);
-		
+
 		GridLayout fithRowGrid = new GridLayout(mainArea.getContext());
 		fithRowGrid.setColumnCount(5);
 		fithRowGrid.setRowCount(1);
@@ -144,7 +144,15 @@ public class ScoutSuccessScreen extends Window
 			}
 			public void whenClicked()
 			{
-				
+				if(CurrentUser.getMe().getIntBalance() > 0)
+				{
+					ScoutSuccessScreen.getMe().killMe();
+					new AttackCacheScreen(ScoutSuccessScreen.getStaticTheCache());
+				}
+				else
+				{
+					MessageBox.newMsgBox("You must have atleast 1 soldier to attack issue an attack", true);
+				}
 			}
 		});
 		attackCacheButton.setLayoutParams(attackCacheButtonLayout);
@@ -175,10 +183,10 @@ public class ScoutSuccessScreen extends Window
 
 		LayoutParams fithRowGridLayout = new LayoutParams(row5, col1);
 		mainArea.addView(fithRowGrid, fithRowGridLayout);
-		
+
 		return mainArea;
 	}
-	
+
 	////////
 	//
 	//topBarClicked
@@ -221,15 +229,15 @@ public class ScoutSuccessScreen extends Window
 		me = null;
 		this.removeAllViews();
 	}
-	
+
 	public static Cache getStaticTheCache()
 	{
 		return staticTheCache;
 	}
-	
+
 	public static JSONObject getStaticTheResponse()
 	{
 		return staticTheResponse;
 	}
-	
+
 }

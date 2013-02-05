@@ -208,7 +208,15 @@ public class VisitEnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-
+				if(CurrentUser.getMe().getIntBalance() > 0)
+				{
+				    VisitEnemyCacheScreen.getMe().killMe();
+				    new AttackCacheScreen(VisitEnemyCacheScreen.getStaticTheCache());
+				}
+				else
+				{
+					MessageBox.newMsgBox("You must have atleast 1 soldier to attack issue an attack", true);
+				}
 			}
 		});
 		attackCacheButton.setLayoutParams(attackCacheLayout);
