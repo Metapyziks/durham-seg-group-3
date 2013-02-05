@@ -8,8 +8,7 @@
 	*/
 
 	/* The function used to display the weblinks on the website */
-	function print_weblinks()
-	{
+	function print_weblinks() {
 		$query="SELECT * FROM wp_weblinks_table";
 		$result=mysql_query($query);
 		
@@ -18,22 +17,31 @@
 		$i=0;
 		while ($i < $num) {
 
-		$f1=mysql_result($result,$i,"name");
-		$f2=mysql_result($result,$i,"url");
-		$f3=mysql_result($result,$i,"description");
-		?>
-		
-		<div class="weblink">
-			<div class="weblink-padding">
-				<a href="<?php echo $f2; ?>"><?php echo $f1; ?></a>
-				<p>
-					<?php echo $f3; ?>
-				</p>
+			$f1=mysql_result($result,$i,"name");
+			$f2=mysql_result($result,$i,"url");
+			$f3=mysql_result($result,$i,"description");
+			$f4=mysql_result($result,$i,"id");
+			?>
+			
+			<div class="weblink">
+				<div class="weblink-padding">
+					<a href="<?php echo $f2; ?>"><?php echo $f1; ?></a>
+					<p>
+						<?php echo $f3; ?>						
+					</p>
+					<p>
+						<a href="admin.php?page=useful-weblinks-delete&id='<?php echo $f4; ?>'">
+							Delete weblink
+						</a>
+					</p>
+					<p>
+						Delete weblink
+					</p>
+				</div>
 			</div>
-		</div>
 
-		<?php
-		$i++;
+			<?php
+			$i++;
 		}
 
 	}
@@ -41,12 +49,8 @@
 	/*	-----------------------------------------------------------------------
 		Setting up the database, and calling it when the plugin activates.
 		----------------------------------------------------------------------- */
-	
-	global $jal_db_version;
-	$jal_db_version = "1.0";
 
 	function jal_install() {
-	   global $jal_db_version;
 		  
 	   $sql = "CREATE TABLE wp_weblinks_table (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -58,8 +62,6 @@
 
 	   require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	   dbDelta($sql);
-	 
-	   add_option("jal_db_version", $jal_db_version);
 	}
 
 	register_activation_hook(__FILE__,'jal_install');
@@ -75,6 +77,9 @@
 	function weblinks_add_menu() {
 		// Add a new top-level menu
 		add_menu_page(__('Weblinks','useful-weblinks'), __('Weblinks','useful-weblinks'), 'manage_options', 'manage-useful-weblinks', 'weblinks_html' );
+		add_submenu_page(null, 'Useful Weblinks - Delete Weblink',
+        'Delete Weblink', 'manage_options', 'useful-weblinks-delete',
+        'useful_weblinks_delete_item');
 	}
 
 	// weblinks_html() displays the page content for the settings page
@@ -84,6 +89,8 @@
 		{
 		  wp_die( __('You do not have sufficient permissions to access this page.') );
 		}
+		
+		global $wpdb;
 
 		// variables for the field and option names 
 		$hidden_field_name = 'mt_submit_hidden';
@@ -101,24 +108,20 @@
 			$sql="INSERT INTO wp_weblinks_table (name, url, description)
 			VALUES
 			('$_POST[$data_field_name_website_name]','$_POST[$data_field_name_website_name]','$_POST[$data_field_name_website_description]')";
-
-			mysql_query($sql) 
-			or die(mysql_error());  
-
+			
+			$wpdb->query($wpdb->prepare($sql));
+			
+			
 			// Put an settings updated message on the screen
-
 	?>
 	<div class="updated"><p><strong><?php _e('Weblink added.', 'useful-weblinks' ); ?></strong></p></div>
 	<?php
-
 		}
 
 		// Now display the settings editing screen
-
 		echo '<div class="wrap">';
 		echo "<h2>" . __( 'Manage Useful Weblinks', 'useful-weblinks' ) . "</h2>";
 		
-
 		// settings form
 		?>
 		
@@ -175,7 +178,9 @@
 	<tr><td colspan="2">
 	<p class="submit">
 	<input type="submit" name="Submit" class="button-primary" value="<?php esc_attr_e('Save Changes') ?>" />
-	</td></tr></table>
+	</p>
+	</td></tr>
+	</table>
 
 	</form>
 	<?php
@@ -184,4 +189,20 @@
 		echo '</div>';
  
 	}
+	
+	function useful_weblinks_delete_link() {
+		$sql = "SELECT * FROM wp_weblinks_table WHERE id = '".$_GET['id']."'";
+		
+		$data = $wpdb->get_results($sql, ARRAY_A);
+		if (count($data) == 0) {
+			wp_die(__( 'Can\'t delete directory entry, entry does not exist!' ));
+		}
+
+		$data = $data[0];
+
+		echo '<div class="wrap">';
+		echo '<h2>Delete Retailer</h2>';
+        $sql = "DELETE FROM wp_weblinks_table WHERE id = '".$_GET['id']."'";
+		$wpdb->query($wpdb->prepare($sql));  
+    }
 ?>
