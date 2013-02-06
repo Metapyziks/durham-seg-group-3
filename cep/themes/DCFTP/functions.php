@@ -1,4 +1,14 @@
-<?php // Apply custom styling to comments.
+<?php 
+
+function wps_admin_bar() {
+    global $wp_admin_bar;
+    $wp_admin_bar->remove_menu('new-post');
+	$wp_admin_bar->remove_menu('customize');
+}
+add_action( 'wp_before_admin_bar_render', 'wps_admin_bar' );
+
+
+// Apply custom styling to comments.
 function advanced_comment($comment, $args, $depth) {
    $GLOBALS['comment'] = $comment; ?>
  

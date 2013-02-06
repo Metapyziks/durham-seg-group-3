@@ -1,9 +1,21 @@
+
+	Kathryn's SMTP stuff
+----------------------------
+	
+Host name: smpt.oink.co.uk (or similar) (or we do this?) & port number for host & is SSL used?
+Her email address
+Her username
+Her password
+
+
+
+
 	Most recent notes (Monday)
 ----------------------------------
 
 Please update "useful weblinks" to refer to the weblinks template, and activate the weblinks plugin.
 
-The plugin stores a database of all the links so that Kathryn does not need to worry about formatting them, as I couldn't find a way to do it automatically through the style sheet that she would understand. I've got it to create a database, add entries to this database and display in on the webpage and settings page for the plugin, but I don't know how to delete or edit entries - is it possible to copy these functions across from your directory? If not let me know and I'll have another go at writing them.
+The plugin stores a database of all the links so that Kathryn does not need to worry about formatting them, as I couldn't find a way to do it automatically through the style sheet that she would understand.
 
 Changes to the stylesheet are only the addition of a .weblinks class and styling.
 

@@ -702,12 +702,10 @@ Version: 1.0
 	*	-------------------------------------------------------------------------	*/
 	
 	.weblink {
-		width: 45%;
+		width: 100%;
 		margin: 10px;
 		border: 1px solid #000;
 		background: #ccc;
-		overflow: auto; /* used to clear the floats */
-		float: left;
 	}
 	
 	.weblink-padding {
