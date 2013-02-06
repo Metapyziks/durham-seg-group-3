@@ -208,6 +208,11 @@ public class AttackCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
+				if(TheMap.getMe().getGoogleMap() == null)
+				{
+					MessageBox.newMsgBox("Unable to get map", true);
+					return;
+				}
 				if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
 				{
 					MessageBox.newMsgBox("Unable To Get Your GPS Location!", true);

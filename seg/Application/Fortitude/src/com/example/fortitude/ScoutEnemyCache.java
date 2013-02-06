@@ -220,7 +220,7 @@ public class ScoutEnemyCache extends Window
 					return;
 				}
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.scoutCache(ScoutEnemyCache.getStaticTheCache().getLat(), ScoutEnemyCache.getStaticTheCache().getLon(), ScoutEnemyCache.getStaticTheCache().getCacheId(), ScoutEnemyCache.getMe().getUnitsToPlaceBox());
+				ServerRequests.scoutCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), ScoutEnemyCache.getStaticTheCache().getCacheId(), ScoutEnemyCache.getMe().getUnitsToPlaceBox());
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
