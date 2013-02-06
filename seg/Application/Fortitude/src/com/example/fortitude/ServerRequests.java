@@ -1440,7 +1440,7 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + ServerRequests.getStaticOriginPosition() + "&destination=" + ServerRequests.getStaticDestinationPosition() + "&sensor=true&mode=walking");
+				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + ServerRequests.getStaticOriginPosition() + "&destination=" + ServerRequests.getStaticDestinationPosition() + "&sensor=true");
 				Thread thread = new Thread(rt);
 				thread.start();
 

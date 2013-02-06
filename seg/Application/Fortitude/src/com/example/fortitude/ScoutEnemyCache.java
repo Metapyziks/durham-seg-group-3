@@ -209,6 +209,16 @@ public class ScoutEnemyCache extends Window
 			}
 			public void whenClicked()
 			{
+				if(TheMap.getMe().getGoogleMap() == null)
+				{
+				    MessageBox.newMsgBox("can't get map", true);
+				    return;
+				}
+				if(TheMap.getMe().getGoogleMap().getMyLocation() == null)
+				{
+					MessageBox.newMsgBox("can't get location", true);
+					return;
+				}
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 				ServerRequests.scoutCache(ScoutEnemyCache.getStaticTheCache().getLat(), ScoutEnemyCache.getStaticTheCache().getLon(), ScoutEnemyCache.getStaticTheCache().getCacheId(), ScoutEnemyCache.getMe().getUnitsToPlaceBox());
 				Thread thread = new Thread(new Runnable() {
