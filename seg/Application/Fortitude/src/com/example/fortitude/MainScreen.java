@@ -31,6 +31,7 @@ public class MainScreen extends Window
 	private Spec row4 = GridLayout.spec(3);
 	private Spec row5 = GridLayout.spec(4);
 	private Spec row6 = GridLayout.spec(5);
+	private static boolean firstTimeDone = false;
 
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
@@ -530,6 +531,22 @@ public class MainScreen extends Window
 
 			IconUpdater.newIconUpdater();
 			MainScreen.setCastleClickable(false);
+
+			if(!firstTimeDone)
+			{
+				FileSave fss = new FileSave();
+				String savedLat = fss.OpenFileDialog("latitude");
+				String savedLon = fss.OpenFileDialog("longitude");
+				if((savedLat != null) && (savedLon != null))
+				{
+					if(TheMap.getMe().getGoogleMap() != null)
+					{
+						TheMap.getMe().zoomToThisPosition(savedLat, savedLon);
+						TheMap.getMe().updateCachePositions();
+					}
+				}
+				firstTimeDone = true;
+			}
 		}
 
 		return mainArea;

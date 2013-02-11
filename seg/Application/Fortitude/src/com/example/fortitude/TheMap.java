@@ -220,6 +220,14 @@ public class TheMap extends GridLayout
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), googleMap.getCameraPosition().zoom));
 		}
 	}
+	
+	public void zoomToThisPosition(String latitude, String longitude)
+	{
+		if(googleMap != null)
+		{
+			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)), 14));
+		}
+	}
 
 	////////
 	//

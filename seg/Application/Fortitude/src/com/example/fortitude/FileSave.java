@@ -17,6 +17,7 @@ public class FileSave {
 		fos.write(string.getBytes());
 		fos.close();}
 		catch (Exception e) {
+			System.out.println(e.toString());
 			return;
 		}
 	}
@@ -39,6 +40,7 @@ public class FileSave {
 			if (content == "") {
 			return null; }
 		} catch (Exception e) {
+			System.out.println(e.toString());
 			return null;
 		}
 		return content;

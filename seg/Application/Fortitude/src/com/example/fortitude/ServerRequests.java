@@ -1296,6 +1296,24 @@ public class ServerRequests
 	{
 		refreshDataComplete = false;
 		refreshDataSuccess = false;
+		try
+		{
+			if(TheMap.getMe().getGoogleMap() != null)
+			{
+				if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+				{
+					String saveLon = Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude());
+					String saveLat = Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude());
+					FileSave fs = new FileSave();
+					fs.CreateFileDialog("latitude", saveLat);
+					fs.CreateFileDialog("longitude", saveLon);
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			//oh well...
+		}
 		TheMap.getMe().updateCachePositions();
 		Thread thread = new Thread(new Runnable() {
 			public void run()
