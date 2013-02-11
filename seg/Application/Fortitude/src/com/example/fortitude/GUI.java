@@ -166,6 +166,10 @@ public class GUI
 			{
 				PostBattleScreen.getMe().killMe();
 			}
+			if(ActivateUserScreen.getMe() != null)
+			{
+				ActivateUserScreen.getMe().killMe();
+			}
 			GUI.disableAllTheGUIElements(Fortitude.getFortitude().getWindow().getDecorView());
 		}
 		catch(Exception e)

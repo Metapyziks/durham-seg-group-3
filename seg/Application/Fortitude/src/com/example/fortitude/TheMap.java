@@ -338,56 +338,68 @@ public class TheMap extends GridLayout
 							});
 							return;
 						}
-						ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false);
-						Thread thread = new Thread(new Runnable() {
-							public void run()
-							{
-								while(!(ServerRequests.getGetUserInfoComplete()))
+						try
+						{
+							ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false);
+							Thread thread = new Thread(new Runnable() {
+								public void run()
 								{
+									while(!(ServerRequests.getGetUserInfoComplete()))
+									{
 
+									}
+									if(ServerRequests.getGetUserInfoSuccess())
+									{
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+												}
+												if(MessageBox.getMe() != null)
+												{
+													MessageBox.getMe().killMe();
+												}
+												GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...
+												if(!ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
+												{
+													MainScreen.getMe().killMe();
+													new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
+												}
+												else
+												{
+													MainScreen.getMe().killMe();
+													new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
+												}
+											}
+										});
+									}
+									else
+									{
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+												}
+											}
+										});
+									}
 								}
-								if(ServerRequests.getGetUserInfoSuccess())
-								{
-									Fortitude.getFortitude().runOnUiThread(new Runnable() {
-										public void run()
-										{
-											if(ServerRequests.getTheMessageBox() != null)
-											{
-												ServerRequests.getTheMessageBox().killMe();
-											}
-											if(MessageBox.getMe() != null)
-											{
-												MessageBox.getMe().killMe();
-											}
-											GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...
-											if(!ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
-											{
-												MainScreen.getMe().killMe();
-												new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
-											}
-											else
-											{
-												MainScreen.getMe().killMe();
-												new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
-											}
-										}
-									});
-								}
-								else
-								{
-									Fortitude.getFortitude().runOnUiThread(new Runnable() {
-										public void run()
-										{
-											if(ServerRequests.getTheMessageBox() != null)
-											{
-												ServerRequests.getTheMessageBox().killMe();
-											}
-										}
-									});
-								}
+							});
+							thread.start();
+						}
+						catch(Exception e)
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
 							}
-						});
-						thread.start();
+							MessageBox.newMsgBox("Could not retrieve data about this cache!", true);
+							return;
+						}
 					}
 				});
 				thread2.start();
@@ -395,7 +407,7 @@ public class TheMap extends GridLayout
 			}
 		});
 	}
-	
+
 	public boolean removeRoute()
 	{
 		if(theRoute != null)
@@ -406,7 +418,7 @@ public class TheMap extends GridLayout
 		}
 		return false;
 	}
-	
+
 	////////
 	//
 	//addRoute
@@ -516,12 +528,12 @@ public class TheMap extends GridLayout
 	{
 		freeToGetCaches = x;
 	}
-	
+
 	public String getCacheRoutePosition()
 	{
 		return cacheRoutePosition;
 	}
-	
+
 	public void setCacheRoutePosition(String x)
 	{
 		cacheRoutePosition = x;

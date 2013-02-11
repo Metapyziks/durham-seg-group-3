@@ -7,18 +7,25 @@ public class User
   private String username; //username of user
   private String joindate; //date (time since the epoc in milliseconds) since the user joined
   private String rank; //Whether the user is verified or not.
+  private String caches;
 
   ////////
   //
   //Constructor
   //
   ////////
-  public User(String accountid, String username, String joindate, String rank)
+  public User(String accountid, String username, String joindate, String rank, String caches)
   {
       this.accountid = accountid;
       this.username = username;
       this.joindate = joindate;
       this.rank = rank;	
+      this.caches = Integer.toString((int)(Double.parseDouble(caches)));
+  }
+  
+  public String getCaches()
+  {
+	  return caches;
   }
   
   ////////

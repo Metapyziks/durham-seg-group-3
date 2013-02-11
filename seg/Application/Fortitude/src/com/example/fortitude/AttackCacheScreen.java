@@ -4,16 +4,16 @@ import json.JSONObject;
 import android.widget.GridLayout;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
-import android.widget.SeekBar;
 import android.widget.Space;
 import android.widget.TextView;
 import android.view.Gravity;
 import android.view.View.OnClickListener;
 import android.view.View;
 import android.widget.ImageView.ScaleType;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.ImageView;
 import android.graphics.Color;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.graphics.Typeface;
 
 public class AttackCacheScreen extends Window

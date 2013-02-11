@@ -60,7 +60,7 @@ public class ForgottenDetailsScreen extends Window
 	    LayoutParams emailTextFieldLayout = new LayoutParams(row2, col2); //email text field
 	    emailTextFieldLayout.width = super.getWindowWidth() / 2;
 	    emailTextFieldLayout.height = super.getWindowHeight() / 12;
-	    emailTextField = new TextField();
+	    emailTextField = new TextField(50);
 	    emailTextField.setLayoutParams(emailTextFieldLayout);
 	    mainArea.addView(emailTextField, emailTextFieldLayout);
 	    

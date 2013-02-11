@@ -76,12 +76,12 @@ public class ServerRequests
 	{
 		return attackCacheResponse;
 	}
-	
+
 	public static void setAttackCacheResponse(JSONObject x)
 	{
 		attackCacheResponse = x;
 	}
-	
+
 	public static JSONObject getScoutCacheResponse()
 	{
 		return scoutCacheResponse;
@@ -575,7 +575,7 @@ public class ServerRequests
 																			//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
 																		}
 																	});
-																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits());
+																	new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits(), staticUserInfo.get(0).getCaches());
 																	FileSave fs = new FileSave();
 																	fs.CreateFileDialog("username", CurrentUser.getMe().getUserName());
 																	fs.CreateFileDialog("password", CurrentUser.getMe().getPhash());
@@ -1093,7 +1093,8 @@ public class ServerRequests
 							String uname = response.get("users").get(i).get("uname").asString();
 							String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
 							String rank = response.get("users").get(i).get("rank").asString();
-							User u = new User(accountid, uname, joindate, rank);
+							String caches = response.get("users").get(i).get("caches").asString();
+							User u = new User(accountid, uname, joindate, rank, caches);
 							ServerRequests.getStaticUserInfo().add(u);
 						}
 						this.setSuccess("2");
@@ -1998,6 +1999,107 @@ public class ServerRequests
 						new MainLoginScreen();
 					}
 				});
+			}
+		});
+		thread.start();
+	}
+
+	public static void resendActivationEmail(String emailAddress)
+	{
+		staticEmail = emailAddress;
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Send Email, Please Try Again");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Send Email, Please Try Again");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("done");
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://" + ServerIP + "/api/sendverify?email=" + ServerRequests.getStaticEmail());
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								else if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						connecting = true;
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								else if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								ActivateUserScreen.getMe().killMe();
+								new MainScreen();
+								MessageBox.newMsgBox("We have resent an activation email to your email account", true);
+							}
+						});
+					}
+				}	
 			}
 		});
 		thread.start();

@@ -31,16 +31,14 @@ public class EnemyProfileScreen extends Window
 	
 	private static User staticTheUser;
 	private static Cache staticCacheComeFrom;
-	private static String staticUserCacheBalance;
 	private static EnemyProfileScreen me;
 	
-	public EnemyProfileScreen(User theUser, Cache cacheComeFrom, String userCacheBalance)
+	public EnemyProfileScreen(User theUser, Cache cacheComeFrom)
 	{
 		super(R.drawable.user_profile);
 		me = this;
 		staticTheUser = theUser;
 		staticCacheComeFrom = cacheComeFrom;
-		staticUserCacheBalance = userCacheBalance;
 		addContentToContentPane(createWindowPane());
 	}
 	
@@ -131,7 +129,7 @@ public class EnemyProfileScreen extends Window
     	TextView totalCachesTextView = new TextView(totalCachesGrid.getContext());
     	totalCachesTextView.setTextSize(14);
     	totalCachesTextView.setTextColor(Color.WHITE);
-    	totalCachesTextView.setText(EnemyProfileScreen.getStaticUserCacheBalance() + " caches");
+    	totalCachesTextView.setText(EnemyProfileScreen.getStaticTheUser().getCaches() + " caches");
     	totalCachesTextView.setGravity(Gravity.RIGHT);
     	totalCachesTextView.setLayoutParams(totalCachesTextViewLayout);
     	totalCachesGrid.addView(totalCachesTextView, totalCachesTextViewLayout);
@@ -261,7 +259,7 @@ public class EnemyProfileScreen extends Window
 		new AccountScreen() {
 			public void showNextScreen()
 			{
-				new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.getStaticUserCacheBalance());
+				new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom());
 			}
 		};
 	}
@@ -289,11 +287,6 @@ public class EnemyProfileScreen extends Window
     {
     	me = null;
     	this.removeAllViews();
-    }
-    
-    public static String getStaticUserCacheBalance()
-    {
-    	return staticUserCacheBalance;
     }
     
     public static User getStaticTheUser()

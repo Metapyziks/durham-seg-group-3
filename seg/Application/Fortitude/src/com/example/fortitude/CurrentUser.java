@@ -9,9 +9,9 @@ public class CurrentUser extends User
 	private String numberOfCaches;
 	private String totalBalance;
 	
-	public CurrentUser(String accountid, String username, String joindate, String rank, String sessionID, String phash, String balance, String numberOfCaches, String totalBalance)
+	public CurrentUser(String accountid, String username, String joindate, String rank, String sessionID, String phash, String balance, String numberOfCaches, String totalBalance, String caches)
 	{
-		super(accountid, username, joindate, rank);
+		super(accountid, username, joindate, rank, caches);
 		this.sessionID = sessionID;
 		this.phash = phash;
 		this.balance = truncateBalance(balance);

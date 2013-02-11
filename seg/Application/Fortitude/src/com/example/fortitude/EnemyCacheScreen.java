@@ -188,7 +188,7 @@ public class EnemyCacheScreen extends Window
 			public void whenClicked()
 			{
 				EnemyCacheScreen.getMe().killMe();
-				new EnemyProfileScreen(EnemyCacheScreen.getTheUser(), EnemyCacheScreen.getStaticTheCache(), "21");
+				new EnemyProfileScreen(EnemyCacheScreen.getTheUser(), EnemyCacheScreen.getStaticTheCache());
 			}
 		});
 		seeProfileButton.setLayoutParams(seeProfileButtonLayout);

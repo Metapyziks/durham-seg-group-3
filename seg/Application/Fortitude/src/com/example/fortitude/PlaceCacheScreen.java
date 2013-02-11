@@ -231,6 +231,7 @@ public class PlaceCacheScreen extends Window
 														}
 														PlaceCacheScreen.getMe().killMe();
 														new MainScreen();
+														MessageBox.newMsgBox("Successfully Placed Cache!", true);
 													}
 												});
 											}

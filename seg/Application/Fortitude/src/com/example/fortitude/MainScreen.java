@@ -263,7 +263,8 @@ public class MainScreen extends Window
 			activateAccountBar.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					TheMap.getMe().zoomToMyPositionAtMyZoom();
+					MainScreen.getMe().killMe();
+					new ActivateUserScreen();
 				}
 			});
 			activateAccountBar.setImageResource(R.drawable.activate_account);
@@ -505,13 +506,20 @@ public class MainScreen extends Window
 			centerMeClickableArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+					if(TheMap.getMe() == null)
 					{
-						TheMap.getMe().zoomToMyPositionAtMyZoom();
+						MessageBox.newMsgBox("Can't get the map!", true);
 					}
 					else
 					{
-						MessageBox.newMsgBox("Can't Get Your Location!", true);
+						if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+						{
+							TheMap.getMe().zoomToMyPositionAtMyZoom();
+						}
+						else
+						{
+							MessageBox.newMsgBox("Can't Get Your Location!", true);
+						}
 					}
 				}
 			});

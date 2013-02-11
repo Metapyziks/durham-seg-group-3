@@ -144,7 +144,7 @@ public class NewUserScreen extends Window
 		LayoutParams email1FieldLayout = new LayoutParams(row8, col2); //eighth row email1 textfield
 		email1FieldLayout.width = GUI.calculateWindowWidth() / 2;
 		email1FieldLayout.height = GUI.calculateWindowHeight() / 12;
-		this.emailField1 = new TextField();
+		this.emailField1 = new TextField(50);
 		emailField1.setLayoutParams(email1FieldLayout);
 		mainArea.addView(emailField1, email1FieldLayout);
 		
@@ -164,7 +164,7 @@ public class NewUserScreen extends Window
 		LayoutParams email2FieldLayout = new LayoutParams(row10, col2); //tenth row email2 textbox
 		email2FieldLayout.width = GUI.calculateWindowWidth() / 2;
 		email2FieldLayout.height = GUI.calculateWindowHeight() / 12;
-		this.emailField2 = new TextField();
+		this.emailField2 = new TextField(50);
 		emailField2.setLayoutParams(email2FieldLayout);
 		mainArea.addView(emailField2, email2FieldLayout);
 		
