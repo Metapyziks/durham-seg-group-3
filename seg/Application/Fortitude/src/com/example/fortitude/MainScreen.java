@@ -177,82 +177,6 @@ public class MainScreen extends Window
 			mainArea.addView(TheMap.getMe(), theMapLayout);
 		}
 
-		GridLayout controlsGrid = new GridLayout(mainArea.getContext());
-		controlsGrid.setColumnCount(2);
-		controlsGrid.setRowCount(6);
-
-		LayoutParams controlGridPositionalSpaceLayout = new LayoutParams(row1, col1);
-		controlGridPositionalSpaceLayout.height = super.getWindowHeight() / 30;
-		controlGridPositionalSpaceLayout.width = 10;
-		Space controlGridPositionalSpace = new Space(controlsGrid.getContext());
-		controlGridPositionalSpace.setLayoutParams(controlGridPositionalSpaceLayout);
-		controlsGrid.addView(controlGridPositionalSpace, controlGridPositionalSpaceLayout);
-
-		LayoutParams zoomInButtonLayout = new LayoutParams(row2, col2); //zoom in button
-		zoomInButtonLayout.width = 30;
-		zoomInButtonLayout.height = 30;
-		zoomInButton = (new FortitudeButton(R.drawable.zoom_plus, R.drawable.zoom_plus) {
-			public void preClickActions()
-			{
-
-			}
-			public void whenClicked()
-			{
-
-			}
-		});
-		zoomInButton.setLayoutParams(zoomInButtonLayout);
-		controlsGrid.addView(zoomInButton, zoomInButtonLayout);
-
-		LayoutParams firstGapLayout = new LayoutParams(row3, col2);
-		firstGapLayout.width = 10;
-		firstGapLayout.height = 10;
-		Space firstGap = new Space(controlsGrid.getContext());
-		firstGap.setLayoutParams(firstGapLayout);
-		controlsGrid.addView(firstGap, firstGapLayout);
-
-		LayoutParams zoomOutButtonLayout = new LayoutParams(row4, col2); //zoom out button
-		zoomOutButtonLayout.width = 30;
-		zoomOutButtonLayout.height = 30;
-		zoomOutButton = (new FortitudeButton(R.drawable.zoom_minus, R.drawable.zoom_minus) {
-			public void preClickActions()
-			{
-
-			}
-			public void whenClicked()
-			{
-
-			}
-		});
-		zoomOutButton.setLayoutParams(zoomOutButtonLayout);
-		controlsGrid.addView(zoomOutButton, zoomOutButtonLayout);
-
-		LayoutParams secondGapLayout = new LayoutParams(row5, col2);
-		secondGapLayout.width = 10;
-		secondGapLayout.height = 10;
-		Space secondGap = new Space(controlsGrid.getContext());
-		secondGap.setLayoutParams(secondGapLayout);
-		controlsGrid.addView(secondGap, secondGapLayout);
-
-		LayoutParams toggleTerrotoryButtonLayout = new LayoutParams(row6, col2); //zoom out button
-		toggleTerrotoryButtonLayout.width = 30;
-		toggleTerrotoryButtonLayout.height = 30;
-		FortitudeButton toggleTerrotoryButton = (new FortitudeButton(R.drawable.toggle_areas, R.drawable.toggle_areas) {
-			public void preClickActions()
-			{
-
-			}
-			public void whenClicked()
-			{
-
-			}
-		});
-		toggleTerrotoryButton.setLayoutParams(toggleTerrotoryButtonLayout);
-		controlsGrid.addView(toggleTerrotoryButton, toggleTerrotoryButtonLayout);
-
-		LayoutParams controlsGridLayout = new LayoutParams(row2, col1);
-		mainArea.addView(controlsGrid, controlsGridLayout);
-
 		if(!CurrentUser.getMe().isVerified())
 		{
 			LayoutParams activateAccountBarLayout = new LayoutParams(row3, col1);
@@ -549,6 +473,11 @@ public class MainScreen extends Window
 			}
 		}
 
+		if(TheMap.getMe().getGoogleMap() == null)
+		{
+			MessageBox.newMsgBox("Google maps crashed, please restart the app!", true);
+		}
+		
 		return mainArea;
 	}
 

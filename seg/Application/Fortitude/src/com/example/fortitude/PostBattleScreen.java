@@ -35,6 +35,8 @@ public class PostBattleScreen extends Window
 	private Spec row10 = GridLayout.spec(9);
 	private Spec row11 = GridLayout.spec(10);
 	private Spec row12 = GridLayout.spec(11);
+	private Spec row13 = GridLayout.spec(12);
+	private Spec row14 = GridLayout.spec(13);
 	
 	private static JSONObject staticTheResponse;
 	private static Cache staticTheCache;
@@ -53,7 +55,7 @@ public class PostBattleScreen extends Window
 	{
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setColumnCount(1);
-		mainArea.setRowCount(13);
+		mainArea.setRowCount(14);
 		
 		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
 		topBarImageLayout.width = super.getWindowWidth();
@@ -204,11 +206,35 @@ public class PostBattleScreen extends Window
     	mainArea.addView(survivorsTextView, survivorsTextViewLayout);
     	
     	LayoutParams eleventhRowSpaceLayout = new LayoutParams(row11, col1);
-    	eleventhRowSpaceLayout.height = super.getWindowWidth() / 10;
+    	eleventhRowSpaceLayout.height = super.getWindowHeight() / 20;
     	Space eleventhRowSpace = new Space(mainArea.getContext());
     	eleventhRowSpace.setLayoutParams(eleventhRowSpaceLayout);
     	mainArea.addView(eleventhRowSpace, eleventhRowSpaceLayout);
     	
+    	LayoutParams captivesTextViewLayout = new LayoutParams(row12, col1);
+    	captivesTextViewLayout.width = super.getWindowWidth();
+    	captivesTextViewLayout.height = super.getWindowHeight() / 10;
+    	TextView captivesTextView = new TextView(mainArea.getContext());
+    	captivesTextView.setTextColor(Color.WHITE);
+    	captivesTextView.setTextSize(14);
+    	captivesTextView.setGravity(Gravity.CENTER);
+    	if(PostBattleScreen.getStaticTheResponse().get("victory").asString().equals("true"))
+    	{
+    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenders").get("deserters").asString()))) + " enemy soldiers chose to surrender and join your army. They have been sent to you, and your balance has been increased.");
+    	}
+    	else
+    	{
+    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackers").get("deserters").asString()))) + " of your soldiers chose to surrender and join the enemy army.");
+    	}
+    	captivesTextView.setLayoutParams(captivesTextViewLayout);
+    	mainArea.addView(captivesTextView, captivesTextViewLayout);
+    	
+    	LayoutParams thirteenthRowSpaceLayout = new LayoutParams(row13, col1);
+    	thirteenthRowSpaceLayout.height = super.getWindowHeight() / 20;
+    	Space thirteenthRowSpace = new Space(mainArea.getContext());
+    	thirteenthRowSpace.setLayoutParams(thirteenthRowSpaceLayout);
+    	mainArea.addView(thirteenthRowSpace, thirteenthRowSpaceLayout);
+   
     	GridLayout cancelButtonRow = new GridLayout(mainArea.getContext());
     	cancelButtonRow.setColumnCount(2);
     	cancelButtonRow.setRowCount(1);
@@ -236,7 +262,7 @@ public class PostBattleScreen extends Window
     	cancelButton.setLayoutParams(cancelButtonLayout);
     	cancelButtonRow.addView(cancelButton, cancelButtonLayout);
     	
-    	LayoutParams cancelButtonRowLayout = new LayoutParams(row12, col1);
+    	LayoutParams cancelButtonRowLayout = new LayoutParams(row14, col1);
     	mainArea.addView(cancelButtonRow, cancelButtonRowLayout);
 		
 		return mainArea;

@@ -1324,19 +1324,10 @@ public class ServerRequests
 				}
 				if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
 				{
-					if(ServerRequests.getTheMessageBox() == null)
-					{
-						Fortitude.getFortitude().runOnUiThread(new Runnable() {
-							public void run()
-							{
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", true));
-							}
-						});
-					}
 					ServerRequests.getUserStats(CurrentUser.getMe().getUserName(), CurrentUser.getMe().getSessionID());
 					while(!(ServerRequests.getGetUserBalanceComplete()))
 					{
-
+					
 					}
 					if(ServerRequests.getGetUserBalanceSuccess())
 					{

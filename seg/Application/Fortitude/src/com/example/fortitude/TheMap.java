@@ -82,7 +82,7 @@ public class TheMap extends GridLayout
 		googleMap.setMyLocationEnabled(true); //tell googlemaps to get and display my location
 		googleMap.getUiSettings().setRotateGesturesEnabled(false);
 		googleMap.getUiSettings().setCompassEnabled(false);
-		googleMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+		googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 		setOnClickListenerOnGoogleMap();
 

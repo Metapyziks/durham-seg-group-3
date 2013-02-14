@@ -1,5 +1,6 @@
 package json;
 
+import java.io.EOFException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.StringBuilder;
@@ -26,14 +27,51 @@ class ParseContext
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 		StringBuilder sb = new StringBuilder();
 		
-		String string = br.readLine();
+		int delorienCounter = 0;
+		long currentTime = System.currentTimeMillis();
+
+		String string;
 		
-		while(string != null)
+		do
 		{
-			sb.append(string);
 			string = br.readLine();
-		}
+			
+			if(string != null)
+			{
+				currentTime = System.currentTimeMillis();
+				
+				boolean exitCharLoop = false;
+				
+				for(char c : string.toCharArray())
+				{
+					if(c == '{')
+					{
+						delorienCounter++;
+					}
+					else if(c == '}')
+					{
+						delorienCounter--;
+						exitCharLoop = true;
+					}
+				}
+
+				sb.append(string);
+				
+				if(exitCharLoop)
+				{
+					break;
+				}
+				
+				string = br.readLine();
+			}
+
+		} while(System.currentTimeMillis() - currentTime < 15000);
 		
+		if(System.currentTimeMillis() - currentTime >= 15000)
+		{
+			throw new EOFException();
+		}
+
 		string = sb.toString();
 
 		length = string.length();
@@ -87,28 +125,28 @@ class ParseContext
 		{
 			switch( _chars[i] )
 			{
-				case '\r':
-				case '\0':
-					break;
-				case '\t':
-					num += 4;
-					break;
-				case '\n':
-					num = 0;
-					break;
-				default:
-					++num;
-					break;
+			case '\r':
+			case '\0':
+				break;
+			case '\t':
+				num += 4;
+				break;
+			case '\n':
+				num = 0;
+				break;
+			default:
+				++num;
+				break;
 			}
 		}
 		return num + 1;
 	}
 
 	void error( String message )
-		throws JSONParserException
-	{
+			throws JSONParserException
+			{
 		throw new JSONParserException( this, message );
-	}
+			}
 
 	void skipWhitespace()
 	{
@@ -176,8 +214,8 @@ class ParseContext
 	}
 
 	char nextUnicodeLiteral() 
-	    throws JSONParserException
-	{
+			throws JSONParserException
+			{
 		if( offset + 4 <= length )
 		{
 			char[] hexChars = new char[] { next(), next(), next(), next() };
@@ -197,30 +235,30 @@ class ParseContext
 			error( "Incomplete unicode literal" );
 		}
 		return '\0';
-	}
+			}
 
 	char nextStringChar()
-		throws JSONParserException
-	{
+			throws JSONParserException
+			{
 		if( peek() == '\\' )
 		{
 			next();
 			switch( next() )
 			{
-				case 'r':
-					return '\r';
-				case 'n':
-					return '\n';
-				case 't':
-					return '\t';
-				case '"':
-					return '"';
-				case 'u':
-					return nextUnicodeLiteral();
-				case '\\':
-					return '\\';
-				default:
-					error( "Invalid escaped character (\\" + prev() + ")" );
+			case 'r':
+				return '\r';
+			case 'n':
+				return '\n';
+			case 't':
+				return '\t';
+			case '"':
+				return '"';
+			case 'u':
+				return nextUnicodeLiteral();
+			case '\\':
+				return '\\';
+			default:
+				error( "Invalid escaped character (\\" + prev() + ")" );
 			}
 		}
 
@@ -228,11 +266,11 @@ class ParseContext
 			return '\0';
 
 		return next();
-	}
+			}
 
 	String nextString()
-		throws JSONParserException
-	{
+			throws JSONParserException
+			{
 		if( !isNextString() )
 			return null;
 
@@ -247,7 +285,7 @@ class ParseContext
 		next(); // read past '"'
 
 		return str.toString();
-	}
+			}
 
 	boolean isNextNumber()
 	{
@@ -307,8 +345,8 @@ class ParseContext
 	}
 
 	JSONValue nextValue()
-		throws JSONParserException
-	{
+			throws JSONParserException
+			{
 		if( isNextNumber() )
 			return new JSONNumber( this );
 
@@ -325,5 +363,5 @@ class ParseContext
 			return new JSONBoolean( this );
 
 		return null;
-	}
+			}
 }

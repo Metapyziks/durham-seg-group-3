@@ -1,7 +1,6 @@
 package com.example.fortitude;
 
 import java.security.MessageDigest;
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 //class to contain static methods for all actions concerning logins and
@@ -94,7 +93,7 @@ public class Login
 	{
 		try
 		{
-			password = "7ï¿½`j8,#@ytIsQ9$Od" + password + "%fI4\"0lPQz^~U&An4:9ï¿½k";
+			password = "7¬`j8,#@ytIsQ9$Od" + password + "%fI4\"0lPQz^~U&An4:9£k";
 			MessageDigest m = MessageDigest.getInstance("MD5");
 		        byte[] digest = m.digest(password.getBytes("UTF-8"));
 		        StringBuffer builder = new StringBuffer();

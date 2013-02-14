@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.content.Context;
+import android.content.Intent;
 
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +31,15 @@ public class Fortitude extends Activity
     {
         getMenuInflater().inflate(R.menu.activity_fortitude, menu);
         return true;
+    }
+    
+    @Override
+    public void onBackPressed()
+    {
+    	Intent startMain = new Intent(Intent.ACTION_MAIN);
+    	startMain.addCategory(Intent.CATEGORY_HOME);
+    	startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	startActivity(startMain);
     }
     
     ////////
