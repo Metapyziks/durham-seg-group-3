@@ -208,7 +208,7 @@ public abstract class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-    			new SettingsScreen();
+    			new HelpScreens(0);
     		}
     	});
     	settingsButton.setLayoutParams(settingsButtonLayout);

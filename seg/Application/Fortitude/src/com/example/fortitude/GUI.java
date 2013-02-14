@@ -130,10 +130,6 @@ public class GUI
 			{
 				PlaceCacheScreen.getMe().killMe();
 			}
-			if(SettingsScreen.getMe() != null)
-			{
-				SettingsScreen.getMe().killMe();
-			}
 			if(VisitEnemyCacheScreen.getMe() != null)
 			{
 				VisitEnemyCacheScreen.getMe().killMe();
@@ -169,6 +165,10 @@ public class GUI
 			if(ActivateUserScreen.getMe() != null)
 			{
 				ActivateUserScreen.getMe().killMe();
+			}
+			if(HelpScreens.getMe() != null)
+			{
+				HelpScreens.getMe().killMe();
 			}
 			GUI.disableAllTheGUIElements(Fortitude.getFortitude().getWindow().getDecorView());
 		}
