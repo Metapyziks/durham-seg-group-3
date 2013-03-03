@@ -1,5 +1,7 @@
 \newcolumntype{C}[1]{>{\Centering}p{#1}}
-\def\Tab#1#2#3{\small\tabular{C{#1}}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}\\
+\def\TabS#1#2{\small\tabular{C{#1}}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}
+    \rule[-2mm]{0pt}{2mm}\endtabular}
+\def\TabA#1#2#3{\small\tabular{C{#1}}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}\\
     \hline\rule[0mm]{0pt}{4mm}#3\rule[-2mm]{0pt}{2mm}\endtabular}
 \seticonparams{entity}{
     shadow=false,
@@ -14,25 +16,25 @@ It was apparent from the briefing and requirements that the application would be
 \begin{figure}[h!]
     \centering
     \begin{tabular}{c}
-    \entity{database}[\Tab{3cm}{Database}{(SQLite Database)}]
+    \entity{database}[\TabA{3cm}{Database}{(SQLite Database)}]
     \hspace{5mm}
-    \entity{server}[\Tab{3cm}{Server}{(Webserver)}]
+    \entity{server}[\TabA{3cm}{Server}{(Webserver)}]
     \hspace{5mm}
     \tabular{C{1mm}}
     \pnode(0,2){arrowtop}
     \pnode(0,-2){arrowbottom}
     \endtabular
     \hspace{5mm}
-    \entity{model}[\Tab{3cm}{Model}{(Application's\\functionality)}]
+    \entity{model}[\TabA{3cm}{Model}{(Application's functionality)}]
     \hspace{5mm}
-    \entity{gui}[\Tab{3cm}{Graphical User Interface}{
-        \entity{controller}[\Tab{25mm}{Controller}{(User Input)}] \\[5mm]
-        \entity{view}[\Tab{25mm}{View}{(Application Output)}]
+    \entity{gui}[\TabA{3cm}{Graphical User Interface}{
+        \entity{controller}[\TabA{25mm}{Controller}{(User Input)}] \\[5mm]
+        \entity{view}[\TabA{25mm}{View}{(Application Output)}]
     }]
     \end{tabular}
     {\small
         \ncline[arrowscale=1.5]{<->}{database}{server}
-        \ncline[arrowscale=1.5,linestyle=dashed]{-}{arrowtop}{arrowbottom}
+        \ncline[arrowscale=1.5,linestyle=dashed]{<->}{arrowtop}{arrowbottom}
         \ncline[arrowscale=1.5]{<->}{server}{model}
         \ncline[arrowscale=1.5]{<-}{model}{controller}
         \ncline[arrowscale=1.5]{->}{model}{view}
@@ -44,7 +46,25 @@ Due to the requirements of also having a website with much of the functionality 
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.6\textwidth]{imdfig2}
+    \begin{tabular}{rcl}
+    ~ &
+    \entity{database}[\TabS{3cm}{Database}] & ~
+    \\[1cm]
+    \entity{application}[\TabS{3cm}{Application}]
+    \hspace{1cm}
+    \pnode(0,2){arrowtop}
+    \pnode(0,-0.5){arrowbottom}
+    \hspace{1cm} &
+    \entity{server}[\TabS{3cm}{Server}] &
+    \hspace{1cm}
+    \entity{website}[\TabS{3cm}{Website}] \\ ~
+    \end{tabular}
+    {\small
+        \ncline[arrowscale=1.5]{<->}{database}{server}
+        \ncline[arrowscale=1.5,linestyle=dashed]{<->}{arrowtop}{arrowbottom}
+        \ncline[arrowscale=1.5]{<->}{server}{application}
+        \ncline[arrowscale=1.5]{<->}{server}{website}
+    }
     \caption{Top level dataflow for the overall system including a centralised database and server and the application and website which interact with server separately.}
 \end{figure}
 
