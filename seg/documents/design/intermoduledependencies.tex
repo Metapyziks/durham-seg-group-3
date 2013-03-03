@@ -80,3 +80,17 @@ This module group is the interface in which incoming HTTP requests are processed
 This submodule of the \emph{Web Interface} handles the delivery of web content such as HTML pages, style sheets, and images. The content is served from a resource directory local to the server program, which is updated during the program's runtime. It also allows dynamic web page generation through the use of inline C$\sharp$ scripts in the source HTML files. These scripts are used as a preprocessing language while constructing the page, so the resulting file sent to a user's web browser has content reflecting the current state of the game and the actions of the user. The inline preprocessor scripting system will be implemented specifically for this project, using code generation and .NET's ``Compiler as a service'' facility. The choice to do this instead of simply using PHP or any other pre-existing CGI is so the scripts would have direct access to the server program and its components (this would be true because the scripts are actually contained within the server program itself). This would provide increased performance and would eliminate the need to produce an interface between the CGI and the server.
 
 \paragraph{API Module}
+The second submodule of the \emph{Web Interface} group handles the interpretation and responses to requests from the client application. These requests arrive in the form of a specific command, and the named parameters required by that command. The module contains a class for each command, all extending a general \emph{Request} superclass that provides some facilities common to most requests such as authenticating the requesting user. After the request is processed, an object extending the \emph{Response} superclass is returned by the processing request class. This object is then serialized automatically into a JSON object, which is sent as a reply to the requesting client. The separation of request and response types into classes has the standard benefits of reduced code dependencies and therefore complexity, and also allows requests (or responses) with similar functionalities to extend general abstract classes that implement them. JSON is used as a response format due to its small bandwidth footprint and how trivial it is to parse. It also opens up the possibility of using it with AJAX for the website implementation.
+
+\subsubsection{Application Module Descriptions}
+\paragraph{Request Module}
+\lipsum[1]
+
+\paragraph{Logic Module}
+\lipsum[2]
+
+\paragraph{Geolocation Module}
+\lipsum[3]
+
+\paragraph{Window Module}
+\lipsum[4]
