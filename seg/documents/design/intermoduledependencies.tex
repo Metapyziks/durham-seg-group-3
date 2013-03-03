@@ -1,8 +1,14 @@
 \newcolumntype{C}[1]{>{\Centering}p{#1}}
-\def\TabS#1#2{\small\tabular{C{#1}}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}
+\def\TabS#1#2{\small\tabular{#1}\rule[-1.5mm]{0pt}{5mm}{#2}
     \rule[-2mm]{0pt}{2mm}\endtabular}
-\def\TabA#1#2#3{\small\tabular{C{#1}}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}\\
-    \hline\rule[0mm]{0pt}{4mm}#3\rule[-2mm]{0pt}{2mm}\endtabular}
+\def\TabA#1#2#3{\small\tabular{#1}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}\\
+    \hline\rule[0mm]{0pt}{4mm}#3
+    \rule[-2mm]{0pt}{2mm}\endtabular}
+\def\TabB#1#2#3{\small\tabular{c}\rule[-1.5mm]{0pt}{5mm}
+    \textbf{{\tiny$\ll$}#1{\tiny$\gg$}}\\
+    \hline\rule[0mm]{0pt}{4mm}\tabular{ll}#2\endtabular \\
+    \hline\rule[0mm]{0pt}{4mm}\tabular{ll}#3\endtabular
+    \rule[-2mm]{0pt}{2mm}\endtabular}
 \seticonparams{entity}{
     shadow=false,
     fillcolor=blue!10,
@@ -16,28 +22,43 @@ It was apparent from the briefing and requirements that the application would be
 \begin{figure}[h!]
     \centering
     \begin{tabular}{c}
-    \entity{database}[\TabA{3cm}{Database}{(SQLite Database)}]
+    \entity{server}[\TabA{c}{Centralized Server}{~\\[-3mm]
+        \tabular{c}~\\[-10mm]
+            \entity{database}[\TabS{c}{Database Module}]\\[8mm]
+            \entity{serverlogic}[\TabS{c}{Logic Module}]\\[-3mm]
+        \endtabular
+        \hspace{5mm}
+        \entity{web}[\TabA{c}{Web Interface}{~\\[-3mm]
+            \entity{api}[\TabS{c}{API Module}]\\[2mm]
+            \entity{website}[\TabS{c}{Website Module}]\\[-3mm] 
+        }]\\[-3mm]
+    }]
     \hspace{5mm}
-    \entity{server}[\TabA{3cm}{Server}{(Webserver)}]
-    \hspace{5mm}
-    \tabular{C{1mm}}
-    \pnode(0,2){arrowtop}
-    \pnode(0,-2){arrowbottom}
-    \endtabular
-    \hspace{5mm}
-    \entity{model}[\TabA{3cm}{Model}{(Application's functionality)}]
-    \hspace{5mm}
-    \entity{gui}[\TabA{3cm}{Graphical User Interface}{
-        \entity{controller}[\TabA{25mm}{Controller}{(User Input)}] \\[5mm]
-        \entity{view}[\TabA{25mm}{View}{(Application Output)}]
+    \entity{app}[\TabA{c}{Android Application}{~\\[3mm]
+        \hspace{-5mm}
+        \tabular{cc}
+        \tabular{c}~\\[-10mm]
+            \entity{request}[\TabS{c}{Request Module}]\\[8mm]
+            \entity{applogic}[\TabS{c}{Logic Module}]\\[-3mm]
+        \endtabular
+        \hspace{2mm}
+        \tabular{c}~\\[-10mm]
+            \entity{window}[\TabS{c}{Window Module}]\\[8mm]
+            \entity{geo}[\TabS{c}{Geolocation Module}]\\[-3mm]
+        \endtabular\hspace{-3mm}
+        \endtabular
+        \\[3mm]
     }]
     \end{tabular}
     {\small
-        \ncline[arrowscale=1.5]{<->}{database}{server}
-        \ncline[arrowscale=1.5,linestyle=dashed]{<->}{arrowtop}{arrowbottom}
-        \ncline[arrowscale=1.5]{<->}{server}{model}
-        \ncline[arrowscale=1.5]{<-}{model}{controller}
-        \ncline[arrowscale=1.5]{->}{model}{view}
+        \ncline[arrowscale=1.5]{<->}{database}{serverlogic}
+        \ncline[arrowscale=1.5]{<->}{web}{serverlogic}
+        \ncline[arrowscale=1.5]{->}{database}{web}
+        \ncline[arrowscale=1.5]{<->}{api}{request}
+        \ncline[arrowscale=1.5]{<->}{request}{applogic}
+        \ncline[arrowscale=1.5]{<->}{window}{applogic}
+        \ncline[arrowscale=1.5]{->}{request}{window}
+        \ncline[arrowscale=1.5]{->}{geo}{applogic}
     }
     \caption{Data flow of the top level of the system, showing the application and server separated by the dashed line, with a clearly visible breakdown of the application into the Model, Controller and View.}
 \end{figure}
@@ -48,16 +69,16 @@ Due to the requirements of also having a website with much of the functionality 
     \centering
     \begin{tabular}{rcl}
     ~ &
-    \entity{database}[\TabS{3cm}{Database}] & ~
+    \entity{database}[\TabS{C{3cm}}{Database}] & ~
     \\[1cm]
-    \entity{application}[\TabS{3cm}{Application}]
+    \entity{application}[\TabS{C{3cm}}{Application}]
     \hspace{1cm}
     \pnode(0,2){arrowtop}
     \pnode(0,-0.5){arrowbottom}
     \hspace{1cm} &
-    \entity{server}[\TabS{3cm}{Server}] &
+    \entity{server}[\TabS{C{3cm}}{Server}] &
     \hspace{1cm}
-    \entity{website}[\TabS{3cm}{Website}] \\ ~
+    \entity{website}[\TabS{C{3cm}}{Website}] \\ ~
     \end{tabular}
     {\small
         \ncline[arrowscale=1.5]{<->}{database}{server}
@@ -74,7 +95,22 @@ Due the centralised nature of the data, the Models main function is to make basi
 
 \begin{figure}[h!]
     \centering
-    \includegraphics[width=0.7\textwidth]{imdfig3}
+    \begin{tabular}{rcl}
+    \entity{currentuser}[\TabB{CurrentUser}{
+        (static) me &: CurrentUser \\
+        sessionID &: String \\
+        phash &: String \\
+        balance &: String \\
+        numberOfCaches &: String \\
+        totalBalance &: String
+    }{
+        setSessionID(x : String) &: void \\
+        setBalance(x : String) &: void \\
+        setNumberOfCaches(x : String) &: void \\
+        setTotalBalance(x : String) &: void \\
+        get
+    }]
+    \end{tabular}
     \caption{Showing the properties and methods of classes within the Model component.}
 \end{figure}
 
