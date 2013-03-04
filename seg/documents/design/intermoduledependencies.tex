@@ -59,11 +59,12 @@ The server and client may be conceptually divided into several modules. For the 
     \end{tabular}
     {\small
         \ncline[arrowscale=1.5]{<->}{database}{serverlogic}
-        \ncline[arrowscale=1.5]{<->}{web}{serverlogic}
+        \nccurve[arrowscale=1.5,angleA=5,angleB=175]{<->}{serverlogic}{api}
+        \nccurve[arrowscale=1.5,angleA=-5,angleB=-175]{<->}{serverlogic}{website}
         %\ncline[arrowscale=1.5]{->}{database}{web}
-        \ncline[arrowscale=1.5]{<->}{api}{request}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{api}{request}
         \ncline[arrowscale=1.5]{<->}{request}{applogic}
-        \ncline[arrowscale=1.5]{<->}{window}{applogic}
+        \nccurve[arrowscale=1.5,angleA=45,angleB=-135]{<->}{applogic}{window}
         %\ncline[arrowscale=1.5]{->}{request}{window}
         \ncline[arrowscale=1.5]{->}{geo}{applogic}
     }
@@ -124,6 +125,10 @@ The module will be used extensively by the other modules in the server, so consi
 
 \subsubsection{Logic Module}
 The Logic Module will contain all critical algorithms related to game and overall system state. This will include the operations of account authentication, client location validation, cache attacking, and unit transactions. The module contains a set of core classes that abstract components of the game such as caches and players. Keeping the more intensive calculations in the system separated from the database and interface means they are easier to locate and profile, and unit tests can be produced more simply without having to unnecessarily incorporate unrelated components.
+
+This module is centred around processing the main elements of the game; players, caches, and their interactions. The \emph{Account} and \emph{Player} classes, which are \emph{DatabaseEntity} types, represent the account details and game states respectively of a user. The separation of user data between the two classes is designed to match the conceptual difference, and also because users who have not been verified by email do not need \emph{Player} objects since they are unable to participate in the game. The \emph{Account} class will provide a wide array of static helper methods; to register a new user, validate an existing one, or promote a user to administrator status for example. The \emph{Cache} class is also a \emph{DatabaseEntity}, and represents a single cache. It provides a helper method \emph{FindNearby} that is used both to detect whether a player is close enough to scout or attack a cache, and also whether a cache is too close to where a user wishes to place a new one. The other notable method is \emph{Cache.Attack} where the battle calculation is performed, deciding whether a cache is defeated by the attacking army or if the defenders keep possession of the stronghold.
+
+Authentication sessions and notifications are also managed in this module. The decision has been made to not store authentication sessions in the database, but rather in memory. Authentication sessions are quite volatile, in that they will be created and removed too frequently to warrant their storage in a sluggish but persistent structure like a database. They will be instead held in a dictionary structure, using the related account ID as a key for easy retrieval. Notifications are messages to users about a change in game state that may be of interest to them, or for messages sent to them by other users. These objects \emph{are} stored in the database, and so the \emph{Notification} class has the \emph{DatabaseEntity} attribute.
 
 \begin{figure}[h!]
     \centering
