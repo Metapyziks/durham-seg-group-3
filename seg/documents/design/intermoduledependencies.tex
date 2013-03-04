@@ -54,11 +54,11 @@ The server and client may be conceptually divided into several modules. For the 
     {\small
         \ncline[arrowscale=1.5]{<->}{database}{serverlogic}
         \ncline[arrowscale=1.5]{<->}{web}{serverlogic}
-        \ncline[arrowscale=1.5]{->}{database}{web}
+        %\ncline[arrowscale=1.5]{->}{database}{web}
         \ncline[arrowscale=1.5]{<->}{api}{request}
         \ncline[arrowscale=1.5]{<->}{request}{applogic}
         \ncline[arrowscale=1.5]{<->}{window}{applogic}
-        \ncline[arrowscale=1.5]{->}{request}{window}
+        %\ncline[arrowscale=1.5]{->}{request}{window}
         \ncline[arrowscale=1.5]{->}{geo}{applogic}
     }
     \caption{Data flow of the top level of the system, showing the application and server as clearly separated entities with internal modules that encapsulate distinct functionalities of the system.}
@@ -68,7 +68,7 @@ As \emph{Figure 1} shows, the server and client have a similar overall structure
 
 \subsubsection{Server Module Descriptions}
 \paragraph{Database Module}
-This module will abstract away interaction with the DMS (Database Management System), making it possible to easily replace the DMS used to support different platforms. For the Windows operating system the server will be running on top of the .NET CLR (Common Language Runtime), and will therefore have access to Microsoft's SQL Compact Edition Server. On Unix systems, the server will be using the Mono CLR implementation, and will therefore have to use an alternative DMS such as SQLite. As well as supporting different DMS connections and SQL dialects depending on the host system, the Database Module will also provide a simple interface to common SQL operations through the use of code generation. This will reduce the amount of errors produced through the use of poorly constructed SQL statements by delegating the validation task to the debugging facilities provided by the IDE (Integrated Development Environment) used while developing the server.
+This module will abstract away interaction with the DBMS (Database Management System), making it possible to easily replace the DBMS used to support different platforms. For the Windows operating system the server will be running on top of the .NET CLR (Common Language Runtime), and will therefore have access to Microsoft's SQL Compact Edition Server. On Unix systems, the server will be using the Mono CLR implementation, and will therefore have to use an alternative DBMS such as SQLite. As well as supporting different DBMS connections and SQL dialects depending on the host system, the Database Module will also provide a simple interface to common SQL operations through the use of code generation. This will reduce the amount of errors produced through the use of poorly constructed SQL statements by delegating the validation task to the debugging facilities provided by the IDE (Integrated Development Environment) used while developing the server.
 
 \paragraph{Logic Module}
 The Logic Module will contain all critical algorithms related to game and overall system state. This will include the operations of account authentication, client location validation, cache attacking, and unit transactions. The module contains a set of core classes that abstract components of the game such as caches and players. Keeping the more intensive calculations in the system separated from the database and interface means they are easier to locate and profile, and unit tests can be produced more simply without having to unnecessarily incorporate unrelated components.
@@ -84,7 +84,7 @@ The second submodule of the \emph{Web Interface} group handles the interpretatio
 
 \subsubsection{Application Module Descriptions}
 \paragraph{Request Module}
-\lipsum[1]
+This module handles the construction and sending of requests to the central server, and then parses and processes the responses given. Each command has a distinct class encapsulating the parameters required and the action to perform with the response. The request classes that have parameters in common extend superclasses implementing those parameters to avoid information duplication and therefore improve maintainability. Other components of the application will, when required, construct a request object instance of the desired type, populate the needed parameters and reference an event handler class to invoke on response arrival, and initiate the request. The request is carried out asynchronously. A flag in the request object will be toggled when a response arrives, and the given event handler triggered. This asynchronous event based pattern is designed to work well with a graphical user interface that must not block execution while waiting for a request, and also allows multiple requests to be performed at the same time.
 
 \paragraph{Logic Module}
 \lipsum[2]
