@@ -1,6 +1,8 @@
 \newcolumntype{C}[1]{>{\Centering}p{#1}}
 \def\TabS#1#2{\small\tabular{#1}\rule[-1.5mm]{0pt}{5mm}{#2}
-    \rule[-2mm]{0pt}{2mm}\endtabular}
+    \rule[-2mm]{0pt}{2mm}\endtabular\hspace{-1mm}}
+\def\TabM#1#2{\tabular{#1}\rule[-1.5mm]{0pt}{7mm}{#2}
+    \rule[-3mm]{0pt}{4mm}\endtabular\hspace{-1mm}}
 \def\TabA#1#2#3{\small\tabular{#1}\rule[-1.5mm]{0pt}{5mm}\textbf{#2}\\
     \hline\rule[0mm]{0pt}{4mm}#3
     \rule[-2mm]{0pt}{2mm}\endtabular}
@@ -70,7 +72,6 @@ The server and client may be conceptually divided into several modules. For the 
 
 As \emph{Figure 1} shows, the server and client have a similar overall structure. Both have a main contained logic processing module, a modifiable data source (the \emph{Database Module} for the server and the \emph{Request Module} for the client), and an interface (the \emph{API Module} and \emph{Website Module} for the server, and \emph{Window Module} for the client). This compartmentalisation of processes is intended to make both the server and client subsystems more expandable and maintainable while features are being implemented and testing performed. The interaction between modules is restricted to a small and manageable set of interfaces to help reduce the internal complexity of the system.
 
-\newpage
 \subsection{Intermodule Dependencies}
 \subsubsection{Database Module}
 This module will abstract away interaction with the DBMS (Database Management System), making it possible to easily replace the DBMS used to support different platforms. For the Windows operating system the server will be running on top of the .NET CLR (Common Language Runtime), and will therefore have access to Microsoft's SQL Compact Edition Server. On Unix systems, the server will be using the Mono CLR implementation, and will therefore have to use an alternative DBMS such as SQLite. As well as supporting different DBMS connections and SQL dialects depending on the host system, the Database Module will also provide a simple interface to common SQL operations through the use of code generation. This will reduce the amount of errors produced through the use of poorly constructed SQL statements by delegating the validation task to the debugging facilities provided by the IDE (Integrated Development Environment) used while developing the server.
@@ -81,8 +82,54 @@ This module will abstract away interaction with the DBMS (Database Management Sy
     \caption{Class diagram for the main Database Module classes.}
 \end{figure}
 
+The three most important classes in the design are \emph{DatabaseTable}, \emph{DatabaseColumn} and \emph{DatabaseManager}. \emph{DatabaseTable} and \emph{DatabaseColumn} relate to the tables and columns respectively in the SqlCe (or Sqlite) database. This abstraction of the database structure is used internally in the database module for the generation of SQL statements and also when reading information supplied by the database management system. Database table is simply a named collection of columns, which can be automatically be constructed from a C$\sharp$ class which has a \emph{DatabaseEntity} attribute. When the server program initializes, all classes in the assembly are checked for this attribute. For each class that has one, a \emph{DatabaseTable} is constructed and stored for later use in the \emph{DatabaseManager}. If this table is not present in the actual database, a DDL statement is automatically generated to define and construct it. This application of assembly reflection and code generation greatly reduces the amount of work needed to implement and use new database entity types. All that is required is the definition of a C$\sharp$ class with the \emph{DatabaseEntity} attribute, and the fields to be stored marked with their respective attributes like the \emph{PrimaryKeyAttribute} and \emph{NotNullAttribute}. The class can then be immediately used in the code without manually adding it to any lists or writing a single line of SQL, and it will be stored in the database through a single call of \emph{DatabaseManager.Insert()}.
+
+The \emph{DatabaseManager} class provides the bridge between the external DBMS and the internal representation of the database. It provides simple but useful functions to add, retrieve, and update items from the database. The aim with the design was to have a powerful interface without the need to write a single line of SQL when making a request. Hard coding SQL into the program would lead to a great deal more work when trying to support the two dialects used by the different management systems for each platform, and would require manual debugging instead of through the IDE's syntax validation. The query system will be implemented through the use of a translator that compiles C$\sharp$ LINQ (Language Integrated Query) expressions to SQL. Although an implementation of this functionality exists in the Microsoft implementation of .NET, the Mono one has no such feature. Therefore, the mechanism will have to be replicated specifically for this application.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{c}
+        \entity{external}[\TabM{C{3cm}}{External Modules}]
+        \hspace{2cm}
+        \entity{dbmodule}[\TabA{c}{Database Module}{
+            \tabular{c}~\\[-2mm]
+                \entity{translator}[\TabS{c}{Translator}]\\[3mm]
+                \entity{reader}[\TabS{c}{Object Reader}]\\[3mm]
+            \endtabular
+        }]
+        \hspace{2cm}
+        \entity{dbms}[\TabM{C{25mm}}{Database Management System}]
+        \hspace{5mm}
+        \tabular{c}
+            ~\\[-1cm]
+            \pnode(0.22,-0.4){db}
+            \database[database]{2cm}{1cm}[fillstyle=solid,fillcolor=blue!10]
+                {Database}[database]
+        \endtabular
+    \end{tabular}
+    \nccurve[arrowscale=1.5,angleA=15,angleB=180]{->}{external}{translator}
+    \naput[nrot=:U,npos=0.35]{LINQ}
+    \nccurve[arrowscale=1.5,angleA=-15,angleB=180]{<-}{external}{reader}
+    \nbput[nrot=:U,npos=0.42]{C$\sharp$ Objects}
+    \nccurve[arrowscale=1.5,angleA=0,angleB=165]{->}{translator}{dbms}
+    \naput[nrot=:U,npos=0.65]{SQL}
+    \nccurve[arrowscale=1.5,angleA=0,angleB=-165]{<-}{reader}{dbms}
+    \nbput[nrot=:U,npos=0.58]{Raw Data}
+    \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{dbms}{db}
+    \nbput[nrot=:U,npos=0.54]{\tiny Magic?}
+    \caption{Diagram showing the data flow of the Database Module during a \emph{SELECT} statement.}
+\end{figure}
+
+The module will be used extensively by the other modules in the server, so considerable effort has been invested in designing a clean and powerful interface.
+
 \subsubsection{Logic Module}
 The Logic Module will contain all critical algorithms related to game and overall system state. This will include the operations of account authentication, client location validation, cache attacking, and unit transactions. The module contains a set of core classes that abstract components of the game such as caches and players. Keeping the more intensive calculations in the system separated from the database and interface means they are easier to locate and profile, and unit tests can be produced more simply without having to unnecessarily incorporate unrelated components.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{svlogiccd}
+    \caption{Class diagram for the main Logic Module classes.}
+\end{figure}
 
 \subsubsection{Web Interface}
 This module group is the interface in which incoming HTTP requests are processed and responded to. The requests come in two main categories; website resource requests and API requests. The website resource requests are from users browsing the website and requesting pages or static content such as images. These requests are directed towards the \emph{Website Module}, which processes them and responds with the requested content. API requests are sent by the client application, and will be routed to the \emph{API Module}. These requests are in the form of a command with a series of named parameters, and the response will be sent as a JSON (JavaScript Object Notation) object.
