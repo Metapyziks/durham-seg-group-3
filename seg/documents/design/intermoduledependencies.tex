@@ -75,7 +75,7 @@ As \emph{Figure 1} shows, the server and client have a similar overall structure
 
 \subsection{Intermodule Dependencies}
 \subsubsection{Database Module}
-This module will abstract away interaction with the DBMS (Database Management System), making it possible to easily replace the DBMS used to support different platforms. For the Windows operating system the server will be running on top of the .NET CLR (Common Language Runtime), and will therefore have access to Microsoft's SQL Compact Edition Server. On Unix systems, the server will be using the Mono CLR implementation, and will therefore have to use an alternative DBMS such as SQLite. As well as supporting different DBMS connections and SQL dialects depending on the host system, the Database Module will also provide a simple interface to common SQL operations through the use of code generation. This will reduce the amount of errors produced through the use of poorly constructed SQL statements by delegating the validation task to the debugging facilities provided by the IDE (Integrated Development Environment) used while developing the server.
+This module will be used extensively by the other modules in the server, so considerable effort has been invested in designing a clean and powerful interface. The module will abstract away interaction with the DBMS (Database Management System), making it possible to easily replace the DBMS used to support different platforms. For the Windows operating system the server will be running on top of the .NET CLR (Common Language Runtime), and will therefore have access to Microsoft's SQL Compact Edition Server. On Unix systems, the server will be using the Mono CLR implementation, and will therefore have to use an alternative DBMS such as SQLite. As well as supporting different DBMS connections and SQL dialects depending on the host system, the Database Module will also provide a simple interface to common SQL operations through the use of code generation. This will reduce the amount of errors produced through the use of poorly constructed SQL statements by delegating the validation task to the debugging facilities provided by the IDE (Integrated Development Environment) used while developing the server.
 
 \begin{figure}[h!]
     \centering
@@ -90,7 +90,7 @@ The \emph{DatabaseManager} class provides the bridge between the external DBMS a
 \begin{figure}[h!]
     \centering
     \begin{tabular}{c}
-        \entity{external}[\TabM{C{3cm}}{External Modules}]
+        \entity{external}[\TabM{C{3cm}}{Other Server Modules}]
         \hspace{2cm}
         \entity{dbmodule}[\TabA{c}{Database Module}{
             \tabular{c}~\\[-2mm]
@@ -121,8 +121,6 @@ The \emph{DatabaseManager} class provides the bridge between the external DBMS a
     \caption{Diagram showing the data flow of the Database Module during a \emph{SELECT} statement.}
 \end{figure}
 
-The module will be used extensively by the other modules in the server, so considerable effort has been invested in designing a clean and powerful interface.
-
 \subsubsection{Logic Module}
 The Logic Module will contain all critical algorithms related to game and overall system state. This will include the operations of account authentication, client location validation, cache attacking, and unit transactions. The module contains a set of core classes that abstract components of the game such as caches and players. Keeping the more intensive calculations in the system separated from the database and interface means they are easier to locate and profile, and unit tests can be produced more simply without having to unnecessarily incorporate unrelated components.
 
@@ -138,6 +136,47 @@ Authentication sessions and notifications are also managed in this module. The d
 
 \subsubsection{Web Interface}
 This module group is the interface in which incoming HTTP requests are processed and responded to. The requests come in two main categories; website resource requests and API requests. The website resource requests are from users browsing the website and requesting pages or static content such as images. These requests are directed towards the \emph{Website Module}, which processes them and responds with the requested content. API requests are sent by the client application, and will be routed to the \emph{API Module}. These requests are in the form of a command with a series of named parameters, and the response will be sent as a JSON (JavaScript Object Notation) object.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{c}
+        \tabular{c}~\\[1cm]
+            \entity{client}[\TabM{C{35mm}}{Client Application}]\\[15mm]
+            \entity{browser}[\TabM{C{35mm}}{Client Web Browser}]
+        \endtabular
+        \hspace{2cm}
+        \entity{web}[\TabA{c}{Web Interface}{
+            \hspace{-3mm}
+            \tabular{lr}~\\[-2mm]
+                \entity{json}[\TabS{c}{JSON Serializer}]&\\[3mm]
+                \entity{api}[\TabS{c}{API Manager}]&
+                \entity{request}[\TabS{c}{Request Class}]\\[3mm]
+                \entity{content}[\TabS{c}{Content Manager}]&
+                \entity{script}[\TabS{c}{Scripted Page}]\\[3mm]
+            \endtabular
+            \hspace{-3mm}
+        }]
+        \hspace{1cm}
+        \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
+    \end{tabular}
+    {\small
+        \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{client}{api}
+        \nbput[nrot=:U,npos=0.45]{HTTP/GET}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{browser}{content}
+        \naput[nrot=:U,npos=0.45]{HTTP/GET}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{api}{request}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{content}{script}
+        \nccurve[arrowscale=1.5,angleA=90,angleB=0]{->}{request}{json}
+        \nbput[nrot=:D,npos=0.5,labelsep=0mm]{\scriptsize Response Object}
+        \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{json}{client}
+        \nbput[nrot=:D,npos=0.55]{JSON}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{request}{logic}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=-90]{<->}{script}{logic}
+        \nccurve[arrowscale=1.5,angleA=-115,angleB=-5]{->}{script}{browser}
+        \nbput[nrot=:D,npos=0.4]{HTML}
+    }
+    \caption{Diagram showing the data flow of the \emph{Web Interface} module group.}
+\end{figure}
 
 \subsubsection{Website Module}
 This submodule of the \emph{Web Interface} handles the delivery of web content such as HTML pages, style sheets, and images. The content is served from a resource directory local to the server program, which is updated during the program's runtime. It also allows dynamic web page generation through the use of inline C$\sharp$ scripts in the source HTML files. These scripts are used as a preprocessing language while constructing the page, so the resulting file sent to a user's web browser has content reflecting the current state of the game and the actions of the user. The inline preprocessor scripting system will be implemented specifically for this project, using code generation and .NET's ``compiler as a service'' facility. The choice to do this instead of simply using PHP or any other pre-existing CGI is so the scripts would have direct access to the server program and its components (this would be true because the scripts are actually contained within the server program itself). This would provide increased performance and would eliminate the need to produce an interface between the CGI and the server.
