@@ -182,7 +182,65 @@ This module group is the interface in which incoming HTTP requests are processed
 This submodule of the \emph{Web Interface} handles the delivery of web content such as HTML pages, style sheets, and images. The content is served from a resource directory local to the server program, which is updated during the program's runtime. It also allows dynamic web page generation through the use of inline C$\sharp$ scripts in the source HTML files. These scripts are used as a preprocessing language while constructing the page, so the resulting file sent to a user's web browser has content reflecting the current state of the game and the actions of the user. The inline preprocessor scripting system will be implemented specifically for this project, using code generation and .NET's ``compiler as a service'' facility. The choice to do this instead of simply using PHP or any other pre-existing CGI is so the scripts would have direct access to the server program and its components (this would be true because the scripts are actually contained within the server program itself). This would provide increased performance and would eliminate the need to produce an interface between the CGI and the server.
 
 \subsubsection{API Module}
-The second submodule of the \emph{Web Interface} group handles the interpretation and responses to requests from the client application. These requests arrive in the form of a specific command, and the named parameters required by that command. The module contains a class for each command, all extending a general \emph{Request} superclass that provides some facilities common to most requests such as authenticating the requesting user. After the request is processed, an object extending the \emph{Response} superclass is returned by the processing request class. This object is then serialized automatically into a JSON object, which is sent as a reply to the requesting client. The separation of request and response types into classes has the standard benefits of reduced code dependencies and therefore complexity, and also allows requests (or responses) with similar functionalities to extend general abstract classes that implement them. JSON is used as a response format due to its small bandwidth footprint and how trivial it is to parse. It also opens up the possibility of using it with AJAX for the website implementation.
+The second submodule of the \emph{Web Interface} group handles the interpretation and responses to requests from the client application. These requests arrive in the form of a specific command, and the named parameters required by that command. The module contains a class for each command, all extending a general \emph{Request} superclass that provides some facilities common to most requests such as authenticating the requesting user. After the request is processed, an object extending the \emph{Response} superclass is returned by the processing request class. This object is then serialized procedurally into a JSON object, which is sent as a reply to the requesting client. The separation of request and response types into classes has the standard benefits of reduced code dependencies and therefore complexity, and also allows requests (or responses) with similar functionalities to extend general abstract classes that implement them. JSON is used as a response format due to its small bandwidth footprint and how trivial it is to parse. It also opens up the possibility of using it with AJAX for the website implementation.
+
+Assembly reflection will be used to automatically detect the corresponding class for each request, and then create an instance of it. All \emph{Request} classes will override a \emph{Respond} method with a \emph{Response} return type, which will be invoked upon instance creation.
+
+\def\Req#1#2{\entity{a#1}[\TabS{C{45mm}}{#2Request}]\\[2mm]}
+\def\Res#1#2{\entity{b#1}[\TabS{C{45mm}}{#2Response}]\\[6mm]}
+\def\Con#1#2{\nccurve[arrowscale=2,angleA=0,angleB=180]{->}{a#1}{b#2}}
+
+\begin{figure}[h!]
+    \centering
+    \tabular{c}
+    \Req{ech}{Echo}
+    \Req{act}{Activation}
+    \Req{pas}{PasswordReset}
+    \Req{reg}{Register}
+    \Req{sen}{SendActivation}
+    \Req{sta}{StartSession}
+    \Req{uir}{UserInfo}
+    \Req{usr}{UserStats}
+    \Req{ucr}{UserCaches}
+    \entity{loc}[\TabA{c}{Locational}{
+        \hspace{-4mm}
+        \tabular{c}~\\[-3mm]
+        \Req{cac}{CacheTransaction}
+        \Req{att}{AttackCache}
+        \Req{nea}{NearbyCaches}
+        \Req{pla}{PlaceCache}
+        \Req{sco}{ScoutCache}
+        \endtabular
+        \hspace{-4mm}
+    }]
+    \endtabular \hspace{45mm}
+    \tabular{c}
+    \Res{ech}{Echo}
+    \Res{res}{}
+    \Res{ses}{SessionInfo}
+    \Res{usi}{UserInfo}
+    \Res{uss}{UserStats}
+    \Res{bat}{BattleReport}
+    \Res{cac}{CacheInfo}
+    \Res{sco}{ScoutCache}
+    \endtabular
+    \Con{act}{res}
+    \Con{att}{bat}
+    \Con{cac}{res}
+    \Con{ech}{ech}
+    \Con{nea}{cac}
+    \Con{pas}{res}
+    \Con{pla}{cac}
+    \Con{reg}{res}
+    \Con{sco}{sco}
+    \Con{sen}{res}
+    \Con{sta}{ses}
+    \Con{ucr}{cac}
+    \Con{uir}{usi}
+    \Con{usr}{uss}
+
+    \caption{A list of each \emph{Request} and \emph{Response} type, and the relationships between them.}
+\end{figure}
 
 \subsubsection{Request Module}
 This module handles the construction and sending of requests to the central server, and then parses and processes the responses given. Each command has a distinct class encapsulating the parameters required and the action to perform with the response. The request classes that have parameters in common extend superclasses implementing those parameters to avoid information duplication and therefore improve maintainability. Other components of the application will, when required, construct a request object instance of the desired type, populate the needed parameters and reference an event handler class to invoke on response arrival, and initiate the request. The request is carried out asynchronously. A flag in the request object will be toggled when a response arrives, and the given event handler triggered. This asynchronous event based pattern is designed to work well with a graphical user interface that must not block execution while waiting for a request, and also allows multiple requests to be performed at the same time.
