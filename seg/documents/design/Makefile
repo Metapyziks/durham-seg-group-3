@@ -3,6 +3,8 @@ design.pdf: \
 	titlepage.tex \
 	intermoduledependencies.tex \
 	dbmancd.png svlogiccd.png \
-	interprocessdependencies.tex
+	interprocessdependencies.tex \
+	interfacedescriptions.tex \
+	introduction.tex
 
 	xelatex design.tex
