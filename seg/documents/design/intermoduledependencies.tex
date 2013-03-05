@@ -27,45 +27,47 @@ The server and client may be conceptually divided into several modules. For the 
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{c}
-    \entity{server}[\TabA{c}{Centralized Server}{~\\[-3mm]
-        \tabular{c}~\\[-10mm]
-            \entity{database}[\TabS{c}{Database Module}]\\[8mm]
-            \entity{serverlogic}[\TabS{c}{Logic Module}]\\[-3mm]
-        \endtabular
+    {\setromanfont[Numbers=Uppercase]{Calibri}
+        \begin{tabular}{c}
+        \entity{server}[\TabA{c}{Centralized Server}{~\\[-3mm]
+            \tabular{c}~\\[-10mm]
+                \entity{database}[\TabS{c}{Database Module}]\\[8mm]
+                \entity{serverlogic}[\TabS{c}{Logic Module}]\\[-3mm]
+            \endtabular
+            \hspace{5mm}
+            \entity{web}[\TabA{c}{Web Interface}{~\\[-3mm]
+                \entity{api}[\TabS{c}{API Module}]\\[2mm]
+                \entity{website}[\TabS{c}{Website Module}]\\[-3mm] 
+            }]\\[-3mm]
+        }]
         \hspace{5mm}
-        \entity{web}[\TabA{c}{Web Interface}{~\\[-3mm]
-            \entity{api}[\TabS{c}{API Module}]\\[2mm]
-            \entity{website}[\TabS{c}{Website Module}]\\[-3mm] 
-        }]\\[-3mm]
-    }]
-    \hspace{5mm}
-    \entity{app}[\TabA{c}{Client Android Application}{~\\[3mm]
-        \hspace{-5mm}
-        \tabular{cc}
-        \tabular{c}~\\[-10mm]
-            \entity{request}[\TabS{c}{Request Module}]\\[8mm]
-            \entity{applogic}[\TabS{c}{Logic Module}]\\[-3mm]
-        \endtabular
-        \hspace{2mm}
-        \tabular{c}~\\[-10mm]
-            \entity{window}[\TabS{c}{Window Module}]\\[8mm]
-            \entity{geo}[\TabS{c}{Geolocation Module}]\\[-3mm]
-        \endtabular\hspace{-3mm}
-        \endtabular
-        \\[3mm]
-    }]
-    \end{tabular}
-    {\small
-        \ncline[arrowscale=1.5]{<->}{database}{serverlogic}
-        \nccurve[arrowscale=1.5,angleA=5,angleB=175]{<->}{serverlogic}{api}
-        \nccurve[arrowscale=1.5,angleA=-5,angleB=-175]{<->}{serverlogic}{website}
-        %\ncline[arrowscale=1.5]{->}{database}{web}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{api}{request}
-        \ncline[arrowscale=1.5]{<->}{request}{applogic}
-        \nccurve[arrowscale=1.5,angleA=45,angleB=-135]{<->}{applogic}{window}
-        %\ncline[arrowscale=1.5]{->}{request}{window}
-        \ncline[arrowscale=1.5]{->}{geo}{applogic}
+        \entity{app}[\TabA{c}{Client Android Application}{~\\[3mm]
+            \hspace{-5mm}
+            \tabular{cc}
+            \tabular{c}~\\[-10mm]
+                \entity{request}[\TabS{c}{Request Module}]\\[8mm]
+                \entity{applogic}[\TabS{c}{Logic Module}]\\[-3mm]
+            \endtabular
+            \hspace{2mm}
+            \tabular{c}~\\[-10mm]
+                \entity{window}[\TabS{c}{Window Module}]\\[8mm]
+                \entity{geo}[\TabS{c}{Geolocation Module}]\\[-3mm]
+            \endtabular\hspace{-3mm}
+            \endtabular
+            \\[3mm]
+        }]
+        \end{tabular}
+        {\small
+            \ncline[arrowscale=1.5]{<->}{database}{serverlogic}
+            \nccurve[arrowscale=1.5,angleA=5,angleB=175]{<->}{serverlogic}{api}
+            \nccurve[arrowscale=1.5,angleA=-5,angleB=-175]{<->}{serverlogic}{website}
+            %\ncline[arrowscale=1.5]{->}{database}{web}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{api}{request}
+            \ncline[arrowscale=1.5]{<->}{request}{applogic}
+            \nccurve[arrowscale=1.5,angleA=45,angleB=-135]{<->}{applogic}{window}
+            %\ncline[arrowscale=1.5]{->}{request}{window}
+            \ncline[arrowscale=1.5]{->}{geo}{applogic}
+        }
     }
     \caption{Data flow of the top level of the system, showing the application and server as clearly separated entities with internal modules that encapsulate distinct functionalities of the system.}
 \end{figure}
@@ -88,36 +90,38 @@ The \emph{DatabaseManager} class provides the bridge between the external DBMS a
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{c}
-        \entity{external}[\TabM{C{3cm}}{Server Logic Module}]
-        \hspace{2cm}
-        \entity{dbmodule}[\TabA{c}{Database Module}{
-            \tabular{c}~\\[-2mm]
-                \entity{translator}[\TabS{c}{Translator}]\\[3mm]
-                \entity{reader}[\TabS{c}{Object Reader}]\\[3mm]
+    {\setromanfont[Numbers=Uppercase]{Calibri}
+        \begin{tabular}{c}
+            \entity{external}[\TabM{C{3cm}}{Server Logic Module}]
+            \hspace{2cm}
+            \entity{dbmodule}[\TabA{c}{Database Module}{
+                \tabular{c}~\\[-2mm]
+                    \entity{translator}[\TabS{c}{Translator}]\\[3mm]
+                    \entity{reader}[\TabS{c}{Object Reader}]\\[3mm]
+                \endtabular
+            }]
+            \hspace{2cm}
+            \entity{dbms}[\TabM{C{25mm}}{Database Management System}]
+            \hspace{5mm}
+            \tabular{c}
+                ~\\[-1cm]
+                \pnode(0.22,-0.4){db}
+                \database[database]{2cm}{1cm}[fillstyle=solid,fillcolor=blue!10]
+                    {Database}[database]
             \endtabular
-        }]
-        \hspace{2cm}
-        \entity{dbms}[\TabM{C{25mm}}{Database Management System}]
-        \hspace{5mm}
-        \tabular{c}
-            ~\\[-1cm]
-            \pnode(0.22,-0.4){db}
-            \database[database]{2cm}{1cm}[fillstyle=solid,fillcolor=blue!10]
-                {Database}[database]
-        \endtabular
-    \end{tabular}
-    \nccurve[arrowscale=1.5,angleA=15,angleB=180]{->}{external}{translator}
-    \naput[nrot=:U,npos=0.35]{LINQ}
-    \nccurve[arrowscale=1.5,angleA=-15,angleB=180]{<-}{external}{reader}
-    \nbput[nrot=:U,npos=0.42]{C$\sharp$ Objects}
-    \nccurve[arrowscale=1.5,angleA=0,angleB=165]{->}{translator}{dbms}
-    \naput[nrot=:U,npos=0.65]{SQL}
-    \nccurve[arrowscale=1.5,angleA=0,angleB=-165]{<-}{reader}{dbms}
-    \nbput[nrot=:U,npos=0.58]{Raw Data}
-    \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{dbms}{db}
-    \nbput[nrot=:U,npos=0.54]{\tiny Magic?}
-    \caption{Diagram showing the data flow of the Database Module during a \emph{SELECT} statement.}
+        \end{tabular}
+        \nccurve[arrowscale=1.5,angleA=15,angleB=180]{->}{external}{translator}
+        \naput[nrot=:U,npos=0.35]{LINQ}
+        \nccurve[arrowscale=1.5,angleA=-15,angleB=180]{<-}{external}{reader}
+        \nbput[nrot=:U,npos=0.42]{C$\sharp$ Objects}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=165]{->}{translator}{dbms}
+        \naput[nrot=:U,npos=0.65]{SQL}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=-165]{<-}{reader}{dbms}
+        \nbput[nrot=:U,npos=0.58]{Raw Data}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{dbms}{db}
+        \nbput[nrot=:U,npos=0.54]{\tiny Magic?}
+        \caption{Diagram showing the data flow of the Database Module during a \emph{SELECT} statement.}
+    }
 \end{figure}
 
 \subsubsection{Logic Module}
@@ -138,41 +142,43 @@ This module group is the interface in which incoming HTTP requests are processed
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{c}
-        \tabular{c}~\\[1cm]
-            \entity{client}[\TabM{C{35mm}}{Client Application}]\\[15mm]
-            \entity{browser}[\TabM{C{35mm}}{Client Web Browser}]
-        \endtabular
-        \hspace{2cm}
-        \entity{web}[\TabA{c}{Web Interface}{
-            \hspace{-3mm}
-            \tabular{lr}~\\[-2mm]
-                \entity{json}[\TabS{c}{JSON Serializer}]&\\[3mm]
-                \entity{api}[\TabS{c}{API Manager}]&
-                \entity{request}[\TabS{c}{Request Class}]\\[3mm]
-                \entity{content}[\TabS{c}{Content Manager}]&
-                \entity{script}[\TabS{c}{Scripted Page}]\\[3mm]
+    {\setromanfont[Numbers=Uppercase]{Calibri}
+        \begin{tabular}{c}
+            \tabular{c}~\\[1cm]
+                \entity{client}[\TabM{C{35mm}}{Client Application}]\\[15mm]
+                \entity{browser}[\TabM{C{35mm}}{Client Web Browser}]
             \endtabular
-            \hspace{-3mm}
-        }]
-        \hspace{1cm}
-        \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
-    \end{tabular}
-    {\small
-        \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{client}{api}
-        \nbput[nrot=:U,npos=0.45]{HTTP/GET}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{browser}{content}
-        \naput[nrot=:U,npos=0.45]{HTTP/GET}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{api}{request}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{content}{script}
-        \nccurve[arrowscale=1.5,angleA=90,angleB=0]{->}{request}{json}
-        \nbput[nrot=:D,npos=0.5,labelsep=0mm]{\scriptsize Response Object}
-        \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{json}{client}
-        \nbput[nrot=:D,npos=0.55]{JSON}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{request}{logic}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=-90]{<->}{script}{logic}
-        \nccurve[arrowscale=1.5,angleA=-135,angleB=-5]{->}{script}{browser}
-        \nbput[nrot=:D,npos=0.4]{HTML}
+            \hspace{2cm}
+            \entity{web}[\TabA{c}{Web Interface}{
+                \hspace{-3mm}
+                \tabular{lr}~\\[-2mm]
+                    \entity{json}[\TabS{c}{JSON Serializer}]&\\[3mm]
+                    \entity{api}[\TabS{c}{API Manager}]&
+                    \entity{request}[\TabS{c}{Request Class}]\\[3mm]
+                    \entity{content}[\TabS{c}{Content Manager}]&
+                    \entity{script}[\TabS{c}{Scripted Page}]\\[3mm]
+                \endtabular
+                \hspace{-3mm}
+            }]
+            \hspace{1cm}
+            \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
+        \end{tabular}
+        {\small
+            \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{client}{api}
+            \nbput[nrot=:U,npos=0.45]{HTTP/GET}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{browser}{content}
+            \naput[nrot=:U,npos=0.45]{HTTP/GET}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{api}{request}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{content}{script}
+            \nccurve[arrowscale=1.5,angleA=90,angleB=0]{->}{request}{json}
+            \nbput[nrot=:D,npos=0.5,labelsep=0mm]{\scriptsize Response Object}
+            \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{json}{client}
+            \nbput[nrot=:D,npos=0.55]{JSON}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{request}{logic}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=-90]{<->}{script}{logic}
+            \nccurve[arrowscale=1.5,angleA=-135,angleB=-5]{->}{script}{browser}
+            \nbput[nrot=:D,npos=0.4]{HTML}
+        }
     }
     \caption{Diagram showing the data flow of the \emph{Web Interface} module group.}
 \end{figure}
@@ -248,32 +254,34 @@ This module handles the construction and sending of requests to the central serv
 
 \begin{figure}[h!]
     \centering
-    \begin{tabular}{c}
-        \entity{server}[\TabM{C{25mm}}{Centralized Server}]
-        \hspace{2cm}
-        \entity{module}[\TabA{c}{Request Module}{
-            \hspace{-3mm}
-            \tabular{lcr}~\\[-2mm]
-                \entity{builder}[\TabS{C{25mm}}{Request Builder}]&\hspace{2mm}&
-                \entity{request}[\TabS{C{25mm}}{Request Manager}]\\[8mm]
-                \entity{deserial}[\TabS{C{25mm}}{JSON Deserializer}]&\hspace{2mm}&
-                \entity{response}[\TabS{C{25mm}}{Response Object}]\\[6mm]
-            \endtabular
-            \hspace{-3mm}
-        }]
-        \hspace{1cm}
-        \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
-    \end{tabular}
-    {\small
-        \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{builder}{server}
-        \nbput[nrot=:D,npos=0.55]{HTTP/GET}
-        \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{server}{deserial}
-        \nbput[nrot=:U,npos=0.45]{JSON}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{deserial}{response}
-        \nccurve[arrowscale=1.5,angleA=0,angleB=-170]{->}{response}{logic}
-        \nccurve[arrowscale=1.5,angleA=170,angleB=0]{->}{logic}{request}
-        \nccurve[arrowscale=1.5,angleA=180,angleB=0]{->}{request}{builder}
-        \nccurve[arrowscale=1.5,angleA=-90,angleB=90]{->}{request}{response} \naput[npos=0.5]{\scriptsize{prepares}}
+    {\setromanfont[Numbers=Uppercase]{Calibri}
+        \begin{tabular}{c}
+            \entity{server}[\TabM{C{25mm}}{Centralized Server}]
+            \hspace{2cm}
+            \entity{module}[\TabA{c}{Request Module}{
+                \hspace{-3mm}
+                \tabular{lcr}~\\[-2mm]
+                    \entity{builder}[\TabS{C{25mm}}{Request Builder}]&\hspace{2mm}&
+                    \entity{request}[\TabS{C{25mm}}{Request Manager}]\\[8mm]
+                    \entity{deserial}[\TabS{C{25mm}}{JSON Deserializer}]&\hspace{2mm}&
+                    \entity{response}[\TabS{C{25mm}}{Response Object}]\\[6mm]
+                \endtabular
+                \hspace{-3mm}
+            }]
+            \hspace{1cm}
+            \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
+        \end{tabular}
+        {\small
+            \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{builder}{server}
+            \nbput[nrot=:D,npos=0.55]{HTTP/GET}
+            \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{server}{deserial}
+            \nbput[nrot=:U,npos=0.45]{JSON}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{deserial}{response}
+            \nccurve[arrowscale=1.5,angleA=0,angleB=-170]{->}{response}{logic}
+            \nccurve[arrowscale=1.5,angleA=170,angleB=0]{->}{logic}{request}
+            \nccurve[arrowscale=1.5,angleA=180,angleB=0]{->}{request}{builder}
+            \nccurve[arrowscale=1.5,angleA=-90,angleB=90]{->}{request}{response} \naput[npos=0.5]{\scriptsize{prepares}}
+        }
     }
     \caption{Diagram showing the data flow of the client application \emph{Request Module}.}
 \end{figure}
