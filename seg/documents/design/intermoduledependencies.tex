@@ -206,9 +206,9 @@ Assembly reflection will be used to automatically detect the corresponding class
         \hspace{-4mm}
         \tabular{c}~\\[-3mm]
         \Req{cac}{CacheTransaction}
-        \Req{att}{AttackCache}
         \Req{nea}{NearbyCaches}
         \Req{pla}{PlaceCache}
+        \Req{att}{AttackCache}
         \Req{sco}{ScoutCache}
         \endtabular
         \hspace{-4mm}
@@ -220,8 +220,8 @@ Assembly reflection will be used to automatically detect the corresponding class
     \Res{ses}{SessionInfo}
     \Res{usi}{UserInfo}
     \Res{uss}{UserStats}
-    \Res{bat}{BattleReport}
     \Res{cac}{CacheInfo}
+    \Res{bat}{BattleReport}
     \Res{sco}{ScoutCache}
     \endtabular
     \Con{act}{res}
@@ -241,6 +241,8 @@ Assembly reflection will be used to automatically detect the corresponding class
 
     \caption{A list of each \emph{Request} and \emph{Response} type, and the relationships between them.}
 \end{figure}
+
+The \emph{Response} superclass has one mandatory attribute - a boolean marking whether the original request was successful or not. For all but one of the extending subclasses, this flag is set to true by default. The one class that doesn't is the \emph{ErrorResponse} class. This class also includes a \emph{String} attribute containing a message describing why the request failed. The mandatory inclusion of the \emph{success} boolean means the receiver of the response can tell if the response object will contain the desired output, or if there will be an error message to read. Standardising the error format also allows response parsing on the client end to be simplified and nicely abstracted too.
 
 \subsubsection{Request Module}
 This module handles the construction and sending of requests to the central server, and then parses and processes the responses given. Each command has a distinct class encapsulating the parameters required and the action to perform with the response. The request classes that have parameters in common extend superclasses implementing those parameters to avoid information duplication and therefore improve maintainability. Other components of the application will, when required, construct a request object instance of the desired type, populate the needed parameters and reference an event handler class to invoke on response arrival, and initiate the request. The request is carried out asynchronously. A flag in the request object will be toggled when a response arrives, and the given event handler triggered. This asynchronous event based pattern is designed to work well with a graphical user interface that must not block execution while waiting for a request, and also allows multiple requests to be performed at the same time.
