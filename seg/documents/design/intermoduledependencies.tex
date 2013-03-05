@@ -90,7 +90,7 @@ The \emph{DatabaseManager} class provides the bridge between the external DBMS a
 \begin{figure}[h!]
     \centering
     \begin{tabular}{c}
-        \entity{external}[\TabM{C{3cm}}{Other Server Modules}]
+        \entity{external}[\TabM{C{3cm}}{Server Logic Module}]
         \hspace{2cm}
         \entity{dbmodule}[\TabA{c}{Database Module}{
             \tabular{c}~\\[-2mm]
@@ -131,7 +131,7 @@ Authentication sessions and notifications are also managed in this module. The d
 \begin{figure}[h!]
     \centering
     \includegraphics[width=\textwidth]{svlogiccd}
-    \caption{Class diagram for the main Logic Module classes.}
+    \caption{Class diagram for the main server Logic Module classes.}
 \end{figure}
 
 \subsubsection{Web Interface}
@@ -172,7 +172,7 @@ This module group is the interface in which incoming HTTP requests are processed
         \nbput[nrot=:D,npos=0.55]{JSON}
         \nccurve[arrowscale=1.5,angleA=0,angleB=180]{<->}{request}{logic}
         \nccurve[arrowscale=1.5,angleA=0,angleB=-90]{<->}{script}{logic}
-        \nccurve[arrowscale=1.5,angleA=-115,angleB=-5]{->}{script}{browser}
+        \nccurve[arrowscale=1.5,angleA=-135,angleB=-5]{->}{script}{browser}
         \nbput[nrot=:D,npos=0.4]{HTML}
     }
     \caption{Diagram showing the data flow of the \emph{Web Interface} module group.}
@@ -247,8 +247,48 @@ The \emph{Response} superclass has one mandatory attribute - a boolean marking w
 \subsubsection{Request Module}
 This module handles the construction and sending of requests to the central server, and then parses and processes the responses given. Each command has a distinct class encapsulating the parameters required and the action to perform with the response. The request classes that have parameters in common extend superclasses implementing those parameters to avoid information duplication and therefore improve maintainability. Other components of the application will, when required, construct a request object instance of the desired type, populate the needed parameters and reference an event handler class to invoke on response arrival, and initiate the request. The request is carried out asynchronously. A flag in the request object will be toggled when a response arrives, and the given event handler triggered. This asynchronous event based pattern is designed to work well with a graphical user interface that must not block execution while waiting for a request, and also allows multiple requests to be performed at the same time.
 
+\begin{figure}[h!]
+    \centering
+    \begin{tabular}{c}
+        \entity{server}[\TabM{C{25mm}}{Centralized Server}]
+        \hspace{2cm}
+        \entity{module}[\TabA{c}{Request Module}{
+            \hspace{-3mm}
+            \tabular{lcr}~\\[-2mm]
+                \entity{builder}[\TabS{C{25mm}}{Request Builder}]&\hspace{2mm}&
+                \entity{request}[\TabS{C{25mm}}{Request Manager}]\\[8mm]
+                \entity{deserial}[\TabS{C{25mm}}{JSON Deserializer}]&\hspace{2mm}&
+                \entity{response}[\TabS{C{25mm}}{Response Object}]\\[6mm]
+            \endtabular
+            \hspace{-3mm}
+        }]
+        \hspace{1cm}
+        \entity{logic}[\TabM{C{2cm}}{Logic Module}]\\[2cm]
+    \end{tabular}
+    {\small
+        \nccurve[arrowscale=1.5,angleA=180,angleB=5]{->}{builder}{server}
+        \nbput[nrot=:D,npos=0.55]{HTTP/GET}
+        \nccurve[arrowscale=1.5,angleA=-5,angleB=180]{->}{server}{deserial}
+        \nbput[nrot=:U,npos=0.45]{JSON}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=180]{->}{deserial}{response}
+        \nccurve[arrowscale=1.5,angleA=0,angleB=-170]{->}{response}{logic}
+        \nccurve[arrowscale=1.5,angleA=170,angleB=0]{->}{logic}{request}
+        \nccurve[arrowscale=1.5,angleA=180,angleB=0]{->}{request}{builder}
+        \nccurve[arrowscale=1.5,angleA=-90,angleB=90]{->}{request}{response} \naput[npos=0.5]{\scriptsize{prepares}}
+    }
+    \caption{Diagram showing the data flow of the client application \emph{Request Module}.}
+\end{figure}
+
+The \emph{Request} and \emph{Response} classes in this module will mirror those of the server, with the main difference being that the \emph{Request} is the one to be serialized (into a HTTP GET request), and the \emph{Response} is deserialized from the JSON sent by the server.
+
 \subsubsection{Logic Module}
 The logic module is where the major processing and validation algorithms of the client application reside. It holds an abstracted model of the game state relevant to the user of the client application, such as data about caches within range of the host device, and profile information about the current user. This module decides what actions the user can perform at each instance in time, and whether an action performed is valid. It also decides what information should be shown to the player, but leaves the details of how it is displayed to the \emph{Window Module}. The components of this module are abstracted for the same reasons as the logic module in the server, to make them easier to locate, unit test, and profile.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=\textwidth]{cllogiccd}
+    \caption{Class diagram for the main client Logic Module classes.}
+\end{figure}
 
 \subsubsection{Geolocation Module}
 This module has two main purposes, to encapsulate the process of finding the current GPS position of the host device, and to interface with the Google APIs which provide various location based services. The module abstracts the methods used for both functions so as to allow for easy refactoring of the internal implementation, reduce intermodule dependencies, and therefore reduce code complexity. The separation of this set of components from the rest of the system should also make the process of porting the application to other systems such as iPhones easier, since the action of reading from GPS sensors is quite low level and operating system specific and it would be difficult to find all instances of the action if it were spread all over the project.
