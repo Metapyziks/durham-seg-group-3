@@ -21,7 +21,6 @@
 \section{Element Descriptions}
 \setcounter{subsection}{-1}
 \subsection{Architecture Overview}
-\subsubsection{Top Level Design}
 It was apparent from the briefing and requirements that the most suitable architecture for the system would be a client-server model. There will be a central server that stores persistent system related data, and performs the majority of the application logic. This server services requests from many client applications that handle user interaction and present information through a graphical user interface. A requirement of the application was also to provide a website as a second source of user interaction, which will be implemented using the central server.
 
 The server and client may be conceptually divided into several modules. For the server, there is the \emph{Database Module} that manages reading from and modifying the persistent application data, the \emph{Logic Module} that handles game and system calculations, and the \emph{Web Interface} group which contains the \emph{API Module} for interacting with client applications, and the \emph{Website Module} for servicing the website HTTP requests. The client will be constructed to include a \emph{Request Module} for contacting the server and interpreting any responses, a \emph{Logic Module} that is aware of relevant aspects of the game state and performs client-relevant calculations, a \emph{Geolocation Module} for interaction with the Google APIs and the GPS sensor, and a \emph{Window Module} for the graphical user interface.
