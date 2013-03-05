@@ -6,6 +6,7 @@ design.pdf: \
 	interprocessdependencies.tex \
 	interfacedescriptions.tex \
 	introduction.tex \
-	versionhistory.tex
+	versionhistory.tex \
+	requirementdiff.tex
 
 	xelatex design.tex

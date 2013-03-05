@@ -1,0 +1,63 @@
+\subsection{Changes to Requirements}
+
+{
+    \renewcommand{\arraystretch}{1.2}
+    \newcommand{\funcreq}[8]
+    {
+        {\bf\normalsize #1 - #2}
+
+        \vspace{2mm}\noindent
+        \begin{tabularx}{\textwidth}{|>{\raggedleft\arraybackslash}p{25mm}|X|}
+            \hline
+            \textbf{Type} &
+                Functional
+            \\
+            \textbf{Description} & #3 \\
+            \textbf{Priority} &
+                \ifnum#4=1 High \else\ifnum#4=2 Medium \else Low \fi\fi
+            \\ 
+            \ifnum\pdfstrcmp{None}{#5}=0 \else
+                \textbf{Pre-conditions} & #5 \\
+            \fi
+            \ifnum\pdfstrcmp{N/A}{#6}=0 \else
+                \textbf{Input} & #6 \\ 
+            \fi
+            \ifnum\pdfstrcmp{N/A}{#7}=0 \else
+                \textbf{Operations} & #7 \\
+            \fi 
+            \textbf{Expected Results} & #8 \\
+            \hline
+        \end{tabularx}
+    }
+    \newcommand{\nonfuncreq}[2]
+    {
+        {\bf\normalsize #1}
+
+        \vspace{2mm}\noindent
+        \begin{tabularx}{|>{\raggedleft\arraybackslash}p{3cm}|X|}
+            \hline
+            \textbf{Type} &
+                Non - Functional
+            \\
+            \textbf{Description} & #2 \\
+            \hline
+            \if\feedbackspace1
+                \textbf{Pass / Fail} &
+                    ~
+                \\
+                \textbf{Remarks} &
+                    ~\newline~\newline~
+                \\ \hline
+            \fi
+        \end{tabularx}
+    }
+
+    {\footnotesize
+        \funcreq{5.2.9}{Account Registration}
+            {If a user physically visits the location of a cache owned by a different user, they can choose to use points to scout a cache, and possibly find the point balance of that cache.}
+            {2}{5.2.4 Cache Balance, 5.2.1 Account Balance, 5.2.2 Account Transactions}
+            {The location of the user and the number of points they wish to scout with are supplied.}
+            {The distance of the user is checked to ensure they are sufficiently near the cache and the number of points used to scout is checked to ensure the user has at least that number of points in their account. The server will decide if the scout is successful.}
+            {If the request was valid, a scout is initiated on the cache by that user with the specified number of points.}
+    }
+}
