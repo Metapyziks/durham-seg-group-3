@@ -5,6 +5,7 @@ design.pdf: \
 	dbmancd.png svlogiccd.png \
 	interprocessdependencies.tex \
 	interfacedescriptions.tex \
-	introduction.tex
+	introduction.tex \
+	versionhistory.tex
 
 	xelatex design.tex
