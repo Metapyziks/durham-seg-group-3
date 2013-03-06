@@ -1,0 +1,6 @@
+-page 2, requirement change 2.4. get rid of. Authorized user does not mean authenticated.
+-page 2, requirement cache scouting requirement description. "possibly find the point balace of the cache". change to "if the scouting was successfull, they will find out the points"
+-page 2, requirement cache scouting requirement expected result. not an expected result. expected result is if scout is successfull then points are displayed
+-page 2, requirement battle breakdown. get rid of. the result given is not an exhaustive list. it jsut gives examples.
+-page 3, scouting non-player caches. Wrong.... remove.... fine as it was, non-player caches, not special caches...
+-page 3, nearby caches. Wrong... remove... the user can use the refresh button to see caches near to any location, not just the users location.

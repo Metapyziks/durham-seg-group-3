@@ -55,37 +55,11 @@
     }
 
     {\footnotesize
-        \funcreq{2.4}{Cache Balance}
-            {A cache must have a point balance associated with it, which must be visible to the owner of the cache when requested.}
-            {1}{2.3 Cache Ownership}
-            {A user makes a request to view the point balance of a cache.}
-            {The server checks to see if the user is authorized to view the 
-            point balance of the cache.}
-            {The balance of a cache will be displayed to the owner when requested.}
         \funcreq{2.9}{Cache Scouting}
-            {If a user physically visits the location of a cache owned by a different user, they can choose to use points to scout a cache, and possibly find the point balance of that cache.}
+            {If a user physically visits the location of a cache owned by a different user, they can choose to use points to scout a cache; and if the scout is successful, find out the point balance of that cache.}
             {2}{2.4 Cache Balance, 2.1 Account Balance, 2.2 Account Transactions}
             {The location of the user and the number of points they wish to scout with are supplied.}
             {The distance of the user is checked to ensure they are sufficiently near the cache and the number of points used to scout is checked to ensure the user has at least that number of points in their account. The server will decide if the scout is successful.}
-            {If the request was valid, a scout is initiated on the cache by that user with the specified number of points.}
-        \funcreq{2.13}{Battle Breakdown}
-            {After an attack on a cache, the attacking user will be able to
-            view a breakdown of the results of the attack.}
-            {3}{2.10 Cache Attacking}
-            {An attack on a cache has concluded.}
-            {The server will provide information such as the initial size of each army, the result, how many survivors the user has and how many deserters they've gained.}
-            {A breakdown of the results of the battle will be displayed to the attacking user.}
-        \funcreq{2.19}{Scouting Non-Player Caches}
-            {If a user has attacked a non-player cache and the minimum delay between attacks on a non-player cache has not elapsed for that cache, the user will not see the cache on the map so cannot interact with it.}
-            {2}{2.18 Attacking Non-Player Caches, 3.2 Nearby Caches}
-            {A user attempts to view a non-player cache on the map.}
-            {The server will check the amount of time since that user last attacked the cache (if at all).}
-            {If the user has never attacked that cache, or the time since the last attack is greater than the amount of time a user must wait between attacks on a non-player cache, they are able to view the cache as normal. Otherwise they cannot.}
-        \funcreq{3.2}{Nearby Caches}
-            {The application must be able to show the user, on the map, the locations of caches near to the user's location.}
-            {1}{3.1 Display Location}
-            {The user will request to see the locations of caches near to their location.}
-            {The application will check that the device's GPS antenna is enabled and there is internet connectivity. If there is a connection and the antenna is enabled, the application will send a request to the server for a list of coordinates of caches near to the user's location.}
-            {The application will mark on the map, provided by the Google Maps API, all caches near to the user's position.}
+            {If the request was valid and the scout action was successful, the user is informed of the number of points in the cache being scouted.}
     }
 }
