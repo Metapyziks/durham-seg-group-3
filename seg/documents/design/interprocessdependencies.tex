@@ -98,7 +98,6 @@ On the cache transactions screen the user can withdraw and deposit soldiers from
 
 There is a messaging feature in the app, which can be navigated around from the inbox screen. This screen will be made like most other screens except for the buttons to particular messages, where a few more classes need to be involved before adding these to the grid. Firstly the information about the 7 viewable messages are set using ServerRequests.setMessages(username, when). The when variable is used to tell which 7 messages are used, for example if the user clicks next twice then the 3rd set of 7 messages will be used, then if the user clicks previous the 2nd set of 7 messages will be used. There will be checks in place to stop `when' being invalid for example negative or so large there are no messages in the set. The message information is used to decide what the icons loOK like and the text displayed. This satisfies requirement 5.4.1 user communication.
 
-\newpage
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/sequence/inbox}
@@ -131,18 +130,28 @@ The following sequence diagram shows how the specific request class RegisterRequ
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/sequence/recentActivity}
+    \includegraphics[width=\textwidth]{images/sequence/registerUser}
 \end{figure}
+
+\begin{wrapfigure}{r}{0.5\textwidth}
+    \includegraphics[width=0.5\textwidth]{images/sequence/userinfo}
+\end{wrapfigure}
 
 When resending an activation email it is the SendActivationRequest class that performs checks to satisfy requirement 5.4.1. The account with the email address provided is selected from the database and used to resend an activation email in the same way as account registration. If an ErrorResponse hasn't already been returned then a Response will be like with account registration.
 
-When sending a password reset email, PasswordResetRequest let's EmailValidationCode perform the checks to satisfy requirement 5.1.8 in the method AttemptCreate(EmailValidationType.ResetPassword, args[``email''], out valid). If it passes these checks an EmailValidationCode will be created and used to send an email to the user and a Response will be returned, else if the checks aren't passed an ErrorResponse will be returned.
+When sending a password reset email, PasswordResetRequest let's EmailValidationCode perform the checks to satisfy requirement 5.1.8 in the method AttemptCreate(). If it passes these checks an EmailValidationCode will be created and used to send an email to the user and a Response will be returned, else if the checks aren't passed an ErrorResponse will be returned.
 
 Figure x shows how UserInfoRequest works, as you can see the checks are performed in the specific request class. If passed then the accounts and caches of the users wanted are found. The response is found using this list of Account and a list of Int corresponding to the number of caches the user has. UserInfoResponse uses these parameters to make a response in the form:
 
 \begin{verbatim}
-{"users":[{"accounted":0,"uname":"metapyziks","regdate":1347374370,"rank":Unverified,"caches":0},{"accounted":1,"uname":"TestName","regdate":1347381045,"rank":Verified,"caches":23}],"success":true}
+{"users":[{"accounted":0,"uname":"metapyziks","regdate":1347374370,
+"rank":Unverified,"caches":0},{"accounted":1,"uname":"TestName",
+"regdate":1347381045,"rank":Verified,"caches":23}],"success":true}
 \end{verbatim}
+
+\begin{wrapfigure}{l}{0.6\textwidth}
+    \includegraphics[width=0.6\textwidth]{images/sequence/createSession}
+\end{wrapfigure}
 
 The server creates a new session using StartSessionRequest. This performs all the necessary checks on the username, email, password hash supplied with the Request class, which will also get the account corresponding to the user supplied and check the account along with the SessionInfoResponse corresponding to the account. It checks expiration using the method IsExpired() in AuthSession. If any of the checks are failed a related ErrorResponse is initiated and fail is returned to StartSessionRequest which will not go on to do AuthSession.Create(account). If the checks are passed the instance of AuthSession is refreshed which will set the refresh time to the current time so it can be used in the IsExpired() method. True is returned to StartSessionRequest, a new instance of AuthSession is made with an AccountID, SessionCode, LastRefresh set to now and a Rank set to the rank of the account. The AuthSession is added to a dictionary of AuthSession as an update or new entry with a new AccountID. The AuthSession is returned to StartSessionRequest which is used to create a new SessionInfoResponse with a code and success value. This satisfies requirement 5.1.5 user authentication.
 
@@ -154,15 +163,30 @@ To find a list of nearby caches, NearbyCachesRequest is used. This firstly find 
 
 When a cache is scouted, the ScoutCacheRequest class is used. Checks's are made using checkAuth(), by trying to parse the Strings representing numbers (e.g. units and latitude) into Doubles, and by seeing if the numbers are in the right bounds e.g. positive or smaller than the user's balance. Tools.getDistance() uses trigonometry to find the distance between the user and closest cache. Tools.CoinToss used to calculate the survivors, it creates a random number and if this number is less than 0.8, true is outputted. This is done for every soldier in the scouting army and the number of trues outputted equals the number of survivors. The players balance is set to balance – units + survivors and this is updated in the database. A new ScoutCacheResponse is made with the CacheID, Scouts set to units, Survivors and Garrison set to cache.Balance. The response will include cacheid, ownerid, cache name, latitude, longitude, garrison and success. The response will be put in Activity, the list of responses in the corresponding Account class and updated in the database. This satisfies requirement 5.2.9 cache scouting.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/sequence/scoutCache}
+\end{figure}
+
 The PlaceCacheRequest class performs checks much like the ScoutRequest class, it does CheckAuth(), CheckLocation(), checks units are a Double, larger than the CachePlacementCost and smaller than the player's balance. CheckLocation() see's if the location hash supplied is the same as the location given which will satisfy requirement 5.2.24 anti-cheating measures. It also uses Cache.FindNearby() which uses as supplied minimum distance, latitude and longitude to find the caches within that distance, and PlaceCacheRequest uses this information to see if the user is far enough away from other cache to place a cache. If all of the checks are passed then a new Cache is made with an AccountID, Balance which is 4 less than units, Latitude, Longitude, Name which is randomly selected, CacheID which isn't supplied by PlaceCacheRequest and Nonplayer set to false. The Cache has an associated AccountID to satisfy requirement 5.2.3, cache ownership, and a Balance to satisfy requirement 5.2.4 cache balance, which is less than units to satisfy requirement 5.2.8 cache placement cost. The players balance is updated and saved in the database, and the cache and activity is inserted into the database. A new CacheInfoResponse is made which includes cacheid, ownerid, name, latitude, longitude, garrison and success. This satisfies requirement 5.3.5 cache placement.
 
-As you can see the checks for attacking caches are done in the AttackCacheRequest class, and the response is created in the Cache class. The sum used for weight is based off research (ASK EMMA FIGURES). The BattleReportResponse is initially set with the cache, AttackerID, DefenderID, Attackers made from a new BattleReportResponse.UnitReport with Initial and Survivors set to units, and Defenders made from a new BattleReportResponse.UnitReport with Initial and Survivors set to cache Balance. The fatalaties are put in the report with report.Attackers.Fatalities = report.Attackers.Initial – report.Attackers.Survivors and a similar method for Defenders. Report.IsVictory is true if there are attacking survivors, in this case report.Attackers.Deserters = 0 while the defending deserters are a small random proportion of the defending fatalities, the cache Balance becomes the surviving attackers plus the defending deserters and the caches AccountID becomes the attackers AccountID. However if IsVictory is false, there are 0 defending deserters, a small proportion of the attacking fatalities are deserters, the cache balance is the surviving defenders and the attacking deserters are added to the defenders balance. The response is added to Activity in the affected instances of Account and updated in the database. This satisfies requirement 5.2.10 cache attacking, 5.2.11 successful attack, 5.2.12 successful defence and 5.2.13 battle breakdown. Attacking non-player caches is very similar, the same request is used, the only difference is that the user's Account NonPlayerDictionary will be updated with the cacheID and time, the 'point reward' will be shown as the deserters, which there will be more of to make up for not getting the cache, and the cache balance won't change in the database. This satisfies requirement 5.2.18.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/activity/server_attackCache}
+\end{figure}
+
+As you can see the checks for attacking caches are done in the AttackCacheRequest class, and the response is created in the Cache class. The sum used for weight is based off research (ASK EMMA FIGURES). The BattleReportResponse is initially set with the cache, AttackerID, DefenderID, Attackers made from a new BattleReportResponse.UnitReport with Initial and Survivors set to units, and Defenders made from a new BattleReportResponse.UnitReport with Initial and Survivors set to cache Balance. The fatalaties are put in the report with report.Attackers.Fatalities = report.Attackers.Initial – report.Attackers.Survivors and a similar method for Defenders. Report.IsVictory is true if there are attacking survivors, in this case report.Attackers.Deserters = 0 while the defending deserters are a small random proportion of the defending fatalities, the cache Balance becomes the surviving attackers plus the defending deserters and the caches AccountID becomes the attackers AccountID. However if IsVictory is false, there are 0 defending deserters, a small proportion of the attacking fatalities are deserters, the cache balance is the surviving defenders and the attacking deserters are added to the defenders balance. The response is added to Activity in the affected instances of Account and updated in the database. This satisfies requirement 5.2.10 cache attacking, 5.2.11 successful attack, 5.2.12 successful defence and 5.2.13 battle breakdown. Attacking non-player caches is very similar, the same request is used, the only difference is that the user's Account NonPlayerDictionary will be updated with the cacheID and time, the `point reward' will be shown as the deserters, which there will be more of to make up for not getting the cache, and the cache balance won't change in the database. This satisfies requirement 5.2.18.
 
 When a message is sent the MessageRequest class is used, it checks the message body and subject aren't empty. It will create a MessageResponse and put it in Activity of the sender's and receiver's Account and updated on the database. It will check the receiver's Account to see if the sender is blocked and return an ErrorResponse if the sender is blocked else a Response is returned. This satisfies requirement 5.4.1.The receiver will always get the message as it is when the activities are requested that the server will make sure that messages aren't received from blocked users. This is so that when a user is unblocked the messages will be received and in the correct order in relation to other activities. There will obviously be a request to block users too which will check the username or id supplied has an associated account that isn't the account of the user before adding the id to the Block list in the user's account. The possible responses are the ErrorResponse or Response. The request to unblock a user is the oppositeto blocking users.
 
 Messages and caches will be able to be reported through the MessageReportRequest and CacheReportRequest classes. They will use the reporterid or username, message or cache id, and a description. They will check the cache or message hasn't previously been reported, and if it's a CacheReportRequest then that it's not the reporter's cache and it's not a non-player cache. The message id is searched for in the reporter's activity to find the message details, or the cache details are found using the cacheid. This information is put into a related Response and added as an AdminResponse in the database so administrators can see it on the website. The cache or message will be marked as reported and saved in the database and a Response will be returned. This satisfies requirement 5.2.22 and 5.4.2.
 
 In many requests the DatabaseManager and Account classes are used in conjunction with the specific request class, with this requirement 5.2.2. Account Transactions and 5.3.6 Activity Recording can be fulfilled. There will also be a Request class for getting activities that uses the users Account ID or username, how many activities they wish to see, which set of they want, and what type. It performs checks (including removing messages from blocked user's from the response) and uses modular arithmetic to select the correct set of activities of the right type and return them in ActivityResponse. Requirement 5.2.5 cache transactions is fulfilled in the same way as 5.2.2 but with Cache class, the request used to withdraw and deposit soldiers will also set the cache owner to null and update it in the database if all the soldiers are withdrawn. This will satisfy requirement 5.2.6.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/activity/IndexHTML}
+\end{figure}
 
 The design of the website will now be discussed. Although not all pages are mentioned, the pages not mentioned will feature forms, checks and updates much like the pages which are examined in detail. This will satisfy requirement 5.4.3.
 
@@ -171,6 +195,18 @@ The index page is made as followed, firstly the header is used to find informati
 When a user logins in with the website login.html is used. It's head uses the username and password in the form to attempt to login, which will output a session. If the session outputted by Account is null a new session is made using coOKies. The title is set and if necessary JavaScript is loaded for hashing passwords. The top bar is added, the subtitle set to Login. If there's an error then it is explained and a link is displayed to try again. If the session is null a form is produced for the user to enter their username and password, which will be hashed. A link is also provided in the case that the user forgets their password. If the session is not null then text will be displaying saying successfully logged in. This will satisfy requirement 5.4.4.
 
 When a user clicks a link in an email to activate their account activate.html is used. In the head, there will be AttemptActivate(get["email"], get["code"] ) and the title will be set to Fortitude Server – Account Activation. In the body, a sub-title will be set as Account Activation. If AttemptActivate outputted an error that wasn't null then the user is explained the error, if not the user is told their account has been activated and they can now log on. A link will be provided to the Home page at the bottom of the body. This will satisfy requirement 5.1.2, account activation.
+
+\begin{landscape}
+\begin{figure}
+    \centering
+    \includegraphics[width=1.2\textheight]{images/activity/loginWeb2}
+\end{figure}
+\end{landscape}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/activity/admin-placecache}
+\end{figure}
 
 Admins can place a cache with placecache.html. In the head this checks whether this session is null and the rank of the session. If the session is null or the rank less than administrator the user is redirected to the error page. Else the account corresponding the username submitted is found and checked, if anything fails an error message is set. Else a new Cache is created and updated in the database. The title is set to Place Cache and a form is created to input username, latitude, longitude and units. If success is true then text is displayed saying where the cache was placed else if there was an error, the message is displayed. This satisfies requirement 5.2.16. placenon-playercache.html is very similar except the form will only include inputs for position and units. The cache created and added to the Server will have the AccountID as the administrator's AccountID. placespecialEvent.html is also similar, in the head it will be checked if the supplied MAC-address is valid and the number of user claiming the reward and the reward is greater than 0.
 
