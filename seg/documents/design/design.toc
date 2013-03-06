@@ -9,6 +9,21 @@
 \contentsline {subsection}{\numberline {1.3}Definitions, Acronyms and Abbreviations}{6}
 \contentsline {subsection}{\numberline {1.4}References}{6}
 \contentsline {subsection}{\numberline {1.5}Overview}{6}
+<<<<<<< HEAD
 \contentsline {section}{\numberline {2}Interface Descriptions}{7}
 \contentsline {subsection}{\numberline {2.1}Design Methodology}{7}
 \contentsline {subsection}{\numberline {2.2}Fortitude-game.co.uk Website}{8}
+=======
+\contentsline {section}{\numberline {3}Element Descriptions}{7}
+\contentsline {subsection}{\numberline {3.0}Architecture Overview}{7}
+\contentsline {subsection}{\numberline {3.1}Intermodule Dependencies}{7}
+\contentsline {subsubsection}{\numberline {3.1.1}Database Module}{7}
+\contentsline {subsubsection}{\numberline {3.1.2}Logic Module}{9}
+\contentsline {subsubsection}{\numberline {3.1.3}Web Interface}{11}
+\contentsline {subsubsection}{\numberline {3.1.4}Website Module}{11}
+\contentsline {subsubsection}{\numberline {3.1.5}API Module}{11}
+\contentsline {subsubsection}{\numberline {3.1.6}Request Module}{12}
+\contentsline {subsubsection}{\numberline {3.1.7}Logic Module}{13}
+\contentsline {subsubsection}{\numberline {3.1.8}Geolocation Module}{13}
+\contentsline {subsubsection}{\numberline {3.1.9}Window Module}{13}
+>>>>>>> 6f81fa371b3a40f05bacd2aee58a0a57f499c33d
