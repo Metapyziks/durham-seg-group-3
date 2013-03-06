@@ -14,6 +14,7 @@
 \usepackage{tikz}
 \usepackage{textpos}
 \usepackage{multirow}
+\usepackage{lscape}
 
 \usetikzlibrary{calc}
 
@@ -40,7 +41,7 @@
                 (headerstart) rectangle (headerend);
             \node () at (0, 1.25)
                 {\Large\textcolor{headertext}{Design Document}};
-            \node () at (-7.75, 1.25)
+            \node () at (-7.75, 1.3)
                 {\includegraphics[width=0.2\textwidth]{images/logo}};
             \node () at (7.75, 1.25)
                 {\textcolor{headertext}{\today}};
@@ -51,7 +52,7 @@
     \fancyhf[FLE]{\thepage\ | Page}
     \fancyhf[FRO]{Page | \thepage}
 
-    %\setromanfont[Numbers=Uppercase]{Calibri}
+    \setromanfont[Numbers=Uppercase]{Calibri}
 }
 
 \pagestyle{plain}
@@ -69,12 +70,8 @@
 \input{introduction.tex}
 \newpage
 \input{interfacedescriptions.tex}
-%\subsection{User Interfaces}
-%\lipsum[141-160]
-%\subsection{Process Descriptions}
-%\lipsum[61-80]
 \newpage
 \input{intermoduledependencies.tex}
-%\newpage
-%\input{interprocessdependencies.tex}
+\newpage
+\input{interprocessdependencies.tex}
 \end{document}
