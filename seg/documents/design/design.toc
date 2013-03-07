@@ -7,45 +7,45 @@
 \contentsline {subsection}{\numberline {1.1}Purpose}{3}
 \contentsline {subsection}{\numberline {1.2}Scope}{3}
 \contentsline {subsection}{\numberline {1.3}Definitions, Acronyms and Abbreviations}{4}
-\contentsline {subsection}{\numberline {1.4}References}{4}
-\contentsline {subsection}{\numberline {1.5}Overview}{4}
-\contentsline {section}{\numberline {2}Interface Descriptions}{5}
-\contentsline {subsection}{\numberline {2.1}Design Methodology}{5}
-\contentsline {subsubsection}{\numberline {2.1.1}Fortitude Application}{5}
-\contentsline {subsubsection}{\numberline {2.1.2}Fortitude-game.co.uk Website}{5}
-\contentsline {subsection}{\numberline {2.2}Process Descriptions}{6}
-\contentsline {subsubsection}{\numberline {2.2.1}Opening the application}{6}
-\contentsline {subsubsection}{\numberline {2.2.2}Performing key game actions}{7}
-\contentsline {subsubsection}{\numberline {2.2.3}Viewing caches}{7}
-\contentsline {subsubsection}{\numberline {2.2.4}Reading and sending messages}{8}
-\contentsline {subsubsection}{\numberline {2.2.5}Administrators acting on user request}{8}
-\contentsline {subsubsection}{\numberline {2.2.6}Reporting and Blocking}{8}
-\contentsline {subsubsection}{\numberline {2.2.7}Miscellaneous other}{9}
-\contentsline {subsection}{\numberline {2.3}User Interface Design - Fortitude Application}{9}
-\contentsline {subsubsection}{\numberline {2.3.1}Main screen}{9}
-\contentsline {subsubsection}{\numberline {2.3.2}Unactivated main screen}{10}
-\contentsline {subsubsection}{\numberline {2.3.3}User text input}{11}
-\contentsline {subsubsection}{\numberline {2.3.4}Menu and Information screens}{11}
-\contentsline {subsubsection}{\numberline {2.3.5}List screens}{12}
-\contentsline {subsubsection}{\numberline {2.3.6}Action screens}{12}
-\contentsline {subsubsection}{\numberline {2.3.7}Reporting results}{13}
-\contentsline {subsubsection}{\numberline {2.3.8}Static screen}{13}
-\contentsline {subsection}{\numberline {2.4}User Interface Design - Fortitude-game.co.uk}{14}
-\contentsline {subsubsection}{\numberline {2.4.1}Site Layout}{14}
-\contentsline {subsubsection}{\numberline {2.4.2}Site Content}{15}
-\contentsline {subsubsection}{\numberline {2.4.3}The Map}{15}
-\contentsline {subsubsection}{\numberline {2.4.4}Sidebar}{15}
-\contentsline {subsubsection}{\numberline {2.4.5}Administrator pages}{16}
-\contentsline {section}{\numberline {3}Element Descriptions}{18}
-\contentsline {subsection}{\numberline {3.0}Architecture Overview}{18}
-\contentsline {subsection}{\numberline {3.1}Intermodule Dependencies}{18}
-\contentsline {subsubsection}{\numberline {3.1.1}Database Module}{18}
-\contentsline {subsubsection}{\numberline {3.1.2}Logic Module}{20}
-\contentsline {subsubsection}{\numberline {3.1.3}Web Interface}{22}
-\contentsline {subsubsection}{\numberline {3.1.4}Website Module}{22}
-\contentsline {subsubsection}{\numberline {3.1.5}API Module}{22}
-\contentsline {subsubsection}{\numberline {3.1.6}Request Module}{23}
-\contentsline {subsubsection}{\numberline {3.1.7}Logic Module}{24}
-\contentsline {subsubsection}{\numberline {3.1.8}Geolocation Module}{25}
-\contentsline {subsubsection}{\numberline {3.1.9}Window Module}{25}
-\contentsline {subsection}{\numberline {3.2}Interprocess Dependencies}{26}
+\contentsline {subsection}{\numberline {1.4}References}{5}
+\contentsline {subsection}{\numberline {1.5}Overview}{5}
+\contentsline {section}{\numberline {2}Interface Descriptions}{6}
+\contentsline {subsection}{\numberline {2.1}Design Methodology}{6}
+\contentsline {subsubsection}{\numberline {2.1.1}Fortitude Application}{6}
+\contentsline {subsubsection}{\numberline {2.1.2}Fortitude-game.co.uk Website}{6}
+\contentsline {subsection}{\numberline {2.2}Process Descriptions}{7}
+\contentsline {subsubsection}{\numberline {2.2.1}Opening the application}{7}
+\contentsline {subsubsection}{\numberline {2.2.2}Performing key game actions}{8}
+\contentsline {subsubsection}{\numberline {2.2.3}Viewing caches}{8}
+\contentsline {subsubsection}{\numberline {2.2.4}Reading and sending messages}{9}
+\contentsline {subsubsection}{\numberline {2.2.5}Administrators acting on user request}{9}
+\contentsline {subsubsection}{\numberline {2.2.6}Reporting and Blocking}{9}
+\contentsline {subsubsection}{\numberline {2.2.7}Miscellaneous other}{10}
+\contentsline {subsection}{\numberline {2.3}User Interface Design - Fortitude Application}{10}
+\contentsline {subsubsection}{\numberline {2.3.1}Main screen}{10}
+\contentsline {subsubsection}{\numberline {2.3.2}Unactivated main screen}{11}
+\contentsline {subsubsection}{\numberline {2.3.3}User text input}{12}
+\contentsline {subsubsection}{\numberline {2.3.4}Menu and Information screens}{12}
+\contentsline {subsubsection}{\numberline {2.3.5}List screens}{13}
+\contentsline {subsubsection}{\numberline {2.3.6}Action screens}{13}
+\contentsline {subsubsection}{\numberline {2.3.7}Reporting results}{14}
+\contentsline {subsubsection}{\numberline {2.3.8}Static screen}{14}
+\contentsline {subsection}{\numberline {2.4}User Interface Design - Fortitude-game.co.uk}{15}
+\contentsline {subsubsection}{\numberline {2.4.1}Site Layout}{15}
+\contentsline {subsubsection}{\numberline {2.4.2}Site Content}{16}
+\contentsline {subsubsection}{\numberline {2.4.3}The Map}{16}
+\contentsline {subsubsection}{\numberline {2.4.4}Sidebar}{16}
+\contentsline {subsubsection}{\numberline {2.4.5}Administrator pages}{17}
+\contentsline {section}{\numberline {3}Element Descriptions}{19}
+\contentsline {subsection}{\numberline {3.0}Architecture Overview}{19}
+\contentsline {subsection}{\numberline {3.1}Intermodule Dependencies}{19}
+\contentsline {subsubsection}{\numberline {3.1.1}Database Module}{19}
+\contentsline {subsubsection}{\numberline {3.1.2}Logic Module}{21}
+\contentsline {subsubsection}{\numberline {3.1.3}Web Interface}{23}
+\contentsline {subsubsection}{\numberline {3.1.4}Website Module}{23}
+\contentsline {subsubsection}{\numberline {3.1.5}API Module}{23}
+\contentsline {subsubsection}{\numberline {3.1.6}Request Module}{24}
+\contentsline {subsubsection}{\numberline {3.1.7}Logic Module}{25}
+\contentsline {subsubsection}{\numberline {3.1.8}Geolocation Module}{26}
+\contentsline {subsubsection}{\numberline {3.1.9}Window Module}{26}
+\contentsline {subsection}{\numberline {3.2}Interprocess Dependencies}{27}
