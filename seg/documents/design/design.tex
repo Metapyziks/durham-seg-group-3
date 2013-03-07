@@ -15,6 +15,7 @@
 \usepackage{textpos}
 \usepackage{multirow}
 \usepackage{lscape}
+\usepackage{chngcntr}
 
 \usetikzlibrary{calc}
 
@@ -49,14 +50,15 @@
     }
 
     \fancyhf[HC]{\headerbox}
-    \fancyhf[FLE]{\thepage\ | Page}
-    \fancyhf[FRO]{Page | \thepage}
+    \fancyhf[FLO]{\thepage\ | Page}
+    \fancyhf[FRE]{Page | \thepage}
 
     \setromanfont[Numbers=Uppercase]{Calibri}
 }
 
 \pagestyle{plain}
 
+\counterwithin{figure}{section}
 \setcounter{tocdepth}{2}
 
 \begin{document}
