@@ -47,6 +47,7 @@ The application's screens satisfy requirement 5.3.7: Interface Style Uniformity 
 \subsubsection{Fortitude-game.co.uk Website}
 
 \begin{figure}[ht]
+	\vspace{-20pt}
 	\begin{center}
 	\includegraphics[width=0.9\textwidth]{images/website_header_background}
 	\caption{The header image, an example of the more complex graphics used in the website. The white bordered box will hold the navigation.}
@@ -55,6 +56,7 @@ The application's screens satisfy requirement 5.3.7: Interface Style Uniformity 
 	\vspace{-20pt}
 \end{figure}
 
+\newpage
 \begin{wrapfigure}{r}{0.25\textwidth}
 	\vspace{-15pt}
 	\begin{center}
@@ -79,9 +81,9 @@ The website design matches the application design by using the same colour schem
 	\vspace{-50pt}
 \end{wrapfigure}
 
-Commonly accessed areas of the website, such as the sidebar and the homepage, are organised into modules (see fig \ref{fig:sidebar_modules}), making information quickly and easily identifiable. It also provides an excellent template for adaption; though out of scope for this project, users could in future personalise the website by selecting which modules to display.
+Commonly accessed areas of the website, such as the sidebar and the homepage, are organised into modules (see fig \ref{sidebar_modules}), making information quickly and easily identifiable. It also provides an excellent template for adaption; though out of scope for this project, users could in future personalise the website by selecting which modules to display.
 
-The website provides feedback, by validating data (see \ref{fig:sign_up_wireframe}) or by providing loading messages, so the user can interact efficiently and with fewer errors. For more critical data entry, such as an administrator creating a new cache, the user is presented with a summary page of the information they have entered and must confirm it is correct before the new data is stored.
+The website provides feedback, by validating data (see \ref{sign_up_wireframe}) or by providing loading messages, so the user can interact efficiently and with fewer errors. For more critical data entry, such as an administrator creating a new cache, the user is presented with a summary page of the information they have entered and must confirm it is correct before the new data is stored.
 
 The website also provides feedback if an error occurs - the most common anticipated is the user having javascript disabled. This will cause every javascript dependent element of the site to be replaced with a placeholder of the correct shape to avoid disturbing the website layout which informs the user that javascript is required.
 
@@ -112,7 +114,7 @@ Users who have not activated their accounts are given limited functionality whil
 \newpage
 \subsubsection{Performing key game actions}
 
-The key actions to Fortitude game play are creating caches (place cache), defending caches (manage cache) and conquering caches (scout then attack cache), which are all accessible through the main screen. These actions require the user to be at the cache or cache they want to place, otherwise the buttons will be greyed out (see fig 2.2). The same button is used to manage a cache (deposit or withdraw defending troops, or abandon the cache by withdrawing all troops) and attack an enemy cache. This simplifies the process of playing the game for the user and reduces redundancy and clutter on the main screen.
+The key actions to Fortitude game play are creating caches (place cache), defending caches (manage cache) and conquering caches (scout then attack cache), which are all accessible through the main screen. These actions require the user to be at the cache or cache they want to place, otherwise the buttons will be greyed out (see fig \ref{buttons}). The same button is used to manage a cache (deposit or withdraw defending troops, or abandon the cache by withdrawing all troops) and attack an enemy cache. This simplifies the process of playing the game for the user and reduces redundancy and clutter on the main screen.
 
 \subsubsection{Viewing caches}
 
@@ -120,13 +122,13 @@ The key actions to Fortitude game play are creating caches (place cache), defend
 	\vspace{-20pt}
 	\begin{center}
 	\includegraphics[width=0.5\textwidth]{images/viewing_caches}
-	\caption{Screen map for key game actions.}
+	\caption{Route mapping.}
 	\label{viewing_caches}
 	\vspace{-20pt}
 	\end{center}
 \end{wrapfigure}
 
-Viewing caches is integral to the above actions and can be done from the main screen (see fig 2.15) whether or not the user is at the cache. This allows the user to plan strategies, keep track of their caches and plan routes to caches displayed on the map (see fig 2.14), which satisfies requirement 5.3.4: Path finding. The user can also view a profile of an enemy through their cache and report the cache to admins (see fig 2.2.5).
+Viewing caches is integral to the above actions and can be done from the main screen (see fig \ref{viewing_caches}) whether or not the user is at the cache. This allows the user to plan strategies, keep track of their caches and plan routes to caches displayed on the map (see fig \ref{route_mapping}), which satisfies requirement 5.3.4: Path finding. The user can also view a profile of an enemy through their cache and report the cache to admins (see 2.2.5).
 
 After a user's cache is attacked, they can see the battle report from their notifications and then view the cache. If their defenders were victorious, they will see an allied cache, but if the attackers won they will see an enemy cache.
 
@@ -144,7 +146,7 @@ After a user's cache is attacked, they can see the battle report from their noti
 
 Users can interact with each other by sending messages, allowing alliances and battle strategies to be formed and satisfying requirement 5.4.1: User communication. From the inbox, users are given the option to turn the messaging system off. If, due to this or any other reason, a user can not send a message then they will be informed through a `Failure' screen. This is so a user is informed and won't send multiple messages believing the previous ones have failed. Users can also report communications and block users (see 2.2.5).
 
-Requirements 5.2.2: Cache reporting and 5.4.2: Communication reporting both require the user to be able to alert the administrators of certain caches or communications. This is anticipated to include a cache placed on a private or otherwise inaccessible location, or users behaving inappropriately towards others, and will be handled through a single report form (fig 2.8). The subject line is automatically filled in according to the screen from which the user reported from (see fig 2.9), and a copy of the offending message, user profile or cache is sent with the body of the report that gives administrators as much information as possible.
+Requirements 5.2.2: Cache reporting and 5.4.2: Communication reporting both require the user to be able to alert the administrators of certain caches or communications. This is anticipated to include a cache placed on a private or otherwise inaccessible location, or users behaving inappropriately towards others, and will be handled through a single report form (fig 2.8). The subject line is automatically filled in according to the screen from which the user reported from (see fig \ref{report_table}), and a copy of the offending message, user profile or cache is sent with the body of the report that gives administrators as much information as possible.
 
 \begin{figure}[ht]
 	\begin{minipage}{0.5\textwidth}
@@ -167,7 +169,7 @@ Requirements 5.2.2: Cache reporting and 5.4.2: Communication reporting both requ
 	\vspace{-180pt}
 	\begin{center}
 	\includegraphics[width=0.25\textwidth]{images/report_mockup}
-	\caption{Mock-up of the report screen.}
+	\caption{Send report.}
 	\label{report_mockup}
 	\end{center}
 	\vspace{-60pt}
@@ -209,7 +211,7 @@ A user can sign out from the user account settings, accessed from clicking on th
 
 Special placement caches appear on the screen if the user has the application open at the correct location. They can then choose to accept or reject the award for finding the cache.
 
-Routes to caches are shown on the main map as a thick red line (see fig 2.14). They can be planned from `view cache' screens, and cleared in the account menu. As routes are cleared before a new one is made only one route can be displayed on the map at once.
+Routes to caches are shown on the main map as a thick red line (see fig \ref{route_mapping}). They can be planned from `view cache' screens, and cleared in the account menu. As routes are cleared before a new one is made only one route can be displayed on the map at once.
 \vspace{30pt}
 
 \subsection{User Interface Design - Fortitude Application}
@@ -236,7 +238,7 @@ Routes to caches are shown on the main map as a thick red line (see fig 2.14). T
 
 The main screen is the core of the Fortitude application through which all key features are easily accessible. These are split into features relating to playing the game, grouped in the action bar at the bottom of the screen, and features relating to providing the user with information or allowing them to access their account, grouped in the status bar at the top of the screen. When clicked, this status bar leads the user to their account menu through which they can sign out, access their message inbox, or view the help screen. The status bar also displays the point balance available to the user; as points are required for core actions, it is important that this information is very visible, as specified by functional requirement 5.2.1: Account balance.
 
-The action buttons relating to game play are grouped at the bottom of the screen, where it is most ergonomic for the user to access them. Each button is clearly distinct and, where appropriate, contains easily discernible extra information - such as the place cache and cache action buttons being greyed out when unavailable (see fig 2.2) and the recent news having a notification symbol to indicate unread news (fig 2.16). 
+The action buttons relating to game play are grouped at the bottom of the screen, where it is most ergonomic for the user to access them. Each button is clearly distinct and, where appropriate, contains easily discernible extra information - such as the place cache and cache action buttons being greyed out when unavailable (see fig \ref{buttons}) and the recent news having a notification symbol to indicate unread news (fig \ref{news_icons}). 
 
 \begin{wrapfigure}{l}{0.2\textwidth}
 	\vspace{-20pt}
@@ -248,7 +250,7 @@ The action buttons relating to game play are grouped at the bottom of the screen
 	\vspace{-20pt}
 \end{wrapfigure}
 
-The main area of the home screen is the map, chosen as a very user friendly interface for the game and fulfilling several requirements including 5.3.1: Display location and 5.2.3: Nearby caches. Caches are clearly distinguished with different coloured pins to differentiate between admin, allied and enemy caches, and allied caches further distinguished by the presence of a dot, as per requirement 5.2.3: Cache ownership and 5.2.26: Distinguishing cache owners; the colours are chosen to account for those with colour blindness (see fig 2.17). The map itself is controlled with the touch screen, using swipe or drag to navigate and pinch to zoom (zoom required by 5.3.3: Map zooming). To reduce data usage as per non-functional requirement 5.2.30: Data usage, adjusting the map view by zoom or location will not load the caches for that area of the map. This will be done by the green refresh arrow on the right of the status bar which also updates point balance, a route to a cache if active, and recent news feed as required.
+The main area of the home screen is the map, chosen as a very user friendly interface for the game and fulfilling several requirements including 5.3.1: Display location and 5.2.3: Nearby caches. Caches are clearly distinguished with different coloured pins to differentiate between admin, allied and enemy caches, and allied caches further distinguished by the presence of a dot, as per requirement 5.2.3: Cache ownership and 5.2.26: Distinguishing cache owners; the colours are chosen to account for those with colour blindness (see fig \ref{grey_pins}). The map itself is controlled with the touch screen, using swipe or drag to navigate and pinch to zoom (zoom required by 5.3.3: Map zooming). To reduce data usage as per non-functional requirement 5.2.30: Data usage, adjusting the map view by zoom or location will not load the caches for that area of the map. This will be done by the green refresh arrow on the right of the status bar which also updates point balance, a route to a cache if active, and recent news feed as required.
 
 \subsubsection{Unactivated main screen}
 
@@ -262,13 +264,13 @@ The main area of the home screen is the map, chosen as a very user friendly inte
 	\vspace{-20pt}
 \end{wrapfigure}
 
-The main screen for the unactived user is identical in appearance to the main screen for an activated user (see fig 2.15), with the only difference being in the bottom bar. On the standard main screen this contains several buttons linking to features or actions which are not available to unactivated users - as specified by functional requirement 5.1.2: Account Activation. Here, this bar is replaced by a banner reminding users to activate their account; when clicked, this banner leads to the resend activation email page.
+The main screen for the unactived user is identical in appearance to the main screen for an activated user (see fig \ref{main_screen}), with the only difference being in the bottom bar. On the standard main screen this contains several buttons linking to features or actions which are not available to unactivated users - as specified by functional requirement 5.1.2: Account Activation. Here, this bar is replaced by a banner reminding users to activate their account; when clicked, this banner leads to the resend activation email page.
 
 All other features have the same functionality as the main screen. The only difference is in navigating the map; on the unactivated account, each request to load a new view of the map also loads every cache within that view. This is because the unactivated user is not able to refresh the screen, as this button is located on the action bar which is not available here.
 
 \subsubsection{User text input}
 
-Many screens make use of text the user has input, most notably those involved with signing in or creating a new account (see fig 2.7) as well as sending messages to users (fig 2.19) or reports to administrators. Text input is handled through the on screen keyboard that is standard on an android phone (see fig 2.20). 
+Many screens make use of text the user has input, most notably those involved with signing in or creating a new account (see fig \ref{sign_up_wireframe}) as well as sending messages to users (fig \ref{sending_messages}) or reports to administrators. Text input is handled through the on screen keyboard that is standard on an android phone (see fig \ref{onscreen_keyboard}). 
 \vspace{0pt}
 \begin{figure}[h!]
 \centering
@@ -304,7 +306,7 @@ Many screens make use of text the user has input, most notably those involved wi
 \vspace{-0pt}
 \end{figure}
 
-Should the user input invalid information, such as incorrect login details, then an error message will be displayed (see fig 2.21). The screen behind this message will be dimmed to ensure the message is clearly visible. A similar design will be used for all message alerts to the user, such as error messages, status messages (for example `connecting to server') or confirmation messages, which may have two options for the user to choose between (see fig 2.22)
+Should the user input invalid information, such as incorrect login details, then an error message will be displayed (see fig \ref{message_box}). The screen behind this message will be dimmed to ensure the message is clearly visible. A similar design will be used for all message alerts to the user, such as error messages, status messages (for example `connecting to server') or confirmation messages, which may have two options for the user to choose between (see fig \ref{message_box_two_options}).
 
 \begin{wrapfigure}{r}{0.25\textwidth}
 	\vspace{-20pt}
@@ -351,6 +353,7 @@ The use of images when viewing a cache provides not only aesthetic appeal, but a
 		\begin{minipage}{0.83\textwidth}
 		\includegraphics[width=\textwidth]{images/news_mockup}
 	\caption{A page of items in the recent news.}
+	\label{recent_news}
 		\end{minipage}
 		\end{center}
 	\end{minipage}
@@ -362,7 +365,7 @@ The use of images when viewing a cache provides not only aesthetic appeal, but a
 
 Lists are used for displaying news items and messages in the inbox. Each screen displays several items on a single screen with forward and back buttons at the bottom of the screen to view the next page of items. This helps to limit data usage and loading times for the user whilst also providing an easy to navigate, well ordered system of displaying the items.
 
-The use of icons to distinguish between types of items - battle reports and news icons, for example - makes it easier to take the list as a whole in without difficulty, and fading the icons of items which are not new helps the user find the important information with greater ease (as shown in the bottom 3 icons of fig 2.25).
+The use of icons to distinguish between types of items - battle reports and news icons, for example - makes it easier to take the list as a whole in without difficulty, and fading the icons of items which are not new helps the user find the important information with greater ease (as shown in the bottom 3 icons of fig \ref{recent_news}).
 
 \subsubsection{Action screens}
 
@@ -400,7 +403,7 @@ The use of icons to distinguish between types of items - battle reports and news
 \vspace{-0pt}
 \end{figure}
 
- Screens involving direct interaction with caches, such as attacking, managing (withdrawing or depositing soldiers) or placing caches are of a similar layout to provide consistency throughout the game. The screens are clearly differentiated by the use of different images - such as a charging soldier on the attack screen versus a sneaking soldier on the scouting screen (see figs 2.26 and 2.27) as well as by the action title being clearly displayed. The name of the cache involved is also clearly displayed on the screen. Any time that user input is required in these screens it is done in such a way as to restrict the values of possible user input to those which are known to be valid, such as using a slider to change the number of soldiers committed to an action or choosing between a choice of names when creating a cache (see fig 2.28). This is to make the process of game play as quick and error free as possible.
+ Screens involving direct interaction with caches, such as attacking, managing (withdrawing or depositing soldiers) or placing caches are of a similar layout to provide consistency throughout the game. The screens are clearly differentiated by the use of different images - such as a charging soldier on the attack screen versus a sneaking soldier on the scouting screen (see figs \ref{attack_cache} and \ref{scouting_cache}) as well as by the action title being clearly displayed. The name of the cache involved is also clearly displayed on the screen. Any time that user input is required in these screens it is done in such a way as to restrict the values of possible user input to those which are known to be valid, such as using a slider to change the number of soldiers committed to an action or choosing between a choice of names when creating a cache (see fig \ref{placing_cache}). This is to make the process of game play as quick and error free as possible.
 
 \subsubsection{Reporting results}
 
@@ -434,6 +437,7 @@ A similar report screen is also accessible from the news feed for the report of 
 		\begin{minipage}{0.83\textwidth}
 		\includegraphics[width=\textwidth]{images/error_mockup}
 	\caption{An error caused by lack of internet connection.}
+	\label{no_internet}
 		\end{minipage}
 		\end{center}
 	\end{minipage}
@@ -446,7 +450,7 @@ A similar report screen is also accessible from the news feed for the report of 
 
 The final type of screen is a static screen. This is one not designed for much user interaction; the full screen is comprised of a single image or static text, such as the Fortitude logo on the splash screen or the help screens (fig 2.1). The splash screen itself has no buttons for the user to progress, as the app will automatically move on once it has loaded. Other static screens, such as the help screens, have a button to move on from this screen.
 
-Static screens are used for errors which cause the app itself to be unplayable - the most common of which would be the user not having internet connection available (see fig 2.31) - and the user will be unable to move from this screen until the error has resolved. A static screen is also used for when a user comes across a special placement cache, with which they cannot interact but must either accept or reject the prize.
+Static screens are used for errors which cause the app itself to be unplayable - the most common of which would be the user not having internet connection available (see fig \ref{no_internet}) - and the user will be unable to move from this screen until the error has resolved. A static screen is also used for when a user comes across a special placement cache, with which they cannot interact but must either accept or reject the prize.
 
 With the exception of the help screens, static screens cannot be called by the user; they are initiated by the server and used to send a message to the user that cannot be ignored or minimised until normal game play can resume.
 
@@ -454,13 +458,13 @@ With the exception of the help screens, static screens cannot be called by the u
 
 \subsubsection{Site Layout}
 
-The visual design of the website was chosen to reflect the dramatic battle-driven nature of the game of Fortitude. It clearly echoes the app in its sombre colour scheme of black, white and greys, and the use of the two flags image used as Fortitude's logo (see fig 2.4). The choice of a more serious design both in the website and the app is to reflect the strategic and `epic' style of game that Fortitude is, appealing to players of all ages.
+The visual design of the website was chosen to reflect the dramatic battle-driven nature of the game of Fortitude. It clearly echoes the app in its sombre colour scheme of black, white and greys, and the use of the two flags image used as Fortitude's logo (see fig \ref{website_header_background}). The choice of a more serious design both in the website and the app is to reflect the strategic and `epic' style of game that Fortitude is, appealing to players of all ages.
 
 \begin{wrapfigure}{l}{0.6\textwidth}
 	\vspace{-30pt}
 	\begin{center}
 	\includegraphics[width=0.6\textwidth]{images/website_wireframe}
-	\caption{Wireframe of the site layout with space left for page content. The image used in the header is shown previously in figure ~\ref{fig:website_header} on page~\pageref{fig:website_header}.}
+	\caption{Wireframe of the site layout with space left for page content. The image used in the header is shown previously in figure ~\ref{website_header_background} on page~\pageref{website_header_background}.}
 	\label{website_wireframe}
 	\end{center}
 	\vspace{-20pt}
@@ -472,7 +476,7 @@ The use of drop down sub menus is important to increase ease of navigation, enab
 
 \subsubsection{Site Content}
 
-The content of the website will in many cases mimic that of the app, though in greater depth or with greater functionality - for example, the user can view caches on a map as they can through the phone, but can also apply a filter to display only their own or only enemy caches, as per requirement 5.4.7: Overview Map (see fig 2.33). In addition, some functionality is only available through the website - such as the ability to search for a user or cache by name, or the ability to view an activity log of recent activity associated with that account, specified in requirement 5.3.6: Activity Recording. Certain content, such as the home screen and site news, is visible to all whether logged in or not so as to give potential users a feel for the game and encourage them to sign up and participate. Other areas will redirect the user to the Login page which consists of two modules, one to log in and one to sign up. These modules will also be visible on the side bar at all times unless the user is logged in, in which case the side bar will display key information.
+The content of the website will in many cases mimic that of the app, though in greater depth or with greater functionality - for example, the user can view caches on a map as they can through the phone, but can also apply a filter to display only their own or only enemy caches, as per requirement 5.4.7: Overview Map (see fig \ref{map_wireframe}). In addition, some functionality is only available through the website - such as the ability to search for a user or cache by name, or the ability to view an activity log of recent activity associated with that account, specified in requirement 5.3.6: Activity Recording. Certain content, such as the home screen and site news, is visible to all whether logged in or not so as to give potential users a feel for the game and encourage them to sign up and participate. Other areas will redirect the user to the Login page which consists of two modules, one to log in and one to sign up. These modules will also be visible on the side bar at all times unless the user is logged in, in which case the side bar will display key information.
 
 \subsubsection{The Map}
 
@@ -504,11 +508,11 @@ Different types of caches are distinguished as on the app by colour and the pres
 
 As mentioned previously in the Design Methodology (2.1.2), users will in future be able to personalise sections of the website including the sidebar to display the modules most appropriate to them. Until such a point, the sidebar will display to a logged in user a search bar, an account summary, a list of the user's five most active caches - determined by the cache with the greatest frequency of events in its history - and a list of the user's five most recent events. If a user who is not logged in views the site, the sidebar will contain the search module as well as modules to log in or sign up.
 
-The title `Elite Warlord' in fig 2.34 Corresponds to the user's level, determined by the number of caches they own. The avatar and user title serve little purpose as far as game play is concerned, but contribute towards personalising a user's account and, in the levels, giving a tangible goal to aim for in the game.
+The title `Elite Warlord' in fig \ref{sidebar} Corresponds to the user's level, determined by the number of caches they own. The avatar and user title serve little purpose as far as game play is concerned, but contribute towards personalising a user's account and, in the levels, giving a tangible goal to aim for in the game.
 
 \subsubsection{Administrator pages}
 
-The administrator features of the website are accessible through the navigation links at the top of the screen, which are only visible to users logged in as administrators. These are highlighted in green, the colour making them stand out and separate from the rest of the website. The tasks that can be completed from each page are shown below in fig 2.36. 
+The administrator features of the website are accessible through the navigation links at the top of the screen, which are only visible to users logged in as administrators. These are highlighted in green, the colour making them stand out and separate from the rest of the website. The tasks that can be completed from each page are shown below in fig \ref{admin_page_tasks}. 
 \vspace{55pt}
 \begin{figure}[ht]
 	\begin{center}
@@ -543,7 +547,7 @@ The administrator features of the website are accessible through the navigation 
 \end{figure}
 
 
-Administrator pages can be roughly grouped into two types; those that involve viewing a database, and those that involve creating data such as a cache, special placement or announcement. Database style pages are laid out as shown in fig 2.37 (the header and sidebar sections are not shown, but are the same as the rest of the site). Filtering the database and commands such as creating new caches or, on the user request page, viewing past requests are linked from the top of the page for easy access, and the database is grouped by a tab system into the types of database. This avoids having redundant fields in an entry - such as the `owner' field for an outlaw camp entry. The administrator cannot ever see the whole database on one page; they are originally shown only the filter section and must access the database by running a query from here. Should the query be too large, the administrator will be requested to narrow down the filter.
+Administrator pages can be roughly grouped into two types; those that involve viewing a database, and those that involve creating data such as a cache, special placement or announcement. Database style pages are laid out as shown in fig \ref{caches_wireframe} (the header and sidebar sections are not shown, but are the same as the rest of the site). Filtering the database and commands such as creating new caches or, on the user request page, viewing past requests are linked from the top of the page for easy access, and the database is grouped by a tab system into the types of database. This avoids having redundant fields in an entry - such as the `owner' field for an outlaw camp entry. The administrator cannot ever see the whole database on one page; they are originally shown only the filter section and must access the database by running a query from here. Should the query be too large, the administrator will be requested to narrow down the filter.
 
 \begin{figure}[h!]
 	\begin{center}
