@@ -26,11 +26,11 @@ The design of a good user interface is key to a successful system, playing a vit
 	\vspace{-20pt}
 \end{wrapfigure}
 
-Our design is easy to use for users of various levels of familiarity with the system. The domain analysis showed us the significance of intuitiveness and easy accessibility (23 Cats, 2012:5-7); therefore we have designed a clear interface with a help screen (see fig 2.1). Bell (1987) says a well designed user interface reduces errors so we have tested many features of the app on potential users during development. In particular, it had been decided to disable the android back button to give the implementers greater control over which screens the user could access at any point in time. This proved difficult for users to adapt to, so instead the back button was incorporated into the application.
+Our design is easy to use for users of various levels of familiarity with the system. The domain analysis showed us the significance of intuitiveness and easy accessibility (23 Cats, 2012:5-7); therefore we have designed a clear interface with a help screen (see fig \ref{help_mockup}). Bell (1987) says a well designed user interface reduces errors so we have tested many features of the app on potential users during development. In particular, it had been decided to disable the android back button to give the implementers greater control over which screens the user could access at any point in time. This proved difficult for users to adapt to, so instead the back button was incorporated into the application.
 
-To further ease of use, buttons will be greyed out when their action is not available and will perform no function. For example when a user is too close to an existing cache the `place cache' button will be greyed out (see fig 2.2).
+To further ease of use, buttons will be greyed out when their action is not available and will perform no function. For example when a user is too close to an existing cache the `place cache' button will be greyed out (see fig \ref{buttons}).
 
-The application's screens satisfy requirement 5.3.7: Interface Style Uniformity by their colour scheme and placement of buttons and headers. The colour scheme is silver or white on black, as this is easily read, even by people who are colour blind. The app provides a fast response to user input by using separate images for on-press actions ensuring the system has received the user's request (see fig 2.3), which satisfies requirement 5.3.9: Interface Feedback Delay.
+The application's screens satisfy requirement 5.3.7: Interface Style Uniformity by their colour scheme and placement of buttons and headers. The colour scheme is silver or white on black, as this is easily read, even by people who are colour blind. The app provides a fast response to user input by using separate images for on-press actions ensuring the system has received the user's request (see fig \ref{website_header_background}), which satisfies requirement 5.3.9: Interface Feedback Delay.
 
 \begin{figure}[ht]
 	\vspace{-10pt}
@@ -77,9 +77,9 @@ The website design matches the application design by using the same colour schem
 	\vspace{-50pt}
 \end{wrapfigure}
 
-Commonly accessed areas of the website, such as the sidebar and the homepage, are organised into modules (see fig 2.5), making information quickly and easily identifiable. It also provides an excellent template for adaption; though out of scope for this project, users could in future personalise the website by selecting which modules to display.
+Commonly accessed areas of the website, such as the sidebar and the homepage, are organised into modules (see fig \ref{fig:sidebar_modules}), making information quickly and easily identifiable. It also provides an excellent template for adaption; though out of scope for this project, users could in future personalise the website by selecting which modules to display.
 
-The website provides feedback, by validating data (see fig 2.6) or by providing loading messages, so the user can interact efficiently and with fewer errors. For more critical data entry, such as an administrator creating a new cache, the user is presented with a summary page of the information they have entered and must confirm it is correct before the new data is stored.
+The website provides feedback, by validating data (see \ref{fig:sign_up_wireframe}) or by providing loading messages, so the user can interact efficiently and with fewer errors. For more critical data entry, such as an administrator creating a new cache, the user is presented with a summary page of the information they have entered and must confirm it is correct before the new data is stored.
 
 The website also provides feedback if an error occurs - the most common anticipated is the user having javascript disabled. This will cause every javascript dependent element of the site to be replaced with a placeholder of the correct shape to avoid disturbing the website layout which informs the user that javascript is required.
 
