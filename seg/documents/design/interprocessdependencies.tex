@@ -172,7 +172,7 @@ The PlaceCacheRequest class performs checks much like the ScoutRequest class, it
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/activity/server_attackCache}
+    \includegraphics[width=0.7\textwidth]{images/activity/server_attackCache}
 \end{figure}
 
 As you can see the checks for attacking caches are done in the AttackCacheRequest class, and the response is created in the Cache class. The sum used for weight is based off research (ASK EMMA FIGURES). The BattleReportResponse is initially set with the cache, AttackerID, DefenderID, Attackers made from a new BattleReportResponse.UnitReport with Initial and Survivors set to units, and Defenders made from a new BattleReportResponse.UnitReport with Initial and Survivors set to cache Balance. The fatalaties are put in the report with report.Attackers.Fatalities = report.Attackers.Initial – report.Attackers.Survivors and a similar method for Defenders. Report.IsVictory is true if there are attacking survivors, in this case report.Attackers.Deserters = 0 while the defending deserters are a small random proportion of the defending fatalities, the cache Balance becomes the surviving attackers plus the defending deserters and the caches AccountID becomes the attackers AccountID. However if IsVictory is false, there are 0 defending deserters, a small proportion of the attacking fatalities are deserters, the cache balance is the surviving defenders and the attacking deserters are added to the defenders balance. The response is added to Activity in the affected instances of Account and updated in the database. This satisfies requirement 5.2.10 cache attacking, 5.2.11 successful attack, 5.2.12 successful defence and 5.2.13 battle breakdown. Attacking non-player caches is very similar, the same request is used, the only difference is that the user's Account NonPlayerDictionary will be updated with the cacheID and time, the `point reward' will be shown as the deserters, which there will be more of to make up for not getting the cache, and the cache balance won't change in the database. This satisfies requirement 5.2.18.
@@ -183,18 +183,13 @@ Messages and caches will be able to be reported through the MessageReportRequest
 
 In many requests the DatabaseManager and Account classes are used in conjunction with the specific request class, with this requirement 5.2.2. Account Transactions and 5.3.6 Activity Recording can be fulfilled. There will also be a Request class for getting activities that uses the users Account ID or username, how many activities they wish to see, which set of they want, and what type. It performs checks (including removing messages from blocked user's from the response) and uses modular arithmetic to select the correct set of activities of the right type and return them in ActivityResponse. Requirement 5.2.5 cache transactions is fulfilled in the same way as 5.2.2 but with Cache class, the request used to withdraw and deposit soldiers will also set the cache owner to null and update it in the database if all the soldiers are withdrawn. This will satisfy requirement 5.2.6.
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/activity/IndexHTML}
-\end{figure}
+\begin{wrapfigure}{r}{0.58\textwidth}
+    \includegraphics[width=0.58\textwidth]{images/activity/IndexHTML}
+\end{wrapfigure}
 
 The design of the website will now be discussed. Although not all pages are mentioned, the pages not mentioned will feature forms, checks and updates much like the pages which are examined in detail. This will satisfy requirement 5.4.3.
 
 The index page is made as followed, firstly the header is used to find information needed. It includes function.html which provides a list of methods used for checking such as isAdmin() and pluralify(). If the Account of the user is verified then the Player and Cache classes are used to find the player and their caches. If the account has the rank admin or higher the admin panel is displayed along with the header everyone can see. If the session isn't null (ie isSignedIn()) then the side bar is personalized, and if the player and caches aren't null it is personalized further with the number of caches and the players balance. If the account is verified and there is a session then caches and news plus links to further information, caches and news are displayed in the sidebar. This sidebar will satisfy requirement 5.4.5 and 5.3.6. The links to caches will display pages that satisfy requirement 5.4.6.
-
-When a user logins in with the website login.html is used. It's head uses the username and password in the form to attempt to login, which will output a session. If the session outputted by Account is null a new session is made using coOKies. The title is set and if necessary JavaScript is loaded for hashing passwords. The top bar is added, the subtitle set to Login. If there's an error then it is explained and a link is displayed to try again. If the session is null a form is produced for the user to enter their username and password, which will be hashed. A link is also provided in the case that the user forgets their password. If the session is not null then text will be displaying saying successfully logged in. This will satisfy requirement 5.4.4.
-
-When a user clicks a link in an email to activate their account activate.html is used. In the head, there will be AttemptActivate(get["email"], get["code"] ) and the title will be set to Fortitude Server – Account Activation. In the body, a sub-title will be set as Account Activation. If AttemptActivate outputted an error that wasn't null then the user is explained the error, if not the user is told their account has been activated and they can now log on. A link will be provided to the Home page at the bottom of the body. This will satisfy requirement 5.1.2, account activation.
 
 \begin{landscape}
 \begin{figure}
@@ -203,13 +198,17 @@ When a user clicks a link in an email to activate their account activate.html is
 \end{figure}
 \end{landscape}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{images/activity/admin-placecache}
-\end{figure}
+When a user logins in with the website login.html is used. It's head uses the username and password in the form to attempt to login, which will output a session. If the session outputted by Account is null a new session is made using coOKies. The title is set and if necessary JavaScript is loaded for hashing passwords. The top bar is added, the subtitle set to Login. If there's an error then it is explained and a link is displayed to try again. If the session is null a form is produced for the user to enter their username and password, which will be hashed. A link is also provided in the case that the user forgets their password. If the session is not null then text will be displaying saying successfully logged in. This will satisfy requirement 5.4.4.
+
+When a user clicks a link in an email to activate their account activate.html is used. In the head, there will be AttemptActivate(get["email"], get["code"] ) and the title will be set to Fortitude Server – Account Activation. In the body, a sub-title will be set as Account Activation. If AttemptActivate outputted an error that wasn't null then the user is explained the error, if not the user is told their account has been activated and they can now log on. A link will be provided to the Home page at the bottom of the body. This will satisfy requirement 5.1.2, account activation.
 
 Admins can place a cache with placecache.html. In the head this checks whether this session is null and the rank of the session. If the session is null or the rank less than administrator the user is redirected to the error page. Else the account corresponding the username submitted is found and checked, if anything fails an error message is set. Else a new Cache is created and updated in the database. The title is set to Place Cache and a form is created to input username, latitude, longitude and units. If success is true then text is displayed saying where the cache was placed else if there was an error, the message is displayed. This satisfies requirement 5.2.16. placenon-playercache.html is very similar except the form will only include inputs for position and units. The cache created and added to the Server will have the AccountID as the administrator's AccountID. placespecialEvent.html is also similar, in the head it will be checked if the supplied MAC-address is valid and the number of user claiming the reward and the reward is greater than 0.
 
 These will be in the form in the body. Then the special event cache will be placed in the database. This satisfies requirement 5.2.20.
 
 Administrators can delete caches using deletecache.html, this will redirect the user to the error page if their session is null or rank not high enough. It will use the cacheid in the form to get the cache from the database, which will be checked to exist then removed from the database. If it doesn't exist then the error String will reflect this. Text is set to Delete Cache and a form is created for the user to submit Cache ID. If success is true the user is told which cache was successfully removed by name and cacheid. However if there was an error text is set to this error. This satisfies requirement 5.2.23. deleteAccount.html works in a very similar way, it is an admin only page and when the account is removed from the database, all the caches with the accountID are found and removed from the database too. This satisfies requirement 5.1.7. Users can also delete accounts through the website then the email they will receive from an administrator. Once the link in the email is clicked on the users' caches as well as account will be removed from the database.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/activity/admin-placecache}
+\end{figure}
