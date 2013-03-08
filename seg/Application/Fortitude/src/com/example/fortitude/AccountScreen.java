@@ -197,10 +197,10 @@ public abstract class AccountScreen extends Window
     	tenthRowMiddleSpacer.setLayoutParams(tenthRowMiddleSpacerLayout);
     	firstButtonRow.addView(tenthRowMiddleSpacer, tenthRowMiddleSpacerLayout);
     	
-    	LayoutParams settingsButtonLayout = new LayoutParams(row1, col3); //Settings Button
-    	settingsButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	settingsButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton settingsButton = (new FortitudeButton(R.drawable.settings, R.drawable.settings_pressed) {
+    	LayoutParams helpButtonLayout = new LayoutParams(row1, col3); //help Button
+    	helpButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+    	helpButtonLayout.height = super.getWindowHeight() / 10;
+    	FortitudeButton helpButton = (new FortitudeButton(R.drawable.help, R.drawable.help_pressed) {
     		public void preClickActions()
     		{
     			
@@ -208,11 +208,11 @@ public abstract class AccountScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-    			new HelpScreens(0);
+    			new HelpScreens(0, 0);
     		}
     	});
-    	settingsButton.setLayoutParams(settingsButtonLayout);
-    	firstButtonRow.addView(settingsButton, settingsButtonLayout);
+    	helpButton.setLayoutParams(helpButtonLayout);
+    	firstButtonRow.addView(helpButton, helpButtonLayout);
     			
     	LayoutParams firstButtonRowLayout = new LayoutParams(row10, col2);
     	mainArea.addView(firstButtonRow, firstButtonRowLayout);

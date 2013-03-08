@@ -170,6 +170,10 @@ public class GUI
 			{
 				HelpScreens.getMe().killMe();
 			}
+			if(AutoSignInErrorScreen.getMe() != null)
+			{
+				AutoSignInErrorScreen.getMe().killMe();
+			}
 			GUI.disableAllTheGUIElements(Fortitude.getFortitude().getWindow().getDecorView());
 		}
 		catch(Exception e)

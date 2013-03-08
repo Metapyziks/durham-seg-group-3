@@ -46,6 +46,7 @@ public class IconUpdater
 									double latitude = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
 									double longitude = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
 									boolean onLocation = false;
+									boolean canPlaceMarker = false;
 									for(Marker marker : TheMap.getMe().getMarkers())
 									{
 										double latlat;
@@ -70,6 +71,10 @@ public class IconUpdater
 										{
 											onLocation = true;
 										}
+										if((lonlon < 0.00300) && (latlat < 0.00300))
+										{
+											canPlaceMarker = true;
+										}
 									}
 									if(onLocation)
 									{
@@ -92,6 +97,30 @@ public class IconUpdater
 												MainScreen.setCastleClickable(false);
 											}
 										}
+									}
+									if(canPlaceMarker)
+									{
+										if(MainScreen.getMe() != null)
+										{
+											if(MainScreen.getMe().getFlagIcon() != null)
+											{
+												MainScreen.getMe().getFlagIcon().setImageResource(R.drawable.flag);
+												MainScreen.setFlagClickable(true);
+												System.out.println("cat");
+											}
+										}
+									}
+									else
+									{
+										if(MainScreen.getMe() != null)
+										{
+											if(MainScreen.getMe().getFlagIcon() != null)
+											{
+												MainScreen.getMe().getFlagIcon().setImageResource(R.drawable.flag_grey);
+												MainScreen.setFlagClickable(true);
+												System.out.println("dog");
+											}
+										}									
 									}
 								}
 							}

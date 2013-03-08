@@ -85,6 +85,11 @@ public class TheMap extends GridLayout
 		googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 		setOnClickListenerOnGoogleMap();
+		
+		if(!CurrentUser.getMe().isVerified())
+		{
+			setOnMapMoveListener();
+		}
 
 		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
 			public void run()                       //location asap
@@ -117,6 +122,16 @@ public class TheMap extends GridLayout
 		thread.start();
 	}
 
+	private void setOnMapMoveListener()
+	{
+		googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			public void onCameraChange(CameraPosition arg0) 
+			{
+				updateCachePositions();
+			}
+		});
+	}
+	
 	public void updateCachePositions()
 	{
 		Fortitude.getFortitude().runOnUiThread(new Runnable() {
