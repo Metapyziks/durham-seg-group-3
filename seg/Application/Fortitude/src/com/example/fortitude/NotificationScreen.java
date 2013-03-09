@@ -30,6 +30,7 @@ public class NotificationScreen extends Window
 	private Spec col6 = GridLayout.spec(5);
 
 	private static int pageId;
+	public static int rememberSize;
 
 	private static NotificationScreen me;
 
@@ -43,6 +44,8 @@ public class NotificationScreen extends Window
 
 	private GridLayout createWindowPane()
 	{
+		boolean needRightArrow = true;
+
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setRowCount(5);
 		mainArea.setColumnCount(1);
@@ -56,17 +59,21 @@ public class NotificationScreen extends Window
 		GridLayout notificationGrid = new GridLayout(mainArea.getContext()); //notifications
 		notificationGrid.setColumnCount(1);
 		notificationGrid.setRowCount(8);
-		
+
 		for(int i = (pageId * 8); i < ((pageId + 1) * 8); i++)
 		{
 			LayoutParams panelLayout = new LayoutParams(GridLayout.spec(i - (pageId * 8)), col1);
 			panelLayout.width = super.getWindowWidth();
 			panelLayout.height = super.getWindowHeight() / 12;
-			NotificationPanel n = new NotificationPanel(notificationGrid.getContext(), NotificationManager.getMessageStub(i), super.getWindowWidth(), super.getWindowHeight());
+			NotificationPanel n = new NotificationPanel(notificationGrid.getContext(), NotificationManager.getMessageStub(i), super.getWindowWidth(), super.getWindowHeight());	
+			if(NotificationManager.getMessageStub(i) == null)
+			{
+				needRightArrow = false;
+			}
 			n.setLayoutParams(panelLayout);
 			notificationGrid.addView(n, panelLayout);
 		}
-		
+
 		LayoutParams notificationGridLayout = new LayoutParams(row2, col1);
 		mainArea.addView(notificationGrid, notificationGridLayout);
 
@@ -104,6 +111,7 @@ public class NotificationScreen extends Window
 					new NotificationScreen(pageId);
 				}
 			});
+			leftButton.setLayoutParams(leftButtonLayout);
 			buttonRow.addView(leftButton,leftButtonLayout);
 		}
 		else
@@ -135,7 +143,7 @@ public class NotificationScreen extends Window
 				new MainScreen();
 			}
 		});
-
+		cancelButton.setLayoutParams(cancelButtonLayout);
 		buttonRow.addView(cancelButton, cancelButtonLayout);
 
 		LayoutParams fifthColSpaceLayout = new LayoutParams(row1,col5);
@@ -149,19 +157,93 @@ public class NotificationScreen extends Window
 		rightButtonLayout.height = (int)(super.getWindowHeight()*0.1);
 		rightButtonLayout.width = (int)(super.getWindowWidth()*0.2);
 
-		FortitudeButton rightButton = (new FortitudeButton(R.drawable.right, R.drawable.right_pressed) {
-			public void preClickActions()
-			{
+		if(needRightArrow)
+		{
+			FortitudeButton rightButton = (new FortitudeButton(R.drawable.right, R.drawable.right_pressed) {
+				public void preClickActions()
+				{
 
-			}
-			public void whenClicked()
-			{
-				pageId++;
-				NotificationScreen.getMe().killMe();
-				new NotificationScreen(pageId);
-			}
-		});
-		buttonRow.addView(rightButton, rightButtonLayout);
+				}
+				public void whenClicked()
+				{
+					if(NotificationManager.getMessageStub((pageId + 1) * 8) == null)
+					{
+						//there are no more messages left in the manager, check for more...
+						if(NotificationManager.getMessageStub((pageId * 8) + 7) == null)
+						{
+							MessageBox.newMsgBox("Error Fetching News", true);
+							return;
+						}
+						ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Fetching Older News", true));
+						rememberSize = NotificationManager.getSize();
+						ServerRequests.getNewsStubs(NotificationManager.getMessageStub((pageId * 8) + 7).getTimeStamp(), 16);
+						Thread thread = new Thread(new Runnable() {
+							public void run()
+							{
+								while(!ServerRequests.getStaticGetNewsComplete())
+								{
+									//WAIT!
+									try
+									{
+										Thread.sleep(100);
+									}
+									catch(Exception e)
+									{
+										//oh well
+									}
+								}
+								if(ServerRequests.getStaticGetNewsSuccess())
+								{
+									if(NotificationManager.getSize() > rememberSize)
+									{
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+												    ServerRequests.getTheMessageBox().killMe();
+												}
+												pageId++;
+												NotificationScreen.getMe().killMe();
+												new NotificationScreen(pageId);
+											}
+										});
+									}
+									else if(NotificationManager.getSize() == rememberSize)
+									{
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+													MessageBox.newMsgBox("No Older News Found", true);
+												}
+											}
+										});
+									}
+								}
+							}
+						});
+						thread.start();
+					}
+					else
+					{
+						pageId++;
+						NotificationScreen.getMe().killMe();
+						new NotificationScreen(pageId);
+					}
+				}
+			});
+			rightButton.setLayoutParams(rightButtonLayout);
+			buttonRow.addView(rightButton, rightButtonLayout);
+		}
+		else
+		{
+			Space rightButtonSpace = new Space(buttonRow.getContext());
+			rightButtonSpace.setLayoutParams(rightButtonLayout);
+			buttonRow.addView(rightButtonSpace, rightButtonLayout);
+		}
 
 		LayoutParams buttonRowLayout = new LayoutParams(row4, col1);
 		mainArea.addView(buttonRow, buttonRowLayout);

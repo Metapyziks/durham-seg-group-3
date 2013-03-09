@@ -372,7 +372,7 @@ public class MainScreen extends Window
 			refreshIcon.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					ServerRequests.refreshData();
+					ServerRequests.refreshData(true);
 				}
 			});
 			bottomBarRefreshIconGrid.addView(refreshIcon, refreshIconLayout);
@@ -472,6 +472,36 @@ public class MainScreen extends Window
 					{
 						TheMap.getMe().zoomToThisPosition(savedLat, savedLon);
 						TheMap.getMe().updateCachePositions();
+						Thread thread = new Thread(new Runnable() {
+							public void run()
+							{
+								while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+								{
+								    //wait
+									try
+									{
+										Thread.sleep(100);
+									}
+									catch(Exception e)
+									{
+										
+									}
+								}
+								if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+								{
+									Fortitude.getFortitude().runOnUiThread(new Runnable() {
+										public void run()
+										{
+											if(ServerRequests.getTheMessageBox() != null)
+											{
+											    ServerRequests.getTheMessageBox().killMe();
+											}
+										}
+									});
+								}
+							}
+						});
+						thread.start();
 					}
 				}
 				firstTimeDone = true;
@@ -500,7 +530,7 @@ public class MainScreen extends Window
 		{                   //and display the relevant user
 			theMarker = -1;
 			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
+			ServerRequests.refreshData(false); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -515,7 +545,7 @@ public class MainScreen extends Window
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
-							MessageBox.newMsgBox("Loading Cache Details", false);
+							ServerRequests.getTheMessageBox().changeMessageToDisplay("Loading Cache Details");
 						}
 					});
 					try

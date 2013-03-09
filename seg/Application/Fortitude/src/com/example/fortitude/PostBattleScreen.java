@@ -213,7 +213,7 @@ public class PostBattleScreen extends Window
     	
     	LayoutParams captivesTextViewLayout = new LayoutParams(row12, col1);
     	captivesTextViewLayout.width = super.getWindowWidth();
-    	captivesTextViewLayout.height = super.getWindowHeight() / 10;
+    	captivesTextViewLayout.height = (int)(super.getWindowHeight() * 0.11);
     	TextView captivesTextView = new TextView(mainArea.getContext());
     	captivesTextView.setTextColor(Color.WHITE);
     	captivesTextView.setTextSize(14);
@@ -230,7 +230,7 @@ public class PostBattleScreen extends Window
     	mainArea.addView(captivesTextView, captivesTextViewLayout);
     	
     	LayoutParams thirteenthRowSpaceLayout = new LayoutParams(row13, col1);
-    	thirteenthRowSpaceLayout.height = super.getWindowHeight() / 20;
+    	thirteenthRowSpaceLayout.height = super.getWindowHeight() / 25;
     	Space thirteenthRowSpace = new Space(mainArea.getContext());
     	thirteenthRowSpace.setLayoutParams(thirteenthRowSpaceLayout);
     	mainArea.addView(thirteenthRowSpace, thirteenthRowSpaceLayout);

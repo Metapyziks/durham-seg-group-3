@@ -19,7 +19,7 @@ public class IconUpdater
 			return me;
 		}
 	}
-	
+
 	private IconUpdater()
 	{
 		shouldIRun = true;
@@ -46,34 +46,20 @@ public class IconUpdater
 									double latitude = TheMap.getMe().getGoogleMap().getMyLocation().getLatitude();
 									double longitude = TheMap.getMe().getGoogleMap().getMyLocation().getLongitude();
 									boolean onLocation = false;
-									boolean canPlaceMarker = false;
+									boolean canPlaceMarker = true;
 									for(Marker marker : TheMap.getMe().getMarkers())
 									{
 										double latlat;
 										double lonlon;
-										if(marker.getPosition().latitude > latitude)
-										{
-											latlat = marker.getPosition().latitude - latitude;
-										}
-										else
-										{
-											latlat = latitude - marker.getPosition().latitude;
-										}
-										if(marker.getPosition().longitude > longitude)
-										{
-											lonlon = marker.getPosition().longitude - longitude;
-										}
-										else
-										{
-											lonlon = longitude - marker.getPosition().longitude;
-										}
+										latlat = Math.abs(marker.getPosition().latitude - latitude);
+										lonlon = Math.abs(marker.getPosition().longitude - longitude);
 										if((lonlon < 0.00028) && (latlat < 0.00028))
 										{
 											onLocation = true;
 										}
 										if((lonlon < 0.00300) && (latlat < 0.00300))
 										{
-											canPlaceMarker = true;
+											canPlaceMarker = false;
 										}
 									}
 									if(onLocation)
@@ -106,7 +92,6 @@ public class IconUpdater
 											{
 												MainScreen.getMe().getFlagIcon().setImageResource(R.drawable.flag);
 												MainScreen.setFlagClickable(true);
-												System.out.println("cat");
 											}
 										}
 									}
@@ -118,9 +103,19 @@ public class IconUpdater
 											{
 												MainScreen.getMe().getFlagIcon().setImageResource(R.drawable.flag_grey);
 												MainScreen.setFlagClickable(true);
-												System.out.println("dog");
 											}
 										}									
+									}
+								}
+								if(MainScreen.getMe() != null)
+								{
+									if(NotificationManager.isUnread())
+									{
+                                        MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail_alert);
+									}
+									else
+									{
+										MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail);
 									}
 								}
 							}

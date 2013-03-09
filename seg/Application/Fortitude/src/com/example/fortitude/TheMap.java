@@ -105,6 +105,36 @@ public class TheMap extends GridLayout
 								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
 								updateCachePositions();
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+										{
+											//wait
+											try
+											{
+												Thread.sleep(100);
+											}
+											catch(Exception e)
+											{
+												//oh well
+											}
+										}
+										if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+												}
+											});
+										}
+									}
+								});
+								thread.start();
 							}
 						}
 					});
@@ -127,7 +157,35 @@ public class TheMap extends GridLayout
 		googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			public void onCameraChange(CameraPosition arg0) 
 			{
-				updateCachePositions();
+				if(!CurrentUser.getMe().isVerified())
+				{
+				    updateCachePositions();
+				    Thread thread = new Thread(new Runnable() {
+				    	public void run()
+				    	{
+				    		while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+				    		{
+				    			//wait
+				    			try
+				    			{
+				    				Thread.sleep(100);
+				    			}
+				    			catch(Exception e)
+				    			{
+				    				//oh well
+				    			}
+				    		}
+				    		if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+				    		{
+				    			if(ServerRequests.getTheMessageBox() != null)
+				    			{
+				    				ServerRequests.getTheMessageBox().killMe();
+				    			}
+				    		}
+				    	}
+				    });
+				    thread.start();
+				}
 			}
 		});
 	}
@@ -181,10 +239,6 @@ public class TheMap extends GridLayout
 								{
 									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
 								}
-							}
-							if(ServerRequests.getTheMessageBox() != null)
-							{
-								ServerRequests.getTheMessageBox().killMe();
 							}
 						}
 					});
@@ -299,7 +353,7 @@ public class TheMap extends GridLayout
 			{
 				setMarkerToBePassed(marker);
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.refreshData();
+				ServerRequests.refreshData(false);
 				Thread thread2 = new Thread(new Runnable() {
 					public void run()
 					{
@@ -310,15 +364,6 @@ public class TheMap extends GridLayout
 						if(!ServerRequests.getRefreshDataSuccess())
 						{
 							return;
-						}
-						if(ServerRequests.getTheMessageBox() == null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-								}
-							});
 						}
 						TheMap.setStaticStillThere(false);
 						TheMap.setStaticStillThereDone(false);

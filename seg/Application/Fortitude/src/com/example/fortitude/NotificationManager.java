@@ -34,7 +34,25 @@ public class NotificationManager
 	
 	public static void addStub(NotificationStub x)
 	{
+		for(int i = 0; i < stubs.size(); i++)
+		{
+			NotificationStub item = stubs.get(i);
+			if(item.getNotificationId() < x.getNotificationId())
+			{
+				stubs.add(i, x);
+				return;
+			}
+			else if(item.getNotificationId() == x.getNotificationId())
+			{
+				return;
+			}
+		}
 		stubs.add(x);
+	}
+	
+	public static int getSize()
+	{
+		return stubs.size();
 	}
 	
 	////////
@@ -47,5 +65,17 @@ public class NotificationManager
 	public static void clearStubs()
 	{
 		stubs.clear();
+	}
+	
+	public static synchronized boolean isUnread()
+	{
+		for(NotificationStub stub : stubs)
+		{
+			if(!stub.getRead())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

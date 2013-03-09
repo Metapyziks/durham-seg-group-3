@@ -208,7 +208,7 @@ public class PlaceCacheScreen extends Window
 										MessageBox.getMe().killMe();
 									}
 									ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-									ServerRequests.refreshData();
+									ServerRequests.refreshData(true);
 									Thread thread = new Thread(new Runnable() {
 										public void run()
 										{

@@ -7,6 +7,7 @@ import java.lang.StringBuilder;
 import java.net.URLEncoder;
 import java.net.ConnectException;
 import json.*;
+
 import java.util.ArrayList;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +59,12 @@ public class ServerRequests
 	private static JSONObject attackCacheResponse;
 	private static boolean staticDepositComplete;
 	private static boolean staticDepositSuccess;
+	private static long staticTimeStamp;
+	private static int staticNumberOfStubs;
+	private static boolean staticGetNewsSuccess;
+	private static boolean staticGetNewsComplete;
+	private static String staticNewsFilter;
+	private static boolean staticDeleteMessagebox;
 
 	////////
 	//
@@ -74,6 +81,51 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static String getStaticNewsFilter()
+	{
+		return staticNewsFilter;
+	}
+
+	public static boolean getStaticGetNewsSuccess()
+	{
+		return staticGetNewsSuccess;
+	}
+
+	public static void setStaticGetNewsSuccess(boolean x)
+	{
+		staticGetNewsSuccess = x;
+	}
+
+	public static boolean getStaticGetNewsComplete()
+	{
+		return staticGetNewsComplete;
+	}
+
+	public static void setStaticGetNewsComplete(boolean x)
+	{
+		staticGetNewsComplete = x;
+	}
+
+	public static long getStaticTimeStamp()
+	{
+		return staticTimeStamp;
+	}
+
+	public static int getStaticNumberOfStubs()
+	{
+		return staticNumberOfStubs;
+	}
+
+	public static void setStaticTimeStamp(long x)
+	{
+		staticTimeStamp = x;
+	}
+
+	public static void setStaticNumberOfStubs(int x)
+	{
+		staticNumberOfStubs = x;
+	}
+
 	public static boolean getStaticDepositComplete()
 	{
 		return staticDepositComplete;
@@ -587,17 +639,6 @@ public class ServerRequests
 															}
 															if(ServerRequests.getGetUserBalanceSuccess())
 															{
-																Fortitude.getFortitude().runOnUiThread(new Runnable() {
-																	public void run()
-																	{
-																		if(ServerRequests.getTheMessageBox() != null)
-																		{
-																			ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
-																		}
-																		//ServerRequests.getTheMessageBox().killMe();
-																		//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
-																	}
-																});
 																new CurrentUser(staticUserInfo.get(0).getAccountId(), staticUserInfo.get(0).getUserName(), staticUserInfo.get(0).getJoinDate(), staticUserInfo.get(0).getRank(), staticSessionId, staticPhash, ServerRequests.staticUserBalance, ServerRequests.getStaticCacheCount(), ServerRequests.getStaticTotalUnits(), staticUserInfo.get(0).getCaches());
 																FileSave fs = new FileSave();
 																fs.CreateFileDialog("username", CurrentUser.getMe().getUserName());
@@ -605,41 +646,81 @@ public class ServerRequests
 																Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																	public void run()
 																	{
-																		try
-																		{
-																			Thread.sleep(1500);
-																		}
-																		catch(Exception e)
-																		{
+																		ServerRequests.getNewsStubs(System.currentTimeMillis(), 16);
+																		Thread thread = new Thread(new Runnable() {
+																			public void run()
+																			{
+																				while(!ServerRequests.getStaticGetNewsComplete())
+																				{
+																					//wait!
+																					ServerRequests.sleepFunction();
+																				}
+																				if(ServerRequests.getStaticGetNewsSuccess())
+																				{
+																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																						public void run()
+																						{
+																							if(ServerRequests.getTheMessageBox() != null)
+																							{
+																								ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+																							}
+																							else if(MessageBox.getMe() != null)
+																							{
+																								MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
+																							}
+																							else
+																							{
+																								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																							}
 
-																		}
-																		if(ServerRequests.getTheMessageBox() != null)
-																		{
-																			ServerRequests.getTheMessageBox().killMe();
-																		}
-																		TheMap.newTheMap(Fortitude.getFortitude());
-																		if(staticInitialLogin)
-																		{
-																			if(MainLoginScreen.getMe() != null)
-																			{
-																				MainLoginScreen.getMe().killMe();
+																							//ServerRequests.getTheMessageBox().killMe();
+																							//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																						}
+																					});
+																					try
+																					{
+																						Thread.sleep(1500);
+																					}
+																					catch(Exception e)
+																					{
+																						//oh well
+																					}
+																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																						public void run()
+																						{
+																							if(ServerRequests.getTheMessageBox() != null)
+																							{
+																								ServerRequests.getTheMessageBox().killMe();
+																							}
+																							TheMap.newTheMap(Fortitude.getFortitude());
+																							if(staticInitialLogin)
+																							{
+																								if(MainLoginScreen.getMe() != null)
+																								{
+																									MainLoginScreen.getMe().killMe();
+																								}
+																								if(AutoSignInErrorScreen.getMe() != null)
+																								{
+																									AutoSignInErrorScreen.getMe().killMe();
+																								}
+																								if(SplashScreen.getMe() != null)
+																								{
+																									SplashScreen.getMe().killMe();
+																								}
+																								new MainScreen();
+																							}
+																							else
+																							{
+																								NewUserScreen.getMe().killMe();
+																								new HelpScreens(0, 0);
+																								MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
+																							}
+																						}
+																					});
+																				}
 																			}
-																			if(AutoSignInErrorScreen.getMe() != null)
-																			{
-																				AutoSignInErrorScreen.getMe().killMe();
-																			}
-																			if(SplashScreen.getMe() != null)
-																			{
-																				SplashScreen.getMe().killMe();
-																			}
-																			new MainScreen();
-																		}
-																		else
-																		{
-																			NewUserScreen.getMe().killMe();
-																			new HelpScreens(0, 1);
-																			MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
-																		}
+																		});
+																		thread.start();
 																	}
 																});
 															}
@@ -655,8 +736,22 @@ public class ServerRequests
 										Fortitude.getFortitude().runOnUiThread(new Runnable() {
 											public void run()
 											{
-												ServerRequests.getTheMessageBox().killMe();
-												ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), false));
+												if(MainLoginScreen.getMe() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+													MainLoginScreen.getMe().getPasswordField().setText("");
+													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+												}
+												else
+												{
+													ServerRequests.getTheMessageBox().killMe();
+													if(SplashScreen.getMe() != null)
+													{
+														SplashScreen.getMe().killMe();
+														new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
+													}
+													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+												}
 											}
 										});
 									}
@@ -1290,15 +1385,6 @@ public class ServerRequests
 					else if(rt.getSuccess().equals("2"))
 					{
 						connecting = true;
-						if(ServerRequests.getTheMessageBox() != null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.getTheMessageBox().killMe();
-								}
-							});
-						}
 						ServerRequests.setGetNearbyCachesInfoStatus(2);
 					}
 				}
@@ -1315,10 +1401,11 @@ public class ServerRequests
 	//refreshes markers on the map and updates user balance and cache number
 	//
 	////////
-	public static void refreshData()
+	public static void refreshData(boolean deleteMessageBox)
 	{
 		refreshDataComplete = false;
 		refreshDataSuccess = false;
+		staticDeleteMessagebox = deleteMessageBox;
 		try
 		{
 			if(TheMap.getMe().getGoogleMap() != null)
@@ -1376,43 +1463,80 @@ public class ServerRequests
 										MainScreen.getMe().getUserBalanceTextView().setText(CurrentUser.getMe().getBalance() + " ");
 									}
 								}
-								if(TheMap.getMe().getCacheRoutePosition().equals("null"))
-								{
-									return;
-								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Mapping Route", false));
-								ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+								ServerRequests.getNewsStubs(System.currentTimeMillis(), 16);
 								Thread thread = new Thread(new Runnable() {
 									public void run()
 									{
-										while(!ServerRequests.getStaticGoogleRouteComplete())
+										while(!ServerRequests.getStaticGetNewsComplete())
 										{
-											//wait
-											sleepFunction();
+											ServerRequests.sleepFunction();
+											//wait!
 										}
-										if(ServerRequests.getStaticGoogleRouteSuccess())
+										if(ServerRequests.getStaticGetNewsSuccess())
 										{
 											Fortitude.getFortitude().runOnUiThread(new Runnable() {
 												public void run()
 												{
-													if(ServerRequests.getTheMessageBox() != null)
+													if(TheMap.getMe().getCacheRoutePosition().equals("null"))
 													{
-														ServerRequests.getTheMessageBox().killMe();
+														if(staticDeleteMessagebox)
+														{
+															if(ServerRequests.getTheMessageBox() != null)
+															{
+																ServerRequests.getTheMessageBox().killMe();
+															}
+															if(MessageBox.getMe() != null)
+															{
+																MessageBox.getMe().killMe();
+															}
+														}
+														ServerRequests.setRefreshDataSuccess(true);
+														ServerRequests.setRefreshDataComplete(true);
+														return;
 													}
-													if(MessageBox.getMe() != null)
-													{
-														MessageBox.getMe().killMe();
-													}
+													ServerRequests.getTheMessageBox().changeMessageToDisplay("Mapping Route");
+													ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+													Thread thread = new Thread(new Runnable() {
+														public void run()
+														{
+															while(!ServerRequests.getStaticGoogleRouteComplete())
+															{
+																//wait
+																sleepFunction();
+															}
+															if(ServerRequests.getStaticGoogleRouteSuccess())
+															{
+																Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																	public void run()
+																	{
+																		if(staticDeleteMessagebox)
+																		{
+																			if(ServerRequests.getTheMessageBox() != null)
+																			{
+																				ServerRequests.getTheMessageBox().killMe();
+																			}
+																			if(MessageBox.getMe() != null)
+																			{
+																				MessageBox.getMe().killMe();
+																			}
+																		}
+																	}
+																});
+															}
+															ServerRequests.setRefreshDataSuccess(true);
+															ServerRequests.setRefreshDataComplete(true);
+														}
+													});
+													thread.start();
 												}
 											});
 										}
 									}
 								});
 								thread.start();
-							}
+							}	
 						});
-						ServerRequests.setRefreshDataSuccess(true);
-						ServerRequests.setRefreshDataComplete(true);
 					}
 					else
 					{
@@ -2016,7 +2140,7 @@ public class ServerRequests
 			{
 				try
 				{
-					Thread.sleep(2000);
+					Thread.sleep(4000);
 				}
 				catch(Exception e)
 				{
@@ -2034,7 +2158,45 @@ public class ServerRequests
 							MessageBox.getMe().killMe();
 						}
 						GUI.killAll();
-						new MainLoginScreen();
+						FileSave fs = new FileSave();
+						String username = fs.OpenFileDialog("username");
+						String password = fs.OpenFileDialog("password");
+						if((username == null) || (password == null))
+						{
+							new MainLoginScreen();
+						}
+						else if((username.equals("")) || (password.equals("")))
+						{
+							new MainLoginScreen();
+						}
+						else
+						{
+							new SplashScreen();
+							Thread thread = new Thread(new Runnable() {
+								public void run()
+								{
+									try
+									{
+										Thread.sleep(1000);
+									}
+									catch(Exception e)
+									{
+										//do nothing...
+									}
+									Fortitude.getFortitude().runOnUiThread(new Runnable() {
+										public void run()
+										{
+											FileSave fs = new FileSave();
+											String username = fs.OpenFileDialog("username");
+											String password = fs.OpenFileDialog("password");
+											ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+											ServerRequests.createSession(username, password, true);
+										}
+									});
+								}
+							});
+							thread.start();
+						}
 					}
 				});
 			}
@@ -2137,6 +2299,125 @@ public class ServerRequests
 								MessageBox.newMsgBox("We have resent an activation email to your email account", true);
 							}
 						});
+					}
+				}	
+			}
+		});
+		thread.start();
+	}
+
+	////////
+	//
+	//getNewsStubs
+	//
+	//gets a given number of stubs message stubs before a certain period in time 
+	//
+	////////
+	public static void getNewsStubs(long timestamp, int numberOfStubs)
+	{
+		getNewsStubs(timestamp, numberOfStubs, "All");
+	}
+	public static void getNewsStubs(long timestamp, int numberOfStubs, String newsFilter)
+	{
+		staticNumberOfStubs = numberOfStubs;
+		staticTimeStamp = timestamp;
+		staticNewsFilter = newsFilter;
+
+		ServerRequests.staticGetNewsComplete = false;
+		ServerRequests.staticGetNewsSuccess = false;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setStaticGetNewsSuccess(false);
+					ServerRequests.setStaticGetNewsComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get News, Please Try Again");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get News, Please Try Again");
+							this.setSuccess("1");
+							return;
+						}
+						for(int i = 0; i < response.get("items").length(); i++)
+						{
+							JSONObject item = (JSONObject) response.get("items").get(i);
+							int notificationid = item.get("notificationid").asInteger();
+							int receiverid = item.get("receiverid").asInteger();
+							int timestamp = item.get("timestamp").asInteger();
+							String type = item.get("type").asString();
+							String status = item.get("status").asString();
+							NotificationManager.addStub(new NotificationStub(notificationid, receiverid, timestamp, type, status));
+						}
+						this.setOutputMessage("done");
+						this.setSuccess("2");
+					}
+
+				};
+				rt.setURL("http://" + ServerIP + "/api/newsstubs?uname=" + CurrentUser.getMe().getUserName() + "&phash=" + CurrentUser.getMe().getPhash() + "&count=" + ServerRequests.getStaticNumberOfStubs() + "&since=" + ServerRequests.getStaticTimeStamp() + "&filter=" + ServerRequests.getStaticNewsFilter());
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								else if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						});
+						ServerRequests.setStaticGetNewsSuccess(false);
+						ServerRequests.setStaticGetNewsComplete(true);
+						connecting = true;
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setStaticGetNewsSuccess(true);
+						ServerRequests.setStaticGetNewsComplete(true);
 					}
 				}	
 			}
