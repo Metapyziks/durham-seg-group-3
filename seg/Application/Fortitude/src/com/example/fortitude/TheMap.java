@@ -179,7 +179,12 @@ public class TheMap extends GridLayout
 				    		{
 				    			if(ServerRequests.getTheMessageBox() != null)
 				    			{
-				    				ServerRequests.getTheMessageBox().killMe();
+				    				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+				    					public void run()
+				    					{
+				    						ServerRequests.getTheMessageBox().killMe();
+				    					}
+				    				});
 				    			}
 				    		}
 				    	}

@@ -185,7 +185,8 @@ public abstract class AccountScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			
+    			AccountScreen.getMe().killMe();
+    			new InboxScreen();
     		}
     	});
     	messagesButton.setLayoutParams(messagesButtonLayout);

@@ -109,13 +109,16 @@ public class IconUpdater
 								}
 								if(MainScreen.getMe() != null)
 								{
-									if(NotificationManager.isUnread())
+									if(CurrentUser.getMe().isVerified())
 									{
-                                        MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail_alert);
-									}
-									else
-									{
-										MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail);
+										if(NotificationManager.isUnread())
+										{
+											MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail_alert);
+										}
+										else
+										{
+											MainScreen.getMe().getMailIcon().setImageResource(R.drawable.mail);
+										}
 									}
 								}
 							}

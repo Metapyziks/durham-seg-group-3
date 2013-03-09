@@ -49,7 +49,49 @@ public class NotificationScreen extends Window
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setRowCount(5);
 		mainArea.setColumnCount(1);
+		
+		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
+		topBarImageLayout.width = super.getWindowWidth();
+		topBarImageLayout.height = super.getWindowHeight() / 20;
+		ImageView topBarImage = new ImageView(mainArea.getContext());
+		topBarImage.setScaleType(ScaleType.FIT_XY);
+		topBarImage.setImageResource(R.drawable.top);
+		topBarImage.setLayoutParams(topBarImageLayout);
+		topBarImage.setOnClickListener(new OnClickListener() {
+			public void onClick(View view)
+			{
+				topBarClicked();
+			}
+		});
+		mainArea.addView(topBarImage, topBarImageLayout);
 
+		GridLayout topBarGrid = new GridLayout(mainArea.getContext());
+		topBarGrid.setColumnCount(2);
+		topBarGrid.setRowCount(1);
+
+		LayoutParams userNameTextViewLayout = new LayoutParams(row1, col1); //username text view
+		userNameTextViewLayout.width = super.getWindowWidth() / 2;
+		userNameTextViewLayout.height = super.getWindowHeight() / 20;
+		TextView userNameTextView = new TextView(topBarGrid.getContext());
+		userNameTextView.setTextColor(Color.YELLOW);
+		userNameTextView.setText("  " + CurrentUser.getMe().getUserName());
+		userNameTextView.setLayoutParams(userNameTextViewLayout);
+		userNameTextView.setGravity(Gravity.LEFT);
+		topBarGrid.addView(userNameTextView, userNameTextViewLayout);
+
+		LayoutParams userBalanceTextViewLayout = new LayoutParams(row1, col2); //balance text view
+		userBalanceTextViewLayout.width = super.getWindowWidth() / 2;
+		userBalanceTextViewLayout.height = super.getWindowHeight() / 20;
+		TextView userBalanceTextView = new TextView(topBarGrid.getContext());
+		userBalanceTextView.setTextColor(Color.YELLOW);
+		userBalanceTextView.setText(CurrentUser.getMe().getBalance() + "  ");
+		userBalanceTextView.setLayoutParams(userBalanceTextViewLayout);
+		userBalanceTextView.setGravity(Gravity.RIGHT);
+		topBarGrid.addView(userBalanceTextView, userBalanceTextViewLayout);
+
+		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
+		mainArea.addView(topBarGrid, topBarGridLayout);
+		
 		LayoutParams topSpaceRowLayout = new LayoutParams(row1, col1);
 		topSpaceRowLayout.height = super.getWindowHeight() / 5;
 		Space topSpaceRow = new Space(mainArea.getContext());
@@ -264,6 +306,17 @@ public class NotificationScreen extends Window
 		this.removeAllViews();
 	}
 
+	public void topBarClicked()
+	{
+		killMe();
+		new AccountScreen() {
+			public void showNextScreen()
+			{
+				new NotificationScreen(NotificationScreen.pageId);
+			}
+		};
+	}
+	
 	////////
 	//
 	//getMe
