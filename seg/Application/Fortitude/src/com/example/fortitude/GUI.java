@@ -174,6 +174,30 @@ public class GUI
 			{
 				AutoSignInErrorScreen.getMe().killMe();
 			}
+			if(DepositUnitsScreen.getMe() != null)
+			{
+				DepositUnitsScreen.getMe().killMe();
+			}
+			if(InboxScreen.getMe() != null)
+			{
+				InboxScreen.getMe().killMe();
+			}
+			if(NotificationScreen.getMe() != null)
+			{
+				NotificationScreen.getMe().killMe();
+			}
+			if(SendMessageScreen.getMe() != null)
+			{
+				SendMessageScreen.getMe().killMe();
+			}
+			if(SplashScreen.getMe() != null)
+			{
+				SplashScreen.getMe().killMe();
+			}
+			if(WithdrawUnitsScreen.getMe() != null)
+			{
+				WithdrawUnitsScreen.getMe().killMe();
+			}
 			GUI.disableAllTheGUIElements(Fortitude.getFortitude().getWindow().getDecorView());
 		}
 		catch(Exception e)

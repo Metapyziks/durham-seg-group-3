@@ -749,8 +749,19 @@ public class ServerRequests
 													{
 														SplashScreen.getMe().killMe();
 														new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
+														AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
 													}
-													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+													else
+													{
+														if(AutoSignInErrorScreen.getMe() != null)
+														{
+															AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
+														}
+														else
+														{
+															ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+														}
+													}
 												}
 											}
 										});
@@ -796,8 +807,19 @@ public class ServerRequests
 											{
 												SplashScreen.getMe().killMe();
 												new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
+												AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
 											}
-											ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+											else
+											{
+												if(AutoSignInErrorScreen.getMe() != null)
+												{
+													AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
+												}
+												else
+											    {
+													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+											    }
+											}
 										}
 									});
 								}
@@ -1589,7 +1611,6 @@ public class ServerRequests
 						}
 						if(!response.get("status").asString().equals("OK"))
 						{
-							System.out.println("debug1" + " " + response.get("status").asString());
 							this.setOutputMessage("Failed To Get Google Directions");
 							this.setSuccess("1");
 							return;

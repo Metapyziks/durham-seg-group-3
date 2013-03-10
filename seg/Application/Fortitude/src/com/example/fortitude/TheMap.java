@@ -102,7 +102,6 @@ public class TheMap extends GridLayout
 							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
 							if((xx != null) && (MessageBox.getMe() == null))
 							{
-								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
 								updateCachePositions();
 								Thread thread = new Thread(new Runnable() {
@@ -128,9 +127,14 @@ public class TheMap extends GridLayout
 													if(ServerRequests.getTheMessageBox() != null)
 													{
 														ServerRequests.getTheMessageBox().killMe();
+														setGotInitialLocation(true);
 													}
 												}
 											});
+										}
+										else
+										{
+											setGotInitialLocation(true);
 										}
 									}
 								});
@@ -157,7 +161,7 @@ public class TheMap extends GridLayout
 		googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
 			public void onCameraChange(CameraPosition arg0) 
 			{
-				if(!CurrentUser.getMe().isVerified())
+				if((!CurrentUser.getMe().isVerified()) && (TheMap.getGotInitialLocation()))
 				{
 				    updateCachePositions();
 				    Thread thread = new Thread(new Runnable() {

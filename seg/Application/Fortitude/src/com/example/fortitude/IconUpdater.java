@@ -121,6 +121,7 @@ public class IconUpdater
 										}
 									}
 								}
+								System.out.println(Fortitude.isWifiavailable());
 							}
 						});
 					}
@@ -142,6 +143,7 @@ public class IconUpdater
 							return;
 						}
 					}
+					
 				}
 			}
 		});

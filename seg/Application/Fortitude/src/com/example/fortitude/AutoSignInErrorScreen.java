@@ -1,6 +1,9 @@
 package com.example.fortitude;
 
+import android.graphics.Color;
+import android.view.Gravity;
 import android.widget.GridLayout;
+import android.widget.TextView;
 import android.widget.GridLayout.LayoutParams;
 import android.widget.GridLayout.Spec;
 import android.widget.Space;
@@ -9,6 +12,8 @@ public class AutoSignInErrorScreen extends Window
 {
 	private Spec row1 = GridLayout.spec(0);
 	private Spec row2 = GridLayout.spec(1);
+	private Spec row3 = GridLayout.spec(2);
+	private Spec row4 = GridLayout.spec(3);
 	
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
@@ -18,6 +23,7 @@ public class AutoSignInErrorScreen extends Window
 	private String uname;
 	private String phash;
 	private boolean initialLogin;
+	private TextView errorBox;
 	
 	////////
 	//
@@ -37,14 +43,43 @@ public class AutoSignInErrorScreen extends Window
 	private GridLayout createWindowPane()
     {
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
-		mainArea.setRowCount(3);
+		mainArea.setRowCount(5);
 		mainArea.setColumnCount(1);
 		
 		LayoutParams firstRowSpaceLayout = new LayoutParams(row1, col1); //top row space
-		firstRowSpaceLayout.height = (super.getWindowHeight() / 10) * 9;
+		firstRowSpaceLayout.height = (int) (super.getWindowHeight() * 0.58);
 		Space firstRowSpace = new Space(mainArea.getContext());
 		firstRowSpace.setLayoutParams(firstRowSpaceLayout);
 		mainArea.addView(firstRowSpace, firstRowSpaceLayout);
+		
+		GridLayout errorGrid = new GridLayout(mainArea.getContext());
+		errorGrid.setRowCount(1);
+		errorGrid.setColumnCount(3);
+		
+		LayoutParams errorGridLeftSpaceLayout = new LayoutParams(row1, col1);
+		errorGridLeftSpaceLayout.width = super.getWindowWidth() / 10;
+		Space errorGridLeftSpace = new Space(errorGrid.getContext());
+		errorGridLeftSpace.setLayoutParams(errorGridLeftSpaceLayout);
+		errorGrid.addView(errorGridLeftSpace, errorGridLeftSpaceLayout);
+		
+		LayoutParams errorBoxLayout = new LayoutParams(row1, col2);
+		errorBoxLayout.width = (int)(super.getWindowWidth() * 0.8);
+		errorBoxLayout.height = super.getWindowHeight() / 4;
+		errorBox = new TextView(errorGrid.getContext());
+		errorBox.setTextColor(Color.WHITE);
+		errorBox.setTextSize(14);
+		errorBox.setGravity(Gravity.CENTER);
+		errorBox.setLayoutParams(errorBoxLayout);
+		errorGrid.addView(errorBox, errorBoxLayout);
+		
+		LayoutParams errorGridLayout = new LayoutParams(row2, col1);
+		mainArea.addView(errorGrid, errorGridLayout);
+		
+		LayoutParams thirdRowSpaceLayout = new LayoutParams(row3, col1);
+		thirdRowSpaceLayout.height = super.getWindowHeight() / 17;
+		Space thirdRowSpace = new Space(mainArea.getContext());
+		thirdRowSpace.setLayoutParams(thirdRowSpaceLayout);
+		mainArea.addView(thirdRowSpace, thirdRowSpaceLayout);
 		
 		GridLayout buttonRow = new GridLayout(mainArea.getContext()); //button row
 		buttonRow.setRowCount(1);
@@ -74,11 +109,16 @@ public class AutoSignInErrorScreen extends Window
 		retryButton.setLayoutParams(retryButtonLayout);
 		buttonRow.addView(retryButton, retryButtonLayout);
 		
-		LayoutParams buttonRowLayout = new LayoutParams(row2, col1);
+		LayoutParams buttonRowLayout = new LayoutParams(row4, col1);
 		mainArea.addView(buttonRow, buttonRowLayout);
 		
 		return mainArea;
     }
+	
+	public TextView getErrorBox()
+	{
+		return errorBox;
+	}
 	
     ////////
     //

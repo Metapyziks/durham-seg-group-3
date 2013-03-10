@@ -54,7 +54,7 @@ public class Fortitude extends Activity
 		fortitude = this;
 		this.setRequestedOrientation(1); //lock application to portrait
 		GUI.setUpActivityGraphics();
-		
+
 		FileSave fs = new FileSave();
 		String username = fs.OpenFileDialog("username");
 		String password = fs.OpenFileDialog("password");
@@ -171,5 +171,24 @@ public class Fortitude extends Activity
 		ConnectivityManager connectivityManager = (ConnectivityManager) Fortitude.getFortitude().getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 		return (activeNetworkInfo != null);
+	}
+
+	public static boolean isWifiavailable()
+	{
+		try
+		{
+			ConnectivityManager connectivityManager = (ConnectivityManager) Fortitude.getFortitude().getSystemService(Context.CONNECTIVITY_SERVICE);
+			NetworkInfo networkInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+			if(networkInfo == null)
+			{
+				return false;
+			}
+			return networkInfo.isAvailable();
+		}
+		catch(Exception e)
+		{
+			System.out.println("Cannot check if wifi is enabled " + e.toString());
+			return false;
+		}
 	}
 }

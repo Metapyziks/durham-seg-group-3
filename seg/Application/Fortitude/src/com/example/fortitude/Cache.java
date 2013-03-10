@@ -19,6 +19,11 @@ public class Cache
 		this.garrison = truncateServerNumber(garrison);
 	}
 	
+	public void setGarrison(int newGarrison)
+	{
+		garrison = Integer.toString(newGarrison);
+	}
+	
 	private String truncateServerNumber(String x)
 	{
 		return Integer.toString((int)(Double.parseDouble(x)));
