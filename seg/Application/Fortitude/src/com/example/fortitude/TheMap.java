@@ -85,6 +85,11 @@ public class TheMap extends GridLayout
 		googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 		setOnClickListenerOnGoogleMap();
+		
+		if(!CurrentUser.getMe().isVerified())
+		{
+			setOnMapMoveListener();
+		}
 
 		Thread thread = new Thread(new Runnable() { //thread that runs on initial set up and displays the users
 			public void run()                       //location asap
@@ -97,9 +102,43 @@ public class TheMap extends GridLayout
 							Location xx = TheMap.getMe().getGoogleMap().getMyLocation();
 							if((xx != null) && (MessageBox.getMe() == null))
 							{
-								setGotInitialLocation(true);
 								TheMap.getMe().zoomToMyPosition();
 								updateCachePositions();
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+										{
+											//wait
+											try
+											{
+												Thread.sleep(100);
+											}
+											catch(Exception e)
+											{
+												//oh well
+											}
+										}
+										if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+														setGotInitialLocation(true);
+													}
+												}
+											});
+										}
+										else
+										{
+											setGotInitialLocation(true);
+										}
+									}
+								});
+								thread.start();
 							}
 						}
 					});
@@ -117,6 +156,49 @@ public class TheMap extends GridLayout
 		thread.start();
 	}
 
+	private void setOnMapMoveListener()
+	{
+		googleMap.setOnCameraChangeListener(new OnCameraChangeListener() {
+			public void onCameraChange(CameraPosition arg0) 
+			{
+				if((!CurrentUser.getMe().isVerified()) && (TheMap.getGotInitialLocation()))
+				{
+				    updateCachePositions();
+				    Thread thread = new Thread(new Runnable() {
+				    	public void run()
+				    	{
+				    		while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+				    		{
+				    			//wait
+				    			try
+				    			{
+				    				Thread.sleep(100);
+				    			}
+				    			catch(Exception e)
+				    			{
+				    				//oh well
+				    			}
+				    		}
+				    		if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+				    		{
+				    			if(ServerRequests.getTheMessageBox() != null)
+				    			{
+				    				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+				    					public void run()
+				    					{
+				    						ServerRequests.getTheMessageBox().killMe();
+				    					}
+				    				});
+				    			}
+				    		}
+				    	}
+				    });
+				    thread.start();
+				}
+			}
+		});
+	}
+	
 	public void updateCachePositions()
 	{
 		Fortitude.getFortitude().runOnUiThread(new Runnable() {
@@ -166,10 +248,6 @@ public class TheMap extends GridLayout
 								{
 									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
 								}
-							}
-							if(ServerRequests.getTheMessageBox() != null)
-							{
-								ServerRequests.getTheMessageBox().killMe();
 							}
 						}
 					});
@@ -284,7 +362,7 @@ public class TheMap extends GridLayout
 			{
 				setMarkerToBePassed(marker);
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.refreshData();
+				ServerRequests.refreshData(false);
 				Thread thread2 = new Thread(new Runnable() {
 					public void run()
 					{
@@ -295,15 +373,6 @@ public class TheMap extends GridLayout
 						if(!ServerRequests.getRefreshDataSuccess())
 						{
 							return;
-						}
-						if(ServerRequests.getTheMessageBox() == null)
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-								}
-							});
 						}
 						TheMap.setStaticStillThere(false);
 						TheMap.setStaticStillThereDone(false);

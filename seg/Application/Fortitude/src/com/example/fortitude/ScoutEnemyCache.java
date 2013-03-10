@@ -235,47 +235,62 @@ public class ScoutEnemyCache extends Window
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								ServerRequests.refreshData();
+								ServerRequests.refreshData(false);
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(!ServerRequests.getRefreshDataComplete())
+										{
+											//wait
+										}
+										if(!ServerRequests.getRefreshDataSuccess())
+										{
+											return;
+										}
+										JSONObject response = ServerRequests.getScoutCacheResponse();
+										String survivors = Integer.toString((int)(Double.parseDouble(response.get("survivors").asString())));
+										if(survivors.equals("0"))
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+													if(MessageBox.getMe() != null)
+													{
+														MessageBox.getMe().killMe();
+													}
+													ScoutEnemyCache.getMe().killMe();
+													new ScoutFailureScreen(ScoutEnemyCache.getStaticTheCache());
+												}
+											});
+										}
+										else
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+													if(MessageBox.getMe() != null)
+													{
+														MessageBox.getMe().killMe();
+													}
+													ScoutEnemyCache.getMe().killMe();
+													new ScoutSuccessScreen(ScoutEnemyCache.getStaticTheCache(), ServerRequests.getScoutCacheResponse());
+												}
+											});
+										}
+
+									}
+								});
+								thread.start();
 							}
 						});
-						try
-						{
-							Thread.sleep(500);
-						}
-						catch(Exception e)
-						{
-							
-						}
-						while(!ServerRequests.getRefreshDataComplete())
-						{
-							//wait
-						}
-						if(!ServerRequests.getRefreshDataSuccess())
-						{
-							return;
-						}
-						JSONObject response = ServerRequests.getScoutCacheResponse();
-						String survivors = Integer.toString((int)(Double.parseDouble(response.get("survivors").asString())));
-						if(survivors.equals("0"))
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ScoutEnemyCache.getMe().killMe();
-									new ScoutFailureScreen(ScoutEnemyCache.getStaticTheCache());
-								}
-							});
-						}
-						else
-						{
-							Fortitude.getFortitude().runOnUiThread(new Runnable() {
-								public void run()
-								{
-									ScoutEnemyCache.getMe().killMe();
-									new ScoutSuccessScreen(ScoutEnemyCache.getStaticTheCache(), ServerRequests.getScoutCacheResponse());
-								}
-							});
-						}
 					}
 				});
 				thread.start();

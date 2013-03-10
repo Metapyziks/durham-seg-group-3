@@ -43,7 +43,7 @@ public class MessageBox extends Window
 	//static constructor
 	//
 	////////
-	public static MessageBox newMsgBox(String messageToDisplay, Boolean okButton)
+	public static MessageBox newMsgBox(String messageToDisplay, boolean okButton)
 	{
 		if(me != null)
 		{
@@ -54,7 +54,7 @@ public class MessageBox extends Window
 
 		return new MessageBox(messageToDisplay, okButton);
 	}
-
+	
 	////////
 	//
 	//Constructor
@@ -230,7 +230,7 @@ public class MessageBox extends Window
 		makeAllTheChildrenBetter(Fortitude.getFortitude().getWindow().getDecorView());
 		me = null;
 		GreyScreen.getMe().killMe();
-		removeAllViews();
+		this.removeAllViews();
 	}
 
 	////////

@@ -143,7 +143,7 @@ public class PostBattleScreen extends Window
     	defendingArmyTextView.setTextColor(Color.WHITE);
     	defendingArmyTextView.setTextSize(14);
     	defendingArmyTextView.setGravity(Gravity.RIGHT);
-    	defendingArmyTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenders").get("initial").asString()))) + " soldiers");
+    	defendingArmyTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenderinitial").asString()))) + " soldiers");
     	defendingArmyTextView.setLayoutParams(defendingArmyTextViewLayout);
     	mainArea.addView(defendingArmyTextView, defendingArmyTextViewLayout);
     	
@@ -160,7 +160,7 @@ public class PostBattleScreen extends Window
     	attackingArmyTextView.setTextColor(Color.WHITE);
     	attackingArmyTextView.setTextSize(14);
     	attackingArmyTextView.setGravity(Gravity.RIGHT);
-    	attackingArmyTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackers").get("initial").asString()))) + " soldiers");
+    	attackingArmyTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackerinitial").asString()))) + " soldiers");
     	attackingArmyTextView.setLayoutParams(attackingArmyTextViewLayout);
     	mainArea.addView(attackingArmyTextView, attackingArmyTextViewLayout);
     	
@@ -201,7 +201,7 @@ public class PostBattleScreen extends Window
     	survivorsTextView.setTextColor(Color.WHITE);
     	survivorsTextView.setTextSize(14);
     	survivorsTextView.setGravity(Gravity.RIGHT);
-    	survivorsTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackers").get("survivors").asString()))) + " soldiers");
+    	survivorsTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackersurvivors").asString()))) + " soldiers");
     	survivorsTextView.setLayoutParams(survivorsTextViewLayout);
     	mainArea.addView(survivorsTextView, survivorsTextViewLayout);
     	
@@ -213,24 +213,24 @@ public class PostBattleScreen extends Window
     	
     	LayoutParams captivesTextViewLayout = new LayoutParams(row12, col1);
     	captivesTextViewLayout.width = super.getWindowWidth();
-    	captivesTextViewLayout.height = super.getWindowHeight() / 10;
+    	captivesTextViewLayout.height = (int)(super.getWindowHeight() * 0.11);
     	TextView captivesTextView = new TextView(mainArea.getContext());
     	captivesTextView.setTextColor(Color.WHITE);
     	captivesTextView.setTextSize(14);
     	captivesTextView.setGravity(Gravity.CENTER);
     	if(PostBattleScreen.getStaticTheResponse().get("victory").asString().equals("true"))
     	{
-    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenders").get("deserters").asString()))) + " enemy soldiers chose to surrender and join your army. They have been sent to you, and your balance has been increased.");
+    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenderdeserters").asString()))) + " enemy soldiers chose to surrender and join your army. They have been sent to you, and your balance has been increased.");
     	}
     	else
     	{
-    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackers").get("deserters").asString()))) + " of your soldiers chose to surrender and join the enemy army.");
+    		captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackerdeserters").asString()))) + " of your soldiers chose to surrender and join the enemy army.");
     	}
     	captivesTextView.setLayoutParams(captivesTextViewLayout);
     	mainArea.addView(captivesTextView, captivesTextViewLayout);
     	
     	LayoutParams thirteenthRowSpaceLayout = new LayoutParams(row13, col1);
-    	thirteenthRowSpaceLayout.height = super.getWindowHeight() / 20;
+    	thirteenthRowSpaceLayout.height = super.getWindowHeight() / 25;
     	Space thirteenthRowSpace = new Space(mainArea.getContext());
     	thirteenthRowSpace.setLayoutParams(thirteenthRowSpaceLayout);
     	mainArea.addView(thirteenthRowSpace, thirteenthRowSpaceLayout);

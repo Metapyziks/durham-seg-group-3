@@ -210,7 +210,13 @@ public class EnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-
+				EnemyCacheScreen.getMe().killMe();
+				new SendMessageScreen(EnemyCacheScreen.getTheUser().getUserName()) {
+					public void whenCancelled()
+					{
+						new EnemyCacheScreen(EnemyCacheScreen.getStaticTheCache(), EnemyCacheScreen.getTheUser());
+					}
+				};
 			}
 		});
 		sendMessageButton.setLayoutParams(sendMessageButtonLayout);
@@ -312,7 +318,13 @@ public class EnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-
+				EnemyCacheScreen.getMe().killMe();
+				new ReportScreens(1) {
+					public void whenCancelled()
+					{
+						new EnemyCacheScreen(EnemyCacheScreen.getStaticTheCache(), EnemyCacheScreen.getTheUser());
+					}
+				};
 			}
 		});
 		reportCacheButton.setLayoutParams(reportCacheButtonLayout);

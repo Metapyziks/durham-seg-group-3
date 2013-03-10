@@ -38,24 +38,6 @@ public class MainLoginScreen extends Window
 		super(R.drawable.sign_in);
 		me = this;
 		super.addContentToContentPane(createWindowPane());
-		Fortitude.getFortitude().runOnUiThread(new Runnable() {
-			public void run()
-			{
-				FileSave fs = new FileSave();
-				String username = fs.OpenFileDialog("username");
-				String password = fs.OpenFileDialog("password");
-				if((username == null) || (password == null))
-				{
-					return;
-				}
-				if((username.equals("")) || (password.equals("")))
-				{
-					return;
-				}
-				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.createSession(username, password, true);	
-			}
-		});
 	}
 
 	////////
