@@ -154,13 +154,14 @@ The following sequence diagram shows how the specific request class RegisterRequ
     \caption{Sequence diagram of the user registration process.}
 \end{figure}
 
+When resending an activation email it is the SendActivationRequest class that performs checks to satisfy requirement 5.4.1: User Communication. The account with the email address provided is selected from the database and used to resend an activation email in the same way as account registration. If an ErrorResponse hasn't already been returned then a Response will be like with account registration.
+
 \begin{wrapfigure}{r}{0.45\textwidth}
     \includegraphics[width=0.45\textwidth]{images/sequence/userinfo}
     \caption{Sequence diagram of the user information request.}
     \label{fig:userInfo}
+    \vspace{-40pt}
 \end{wrapfigure}
-
-When resending an activation email it is the SendActivationRequest class that performs checks to satisfy requirement 5.4.1: User Communication. The account with the email address provided is selected from the database and used to resend an activation email in the same way as account registration. If an ErrorResponse hasn't already been returned then a Response will be like with account registration.
 
 When sending a password reset email, PasswordResetRequest let's EmailValidationCode perform the checks to satisfy requirement 5.1.8:Password Reset in the method AttemptCreate(). If it passes these checks an EmailValidationCode will be created and used to send an email to the user and a Response will be returned, else if the checks aren't passed an ErrorResponse will be returned.
 
