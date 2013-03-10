@@ -160,6 +160,7 @@ When resending an activation email it is the SendActivationRequest class that pe
     \includegraphics[width=0.45\textwidth]{images/sequence/userinfo}
     \caption{Sequence diagram of the user information request.}
     \label{fig:userInfo}
+    \vspace{-40pt}
 \end{wrapfigure}
 
 When sending a password reset email, PasswordResetRequest let's EmailValidationCode perform the checks to satisfy requirement 5.1.8:Password Reset in the method AttemptCreate(). If it passes these checks an EmailValidationCode will be created and used to send an email to the user and a Response will be returned, else if the checks aren't passed an ErrorResponse will be returned.

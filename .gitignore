@@ -17,7 +17,6 @@ seg/GPSTestThing/bin/
 *.orig
 *.aux
 *.log
-*.pdf
 
 seg/documents/requirements/*.log
 seg/documents/requirements/*.aux
