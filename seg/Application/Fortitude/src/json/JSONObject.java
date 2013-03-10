@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class JSONObject extends JSONValue
 {
@@ -86,6 +88,34 @@ public class JSONObject extends JSONValue
 	@Override
 	public String toString()
 	{
-		return "{}"; // TODO: make this good
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for(String key : this._children.keySet())
+		{
+			JSONValue val = this.get(key);
+			sb.append('"');
+			sb.append(key);
+			sb.append("\" : ");
+			sb.append(val.toString());
+			sb.append(",\n");
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	public static void main(String args[])
+	{
+		try
+		{
+		URL urler = new URL("http://maps.googleapis.com/maps/api/directions/json?origin=54.77853412,-1.57010289&destination=54.773628,-1.588106&sensor=true");
+		URLConnection connection = urler.openConnection();
+		connection.setConnectTimeout(15000);
+		JSONObject x = JSONObject.parseStream(connection.getInputStream());
+		System.out.println(x.toString());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
 	}
 }

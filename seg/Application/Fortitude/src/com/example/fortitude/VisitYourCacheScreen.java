@@ -136,7 +136,7 @@ public class VisitYourCacheScreen extends Window
     	}
     	else
     	{
-    		usernameTextView.setText("OUTLAWS");
+    		usernameTextView.setText("UNOWNED");
     	}
     	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
@@ -151,13 +151,13 @@ public class VisitYourCacheScreen extends Window
     	standingArmyGrid.setRowCount(1);
     	
     	LayoutParams standingArmyLeftSpaceLayout = new LayoutParams(row1, col1);
-    	standingArmyLeftSpaceLayout.width = super.getWindowWidth() / 2;
+    	standingArmyLeftSpaceLayout.width = super.getWindowWidth() / 3;
     	Space standingArmyLeftSpace = new Space(standingArmyGrid.getContext());
     	standingArmyLeftSpace.setLayoutParams(standingArmyLeftSpaceLayout);
     	standingArmyGrid.addView(standingArmyLeftSpace, standingArmyLeftSpaceLayout);
     	
     	LayoutParams standingArmyTextViewLayout = new LayoutParams(row1, col2); //standing army text view
-    	standingArmyTextViewLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 8);
+    	standingArmyTextViewLayout.width = ((super.getWindowWidth() / 3) * 2) - (super.getWindowWidth() / 8);
     	standingArmyTextViewLayout.height = super.getWindowHeight() / 20;
     	TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
     	standingArmyTextView.setTextSize(14);
@@ -278,6 +278,7 @@ public class VisitYourCacheScreen extends Window
     		{
     			killMe();
     			new MainScreen();
+    			GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
     		}
     	});
     	cancelButton.setLayoutParams(cancelButtonLayout);

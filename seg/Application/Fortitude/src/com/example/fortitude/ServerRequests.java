@@ -65,6 +65,8 @@ public class ServerRequests
 	private static boolean staticGetNewsComplete;
 	private static String staticNewsFilter;
 	private static boolean staticDeleteMessagebox;
+	private static boolean staticGetSpecialCachesComplete;
+	private static boolean staticGetSpecialCachesSuccess;
 
 	////////
 	//
@@ -81,6 +83,26 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static void setStaticGetSpecialCachesComplete(boolean x)
+	{
+		staticGetSpecialCachesComplete = x;
+	}
+
+	public static void setStaticGetSpecialCachesSuccess(boolean x)
+	{
+		staticGetSpecialCachesSuccess = x;
+	}
+
+	public static boolean getStaticGetSpecialCachesComplete()
+	{
+		return staticGetSpecialCachesComplete;
+	}
+
+	public static boolean getStaticGetSpecialCachesSuccess()
+	{
+		return staticGetSpecialCachesSuccess;
+	}
+
 	public static String getStaticNewsFilter()
 	{
 		return staticNewsFilter;
@@ -660,69 +682,100 @@ public class ServerRequests
 																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																						public void run()
 																						{
-																							if(ServerRequests.getTheMessageBox() != null)
-																							{
-																								ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
-																							}
-																							else if(MessageBox.getMe() != null)
-																							{
-																								MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
-																							}
-																							else
-																							{
-																								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
-																							}
+																							ServerRequests.getSpecialCaches();
+																							Thread thread = new Thread(new Runnable() {
+																								public void run()
+																								{
+																									while(!ServerRequests.getStaticGetSpecialCachesComplete())
+																									{
+																										ServerRequests.sleepFunction();
+																									}
+																									if(ServerRequests.getStaticGetSpecialCachesSuccess())
+																									{
+																										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																											public void run()
+																											{
+																												if(ServerRequests.getTheMessageBox() != null)
+																												{
+																													ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+																												}
+																												else if(MessageBox.getMe() != null)
+																												{
+																													MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
+																												}
+																												else
+																												{
+																													ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																												}
 
-																							//ServerRequests.getTheMessageBox().killMe();
-																							//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																												//ServerRequests.getTheMessageBox().killMe();
+																												//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+																											}
+																										});
+																										try
+																										{
+																											Thread.sleep(1500);
+																										}
+																										catch(Exception e)
+																										{
+																											//oh well
+																										}
+																										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																											public void run()
+																											{
+																												if(ServerRequests.getTheMessageBox() != null)
+																												{
+																													ServerRequests.getTheMessageBox().killMe();
+																												}
+																												TheMap.newTheMap(Fortitude.getFortitude());
+																												if(staticInitialLogin)
+																												{
+																													if(MainLoginScreen.getMe() != null)
+																													{
+																														MainLoginScreen.getMe().killMe();
+																													}
+																													if(AutoSignInErrorScreen.getMe() != null)
+																													{
+																														AutoSignInErrorScreen.getMe().killMe();
+																													}
+																													if(SplashScreen.getMe() != null)
+																													{
+																														SplashScreen.getMe().killMe();
+																													}
+																													new MainScreen();
+																												}
+																												else
+																												{
+																													NewUserScreen.getMe().killMe();
+																													new HelpScreens(0, 0);
+																													MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
+																												}
+																											}
+																										});
+																									}
+																									else
+																									{
+																										signInError();
+																									}
+																								}
+																							});
+																							thread.start();
 																						}
 																					});
-																					try
-																					{
-																						Thread.sleep(1500);
-																					}
-																					catch(Exception e)
-																					{
-																						//oh well
-																					}
-																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
-																						public void run()
-																						{
-																							if(ServerRequests.getTheMessageBox() != null)
-																							{
-																								ServerRequests.getTheMessageBox().killMe();
-																							}
-																							TheMap.newTheMap(Fortitude.getFortitude());
-																							if(staticInitialLogin)
-																							{
-																								if(MainLoginScreen.getMe() != null)
-																								{
-																									MainLoginScreen.getMe().killMe();
-																								}
-																								if(AutoSignInErrorScreen.getMe() != null)
-																								{
-																									AutoSignInErrorScreen.getMe().killMe();
-																								}
-																								if(SplashScreen.getMe() != null)
-																								{
-																									SplashScreen.getMe().killMe();
-																								}
-																								new MainScreen();
-																							}
-																							else
-																							{
-																								NewUserScreen.getMe().killMe();
-																								new HelpScreens(0, 0);
-																								MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
-																							}
-																						}
-																					});
+																				}
+																				else
+																				{
+																					signInError();
 																				}
 																			}
 																		});
 																		thread.start();
 																	}
 																});
+															}
+															else
+															{
+																signInError();
 															}
 														}
 													});
@@ -733,38 +786,7 @@ public class ServerRequests
 									}
 									else
 									{
-										Fortitude.getFortitude().runOnUiThread(new Runnable() {
-											public void run()
-											{
-												if(MainLoginScreen.getMe() != null)
-												{
-													ServerRequests.getTheMessageBox().killMe();
-													MainLoginScreen.getMe().getPasswordField().setText("");
-													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
-												}
-												else
-												{
-													ServerRequests.getTheMessageBox().killMe();
-													if(SplashScreen.getMe() != null)
-													{
-														SplashScreen.getMe().killMe();
-														new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
-														AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
-													}
-													else
-													{
-														if(AutoSignInErrorScreen.getMe() != null)
-														{
-															AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
-														}
-														else
-														{
-															ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
-														}
-													}
-												}
-											}
-										});
+										signInError();
 									}
 								}
 							});
@@ -772,58 +794,7 @@ public class ServerRequests
 						}
 						if(rt.getSuccess().equals("1"))
 						{
-							if(rt.getOutputMessage().equals("auth error: incorrect credentials"))
-							{
-								Fortitude.getFortitude().runOnUiThread(new Runnable() {
-									public void run()
-									{
-										ServerRequests.getTheMessageBox().killMe();
-										GUI.killAll();
-										new MainLoginScreen();
-										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
-									}
-								});
-							}
-							else
-							{
-								if(MainLoginScreen.getMe() != null)
-								{
-									Fortitude.getFortitude().runOnUiThread(new Runnable() {
-										public void run()
-										{
-											ServerRequests.getTheMessageBox().killMe();
-											MainLoginScreen.getMe().getPasswordField().setText("");
-											ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
-										}
-									});
-								}
-								else
-								{
-									Fortitude.getFortitude().runOnUiThread(new Runnable() {
-										public void run()
-										{
-											ServerRequests.getTheMessageBox().killMe();
-											if(SplashScreen.getMe() != null)
-											{
-												SplashScreen.getMe().killMe();
-												new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
-												AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
-											}
-											else
-											{
-												if(AutoSignInErrorScreen.getMe() != null)
-												{
-													AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
-												}
-												else
-											    {
-													ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
-											    }
-											}
-										}
-									});
-								}
-							}
+							signInError();
 						}
 						connecting = true;
 					}
@@ -933,7 +904,10 @@ public class ServerRequests
 									}
 									else
 									{
-										ServerRequests.getTheMessageBox().killMe();
+										if(ServerRequests.getTheMessageBox() != null)
+										{
+											ServerRequests.getTheMessageBox().killMe();
+										}
 										ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
 									}
 								}
@@ -951,6 +925,62 @@ public class ServerRequests
 		};
 		Thread thread = new Thread(runnable);
 		thread.start();
+	}
+	
+	public static void signInError()
+	{
+		if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect credentials"))
+		{
+			Fortitude.getFortitude().runOnUiThread(new Runnable() {
+				public void run()
+				{
+					ServerRequests.getTheMessageBox().killMe();
+					GUI.killAll();
+					new MainLoginScreen();
+					ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+				}
+			});
+		}
+		else
+		{
+			if(MainLoginScreen.getMe() != null)
+			{
+				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+					public void run()
+					{
+						ServerRequests.getTheMessageBox().killMe();
+						MainLoginScreen.getMe().getPasswordField().setText("");
+						ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+					}
+				});
+			}
+			else
+			{
+				Fortitude.getFortitude().runOnUiThread(new Runnable() {
+					public void run()
+					{
+						ServerRequests.getTheMessageBox().killMe();
+						if(SplashScreen.getMe() != null)
+						{
+							SplashScreen.getMe().killMe();
+							new AutoSignInErrorScreen(staticUname, staticPhash, staticInitialLogin);
+							AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
+						}
+						else
+						{
+							if(AutoSignInErrorScreen.getMe() != null)
+							{
+								AutoSignInErrorScreen.getMe().getErrorBox().setText(ServerRequests.getStaticOutputMessage());
+							}
+							else
+							{
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+							}
+						}
+					}
+				});
+			}
+		}
 	}
 
 	////////
@@ -1500,59 +1530,89 @@ public class ServerRequests
 											Fortitude.getFortitude().runOnUiThread(new Runnable() {
 												public void run()
 												{
-													if(TheMap.getMe().getCacheRoutePosition().equals("null"))
-													{
-														if(staticDeleteMessagebox)
-														{
-															if(ServerRequests.getTheMessageBox() != null)
-															{
-																ServerRequests.getTheMessageBox().killMe();
-															}
-															if(MessageBox.getMe() != null)
-															{
-																MessageBox.getMe().killMe();
-															}
-														}
-														ServerRequests.setRefreshDataSuccess(true);
-														ServerRequests.setRefreshDataComplete(true);
-														return;
-													}
-													ServerRequests.getTheMessageBox().changeMessageToDisplay("Mapping Route");
-													ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+													ServerRequests.getSpecialCaches();
 													Thread thread = new Thread(new Runnable() {
 														public void run()
 														{
-															while(!ServerRequests.getStaticGoogleRouteComplete())
+															while(!ServerRequests.getStaticGetSpecialCachesComplete())
 															{
 																//wait
-																sleepFunction();
+																ServerRequests.sleepFunction();
 															}
-															if(ServerRequests.getStaticGoogleRouteSuccess())
+															if(ServerRequests.getStaticGetSpecialCachesSuccess())
 															{
 																Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																	public void run()
 																	{
-																		if(staticDeleteMessagebox)
+																		if(TheMap.getMe().getCacheRoutePosition().equals("null"))
 																		{
-																			if(ServerRequests.getTheMessageBox() != null)
+																			if(staticDeleteMessagebox)
 																			{
-																				ServerRequests.getTheMessageBox().killMe();
+																				if(ServerRequests.getTheMessageBox() != null)
+																				{
+																					ServerRequests.getTheMessageBox().killMe();
+																				}
+																				if(MessageBox.getMe() != null)
+																				{
+																					MessageBox.getMe().killMe();
+																				}
 																			}
-																			if(MessageBox.getMe() != null)
-																			{
-																				MessageBox.getMe().killMe();
-																			}
+																			ServerRequests.setRefreshDataSuccess(true);
+																			ServerRequests.setRefreshDataComplete(true);
+																			return;
 																		}
+																		ServerRequests.getTheMessageBox().changeMessageToDisplay("Mapping Route");
+																		ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+																		Thread thread = new Thread(new Runnable() {
+																			public void run()
+																			{
+																				while(!ServerRequests.getStaticGoogleRouteComplete())
+																				{
+																					//wait
+																					sleepFunction();
+																				}
+																				if(ServerRequests.getStaticGoogleRouteSuccess())
+																				{
+																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																						public void run()
+																						{
+																							if(staticDeleteMessagebox)
+																							{
+																								if(ServerRequests.getTheMessageBox() != null)
+																								{
+																									ServerRequests.getTheMessageBox().killMe();
+																								}
+																								if(MessageBox.getMe() != null)
+																								{
+																									MessageBox.getMe().killMe();
+																								}
+																							}
+																						}
+																					});
+																				}
+																				ServerRequests.setRefreshDataSuccess(true);
+																				ServerRequests.setRefreshDataComplete(true);
+																			}
+																		});
+																		thread.start();
 																	}
 																});
 															}
-															ServerRequests.setRefreshDataSuccess(true);
-															ServerRequests.setRefreshDataComplete(true);
+															else
+															{
+																ServerRequests.setRefreshDataSuccess(false);
+																ServerRequests.setRefreshDataComplete(true);
+															}
 														}
 													});
 													thread.start();
 												}
 											});
+										}
+										else
+										{
+											ServerRequests.setRefreshDataSuccess(false);
+											ServerRequests.setRefreshDataComplete(true);
 										}
 									}
 								});
@@ -2419,15 +2479,26 @@ public class ServerRequests
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
-								if(ServerRequests.getTheMessageBox() != null)
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
 								{
-									ServerRequests.getTheMessageBox().killMe();
+									sessionExpiredActions();
 								}
-								else if(MessageBox.getMe() != null)
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
 								{
-									MessageBox.getMe().killMe();
+									sessionExpiredActions();
 								}
-								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
 							}
 						});
 						ServerRequests.setStaticGetNewsSuccess(false);
@@ -2580,6 +2651,141 @@ public class ServerRequests
 						staticOutputMessage = rt.getOutputMessage();
 						ServerRequests.setStaticDepositSuccess(true);
 						ServerRequests.setStaticDepositComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public static void getSpecialCaches()
+	{
+		ServerRequests.setStaticGetSpecialCachesComplete(false);
+		ServerRequests.setStaticGetSpecialCachesSuccess(false);
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setStaticGetSpecialCachesSuccess(false);
+					ServerRequests.setStaticGetSpecialCachesComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get Special Caches");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get Special Caches");
+							this.setSuccess("1");
+							return;
+						}
+						MACManager.clearMacs();
+						JSONValue[] addresses = response.get("addresses").asArray();
+						for(JSONValue address : addresses)
+						{
+							MACManager.addMacAddress(address.asString());
+						}
+						this.setOutputMessage("DONE!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/specialevents?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID());
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing transfer url", true));	
+						}
+					});
+					ServerRequests.setStaticGetSpecialCachesSuccess(false);
+					ServerRequests.setStaticGetSpecialCachesComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setStaticGetSpecialCachesSuccess(false);
+						ServerRequests.setStaticGetSpecialCachesComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
+						ServerRequests.setStaticGetSpecialCachesSuccess(true);
+						ServerRequests.setStaticGetSpecialCachesComplete(true);
 					}
 				}
 			}

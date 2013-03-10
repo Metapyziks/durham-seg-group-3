@@ -19,6 +19,21 @@ public class Cache
 		this.garrison = truncateServerNumber(garrison);
 	}
 	
+	public boolean isUnowned()
+	{
+		return getOwnerId().equals("0");
+	}
+	
+	public boolean isAdminCache()
+	{
+		return getOwnerId().equals("-1");
+	}
+	
+	public boolean isMine()
+	{
+		return getOwnerId().equals(CurrentUser.getMe().getAccountId());
+	}
+	
 	public void setGarrison(int newGarrison)
 	{
 		garrison = Integer.toString(newGarrison);

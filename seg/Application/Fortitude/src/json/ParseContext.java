@@ -27,31 +27,57 @@ class ParseContext
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
 		StringBuilder sb = new StringBuilder();
 		
-		int delorienCounter = 0;
 		long currentTime = System.currentTimeMillis();
 
+		int delorianCounter = 0;
+		
 		String string;
 		
 		do
 		{
-			string = br.readLine();
+			string = br.readLine() + "\n";
 			
 			if(string != null)
 			{
 				currentTime = System.currentTimeMillis();
 				
 				boolean exitCharLoop = false;
+				boolean inString = false;
+				boolean isEscaped = false;
 				
 				for(char c : string.toCharArray())
 				{
-					if(c == '{')
+					if(isEscaped)
 					{
-						delorienCounter++;
+						isEscaped = false;
+					}
+					else if(inString)
+					{
+						if(c == '"')
+						{
+							inString = false;
+						}
+						else if(c == '\\')
+						{
+							isEscaped = true;
+						}
+					}
+					else if(c == '"')
+					{
+						inString = !inString;
+					}
+					else if(c == '{')
+					{
+						delorianCounter++;
 					}
 					else if(c == '}')
 					{
-						delorienCounter--;
-						exitCharLoop = true;
+						delorianCounter--;
+						if(delorianCounter == 0)
+						{
+							exitCharLoop = true;
+							break;
+						}
 					}
 				}
 
@@ -61,8 +87,6 @@ class ParseContext
 				{
 					break;
 				}
-				
-				string = br.readLine();
 			}
 
 		} while(System.currentTimeMillis() - currentTime < 15000);

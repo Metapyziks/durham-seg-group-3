@@ -132,7 +132,14 @@ public class DepositUnitsScreen extends Window
 		usernameTextView.setTextColor(Color.rgb(160, 160, 160));
 		usernameTextView.setGravity(Gravity.CENTER);
 		usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-		usernameTextView.setText(CurrentUser.getMe().getUserName());
+		if(VisitYourCacheScreen.getStaticTheCache().isUnowned())
+		{
+			usernameTextView.setText("OUTLAWS");
+		}
+		else
+		{
+			usernameTextView.setText(CurrentUser.getMe().getUserName());
+		}
 		mainArea.addView(usernameTextView, usernameTextViewLayout);
 
 		LayoutParams fourthRowSpaceLayout = new LayoutParams(row4, col1); //fourth row space
@@ -157,7 +164,14 @@ public class DepositUnitsScreen extends Window
 		TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
 		standingArmyTextView.setTextSize(14);
 		standingArmyTextView.setTextColor(Color.WHITE);
-		standingArmyTextView.setText(VisitYourCacheScreen.getStaticTheCache().getGarrison() + " soldiers");
+		if(VisitYourCacheScreen.getStaticTheCache().isUnowned())
+		{
+			standingArmyTextView.setText("0 soldiers");
+		}
+		else
+		{
+		    standingArmyTextView.setText(VisitYourCacheScreen.getStaticTheCache().getGarrison() + " soldiers");
+		}
 		standingArmyTextView.setGravity(Gravity.RIGHT);
 		standingArmyTextView.setLayoutParams(standingArmyTextViewLayout);
 		standingArmyGrid.addView(standingArmyTextView, standingArmyTextViewLayout);

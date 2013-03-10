@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.view.Menu;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.content.Context;
 import android.content.Intent;
 
@@ -60,11 +61,53 @@ public class Fortitude extends Activity
 		String password = fs.OpenFileDialog("password");
 		if((username == null) || (password == null))
 		{
-			new MainLoginScreen();
+			new SplashScreen();
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					try
+					{
+						Thread.sleep(3000);
+					}
+					catch(Exception e)
+					{
+						//do nothing...
+					}
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							SplashScreen.getMe().killMe();
+							new MainLoginScreen();
+						}
+					});
+				}
+			});
+			thread.start();
 		}
 		else if((username.equals("")) || (password.equals("")))
 		{
-			new MainLoginScreen();
+			new SplashScreen();
+			Thread thread = new Thread(new Runnable() {
+				public void run()
+				{
+					try
+					{
+						Thread.sleep(3000);
+					}
+					catch(Exception e)
+					{
+						//do nothing...
+					}
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							SplashScreen.getMe().killMe();
+							new MainLoginScreen();
+						}
+					});
+				}
+			});
+			thread.start();
 		}
 		else
 		{
@@ -189,6 +232,19 @@ public class Fortitude extends Activity
 		{
 			System.out.println("Cannot check if wifi is enabled " + e.toString());
 			return false;
+		}
+	}
+	
+	public static void enableWifi()
+	{
+		try
+		{
+			WifiManager wifi = (WifiManager) Fortitude.getFortitude().getSystemService(Context.WIFI_SERVICE);
+			wifi.setWifiEnabled(true);
+		}
+		catch(Exception e)
+		{
+			//oh well
 		}
 	}
 }

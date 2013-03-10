@@ -232,7 +232,7 @@ public class EnemyCacheScreen extends Window
 		seventhRowTextView.setGravity(Gravity.CENTER);
 		seventhRowTextView.setTextSize(12);
 		seventhRowTextView.setTextColor(Color.WHITE);
-		seventhRowTextView.setText("Stuff about distances between caches here :)");
+		seventhRowTextView.setText("");
 		seventhRowTextView.setLayoutParams(seventhRowTextViewLayout);
 		mainArea.addView(seventhRowTextView, seventhRowTextViewLayout);
 

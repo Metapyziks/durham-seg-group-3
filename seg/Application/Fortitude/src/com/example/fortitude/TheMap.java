@@ -46,6 +46,7 @@ public class TheMap extends GridLayout
 	private static int markerPositionToBePassed;
 	private static boolean staticStillThere;
 	private static boolean staticStillThereDone;
+	private static boolean theLock;
 
 	////////
 	//
@@ -71,6 +72,7 @@ public class TheMap extends GridLayout
 		super(context);
 		me = this;
 		freeToGetCaches = true;
+		theLock = false;
 
 		LayoutInflater factory = LayoutInflater.from(Fortitude.getFortitude()); //create the map and add it to this view
 		mapView = (factory.inflate(R.layout.maplayout, null));
@@ -85,7 +87,7 @@ public class TheMap extends GridLayout
 		googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
 		setOnClickListenerOnGoogleMap();
-		
+
 		if(!CurrentUser.getMe().isVerified())
 		{
 			setOnMapMoveListener();
@@ -163,42 +165,42 @@ public class TheMap extends GridLayout
 			{
 				if((!CurrentUser.getMe().isVerified()) && (TheMap.getGotInitialLocation()))
 				{
-				    updateCachePositions();
-				    Thread thread = new Thread(new Runnable() {
-				    	public void run()
-				    	{
-				    		while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
-				    		{
-				    			//wait
-				    			try
-				    			{
-				    				Thread.sleep(100);
-				    			}
-				    			catch(Exception e)
-				    			{
-				    				//oh well
-				    			}
-				    		}
-				    		if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
-				    		{
-				    			if(ServerRequests.getTheMessageBox() != null)
-				    			{
-				    				Fortitude.getFortitude().runOnUiThread(new Runnable() {
-				    					public void run()
-				    					{
-				    						ServerRequests.getTheMessageBox().killMe();
-				    					}
-				    				});
-				    			}
-				    		}
-				    	}
-				    });
-				    thread.start();
+					updateCachePositions();
+					Thread thread = new Thread(new Runnable() {
+						public void run()
+						{
+							while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+							{
+								//wait
+								try
+								{
+									Thread.sleep(100);
+								}
+								catch(Exception e)
+								{
+									//oh well
+								}
+							}
+							if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									Fortitude.getFortitude().runOnUiThread(new Runnable() {
+										public void run()
+										{
+											ServerRequests.getTheMessageBox().killMe();
+										}
+									});
+								}
+							}
+						}
+					});
+					thread.start();
 				}
 			}
 		});
 	}
-	
+
 	public void updateCachePositions()
 	{
 		Fortitude.getFortitude().runOnUiThread(new Runnable() {
@@ -240,13 +242,21 @@ public class TheMap extends GridLayout
 							TheMap.getMe().setMarkers(new ArrayList<Marker>());
 							for(Cache cache: caches)
 							{
-								if(cache.getGarrison().equals("-1"))
-								{
-									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
-								}
-								if(!cache.getGarrison().equals("-1"))
+								if(cache.isMine())
 								{
 									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))));
+								}
+								else if(cache.isUnowned())
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))));
+								}
+								else if(cache.isAdminCache())
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))));
+								}
+								else
+								{
+									TheMap.getMe().getMarkers().add(TheMap.getMe().getGoogleMap().addMarker(new MarkerOptions().position(new LatLng(Double.parseDouble(cache.getLat()), Double.parseDouble(cache.getLon()))).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))));
 								}
 							}
 						}
@@ -298,7 +308,7 @@ public class TheMap extends GridLayout
 			googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()), googleMap.getCameraPosition().zoom));
 		}
 	}
-	
+
 	public void zoomToThisPosition(String latitude, String longitude)
 	{
 		if(googleMap != null)
@@ -360,6 +370,11 @@ public class TheMap extends GridLayout
 		googleMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 			public boolean onMarkerClick(Marker marker)
 			{
+				if(theLock)
+				{
+					return true;
+				}
+				theLock = true;
 				setMarkerToBePassed(marker);
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 				ServerRequests.refreshData(false);
@@ -372,6 +387,7 @@ public class TheMap extends GridLayout
 						}
 						if(!ServerRequests.getRefreshDataSuccess())
 						{
+							theLock = false;
 							return;
 						}
 						TheMap.setStaticStillThere(false);
@@ -413,60 +429,88 @@ public class TheMap extends GridLayout
 									MessageBox.newMsgBox("The Cache Isn't There Any More", true);
 								}
 							});
+							theLock = false;
 							return;
 						}
 						try
 						{
-							ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false);
-							Thread thread = new Thread(new Runnable() {
-								public void run()
-								{
-									while(!(ServerRequests.getGetUserInfoComplete()))
+							if(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).isUnowned())
+							{
+								Fortitude.getFortitude().runOnUiThread(new Runnable() {
+									public void run()
 									{
+										GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
+										MainScreen.getMe().killMe();
+										new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
+									}
+								});
+							}
+							else if(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).isAdminCache())
+							{
+								Fortitude.getFortitude().runOnUiThread(new Runnable() {
+									public void run()
+									{
+										GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
+										MainScreen.getMe().killMe();
+										new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
+									}
+								});
+							}
+							else
+							{
+								ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), false);
+								Thread thread = new Thread(new Runnable() {
+									public void run()
+									{
+										while(!(ServerRequests.getGetUserInfoComplete()))
+										{
 
+										}
+										if(ServerRequests.getGetUserInfoSuccess())
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+													if(MessageBox.getMe() != null)
+													{
+														MessageBox.getMe().killMe();
+													}
+													GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...
+													if(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).isMine())
+													{
+														MainScreen.getMe().killMe();
+														new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
+													}
+													else
+													{
+														MainScreen.getMe().killMe();
+														new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
+													}
+												}
+											});
+										}
+										else
+										{
+											Fortitude.getFortitude().runOnUiThread(new Runnable() {
+												public void run()
+												{
+													if(ServerRequests.getTheMessageBox() != null)
+													{
+														ServerRequests.getTheMessageBox().killMe();
+													}
+												}
+											});
+										}
+										theLock = false;
 									}
-									if(ServerRequests.getGetUserInfoSuccess())
-									{
-										Fortitude.getFortitude().runOnUiThread(new Runnable() {
-											public void run()
-											{
-												if(ServerRequests.getTheMessageBox() != null)
-												{
-													ServerRequests.getTheMessageBox().killMe();
-												}
-												if(MessageBox.getMe() != null)
-												{
-													MessageBox.getMe().killMe();
-												}
-												GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...
-												if(!ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
-												{
-													MainScreen.getMe().killMe();
-													new EnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()), ServerRequests.getStaticUserInfo().get(0));
-												}
-												else
-												{
-													MainScreen.getMe().killMe();
-													new YourCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getOwnerId(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getCacheName(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLat(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getLon(), ServerRequests.getNearbyCaches().get(TheMap.getMarkerPositionToBePassed()).getGarrison()));
-												}
-											}
-										});
-									}
-									else
-									{
-										Fortitude.getFortitude().runOnUiThread(new Runnable() {
-											public void run()
-											{
-												if(ServerRequests.getTheMessageBox() != null)
-												{
-													ServerRequests.getTheMessageBox().killMe();
-												}
-											}
-										});
-									}
-								}
-							});
-							thread.start();
+								});
+								thread.start();
+							}
+							theLock = false;
 						}
 						catch(Exception e)
 						{
@@ -475,6 +519,7 @@ public class TheMap extends GridLayout
 								ServerRequests.getTheMessageBox().killMe();
 							}
 							MessageBox.newMsgBox("Could not retrieve data about this cache!", true);
+							theLock = false;
 							return;
 						}
 					}

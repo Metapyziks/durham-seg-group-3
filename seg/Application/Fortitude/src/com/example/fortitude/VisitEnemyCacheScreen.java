@@ -253,6 +253,7 @@ public class VisitEnemyCacheScreen extends Window
 			{
 				killMe();
 				new MainScreen();
+				GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
 			}
 		});
 		cancelButton.setLayoutParams(cancelButtonLayout);

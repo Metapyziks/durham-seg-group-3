@@ -57,7 +57,7 @@ public class NotificationPanel extends GridLayout
 			}
 			else if(stub.getType().equals("BattleReport"))
 			{
-				icon.setImageResource(R.drawable.swords);
+				icon.setImageResource(R.drawable.swords_read);
 			}
 		}
 		else

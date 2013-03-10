@@ -131,7 +131,18 @@ public class YourCacheScreen extends Window
     	usernameTextView.setTextColor(Color.rgb(160, 160, 160));
     	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	usernameTextView.setText(CurrentUser.getMe().getUserName());
+    	if(staticTheCache.isMine())
+    	{
+    	    usernameTextView.setText(CurrentUser.getMe().getUserName());
+    	}
+    	else if(staticTheCache.isAdminCache())
+    	{
+    		usernameTextView.setText("OUTLAWS");
+    	}
+    	else
+    	{
+    		usernameTextView.setText("UNOWNED");
+    	}
     	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
     	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1); //fith row space
@@ -156,7 +167,18 @@ public class YourCacheScreen extends Window
     	TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
     	standingArmyTextView.setTextSize(14);
     	standingArmyTextView.setTextColor(Color.WHITE);
-    	standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
+    	if(staticTheCache.isMine())
+    	{
+    	    standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
+    	}
+    	else if(staticTheCache.isUnowned())
+    	{
+    		standingArmyTextView.setText("0 soldiers");
+    	}
+    	else
+    	{
+    		standingArmyTextView.setText("bandits");
+    	}
     	standingArmyTextView.setGravity(Gravity.RIGHT);
     	standingArmyTextView.setLayoutParams(standingArmyTextViewLayout);
     	standingArmyGrid.addView(standingArmyTextView, standingArmyTextViewLayout);
@@ -177,7 +199,7 @@ public class YourCacheScreen extends Window
     	eighthRowTextView.setGravity(Gravity.CENTER);
     	eighthRowTextView.setTextSize(12);
     	eighthRowTextView.setTextColor(Color.WHITE);
-    	eighthRowTextView.setText("Stuff about distances between caches here :)");
+    	eighthRowTextView.setText("");
     	eighthRowTextView.setLayoutParams(eighthRowTextViewLayout);
     	mainArea.addView(eighthRowTextView, eighthRowTextViewLayout);
     	
@@ -265,6 +287,7 @@ public class YourCacheScreen extends Window
     		{
     			YourCacheScreen.getMe().killMe();
     			new MainScreen();
+    			GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
     		}
     	});
     	cancelButton.setLayoutParams(cancelButtonLayout);
