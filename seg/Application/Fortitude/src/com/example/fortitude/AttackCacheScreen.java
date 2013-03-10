@@ -234,7 +234,7 @@ public class AttackCacheScreen extends Window
 								Fortitude.getFortitude().runOnUiThread(new Runnable() {
 									public void run()
 									{
-										ServerRequests.refreshData();
+										ServerRequests.refreshData(false);
 										Thread thread = new Thread(new Runnable() {
 											public void run()
 											{

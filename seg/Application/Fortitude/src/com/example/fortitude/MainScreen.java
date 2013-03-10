@@ -41,6 +41,8 @@ public class MainScreen extends Window
 	private Spec allcols = GridLayout.spec(0,1);
 
 	private TextView userBalanceTextView = null;
+	
+	private static boolean theLock = false;
 
 	FortitudeButton zoomInButton;
 	FortitudeButton zoomOutButton;
@@ -51,9 +53,12 @@ public class MainScreen extends Window
 	private ImageView flagIcon;
 	private ImageView castleIcon;
 	private ImageView refreshIcon;
+	private ImageView starIcon;
 	private static int theMarker = -1;
 
 	private static boolean castleClickable = false;
+	private static boolean flagClickable = false;
+	private static boolean starClickable = false;
 
 	////////
 	//
@@ -76,6 +81,9 @@ public class MainScreen extends Window
 	{
 		super();
 		me = this;
+		castleClickable = false;
+		flagClickable = false;
+		starClickable = false;
 		addContentToContentPane(createWindowPane());
 	}
 
@@ -132,7 +140,13 @@ public class MainScreen extends Window
 		topBarImage.setOnClickListener(new OnClickListener() {
 			public void onClick(View view)
 			{
+				if(theLock)
+				{
+				    return;
+				}
+				theLock = true;
 				topBarClicked();
+				theLock = false;
 			}
 		});
 		mainArea.addView(topBarImage, topBarImageLayout);
@@ -163,7 +177,7 @@ public class MainScreen extends Window
 
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-
+		
 		LayoutParams theMapLayout = new LayoutParams(row2, col1); //The map
 		theMapLayout.width = super.getWindowWidth();
 		theMapLayout.height = super.getWindowHeight() - (super.getWindowHeight() / 5) - (super.getWindowHeight() / 20);
@@ -177,6 +191,48 @@ public class MainScreen extends Window
 			mainArea.addView(TheMap.getMe(), theMapLayout);
 		}
 
+		GridLayout starGrid = new GridLayout(mainArea.getContext());
+		starGrid.setRowCount(3);
+		starGrid.setColumnCount(3);
+		
+		LayoutParams starGridTopSpaceLayout = new LayoutParams(row1, col1);
+		starGridTopSpaceLayout.height = super.getWindowHeight() / 40;
+		Space starGridTopSpace = new Space(starGrid.getContext());
+		starGrid.setLayoutParams(starGridTopSpaceLayout);
+		starGrid.addView(starGridTopSpace, starGridTopSpaceLayout);
+		
+		LayoutParams starLeftSpaceLayout = new LayoutParams(row2, col1);
+		starLeftSpaceLayout.width = (int) (super.getWindowWidth() * 0.82);
+		Space starLeftSpace = new Space(starGrid.getContext());
+		starLeftSpace.setLayoutParams(starLeftSpaceLayout);
+		starGrid.addView(starLeftSpace, starLeftSpaceLayout);
+		
+		LayoutParams starIconLayout = new LayoutParams(row2, col2);
+		starIconLayout.width = super.getWindowHeight() / 10;
+		starIconLayout.height = super.getWindowHeight() / 10;
+		starIcon = new ImageView(starGrid.getContext());
+		starIcon.setImageResource(R.drawable.star);
+		starIcon.setLayoutParams(starIconLayout);
+		starIcon.setVisibility(View.INVISIBLE);
+		starIcon.setOnClickListener(new OnClickListener() {
+			public void onClick(View arg0) {
+				if(theLock)
+				{
+					return;
+				}
+				theLock = true;
+				if(MainScreen.getStarClickable())
+				{
+					new SpecialCacheScreen();
+				}
+				theLock = false;
+			}
+		});
+		starGrid.addView(starIcon, starIconLayout);
+		
+		LayoutParams starGridLayout = new LayoutParams(row2, col1);
+	    mainArea.addView(starGrid, starGridLayout);
+		
 		if(!CurrentUser.getMe().isVerified())
 		{
 			LayoutParams activateAccountBarLayout = new LayoutParams(row3, col1);
@@ -188,8 +244,14 @@ public class MainScreen extends Window
 			activateAccountBar.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
+					if(theLock)
+					{
+						return;
+					}
+					theLock = true;
 					MainScreen.getMe().killMe();
 					new ActivateUserScreen();
+					theLock = false;
 				}
 			});
 			activateAccountBar.setImageResource(R.drawable.activate_account);
@@ -216,13 +278,13 @@ public class MainScreen extends Window
 
 			LayoutParams firstTopLeftSpaceLayout = new LayoutParams(row1, col1);
 			//firstTopLeftSpaceLayout.width = (super.getWindowWidth() / 4) / 8;
-			firstTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 20;
+			firstTopLeftSpaceLayout.height = (super.getWindowHeight() / 5) / 15;
 			Space firstLeftSpace = new Space(bottomBarMailIconGrid.getContext());
 			firstLeftSpace.setLayoutParams(firstTopLeftSpaceLayout);
 			bottomBarMailIconGrid.addView(firstLeftSpace, firstTopLeftSpaceLayout);
 
 			LayoutParams mailIconLayout = new LayoutParams(row2, col1); //mailIcon
-			mailIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 10);
+			mailIconLayout.height = (super.getWindowHeight() / 5) - ((super.getWindowHeight() / 5) / 8);
 			mailIconLayout.width = (super.getWindowWidth() / 4);
 			mailIcon = new ImageView(bottomBarMailIconGrid.getContext());
 			mailIcon.setScaleType(ScaleType.FIT_XY);
@@ -231,7 +293,14 @@ public class MainScreen extends Window
 			mailIcon.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					MessageBox.newMsgBox("Mail Was Clicked", true);
+					if(theLock)
+					{
+						return;
+					}
+					theLock = true;
+					MainScreen.getMe().killMe();
+					new NotificationScreen(0);
+					theLock = false;
 				}
 			});
 			bottomBarMailIconGrid.addView(mailIcon, mailIconLayout);
@@ -255,7 +324,7 @@ public class MainScreen extends Window
 			flagIconLayout.width = (super.getWindowWidth() / 4);
 			flagIcon = new ImageView(bottomBarMailIconGrid.getContext());
 			flagIcon.setScaleType(ScaleType.FIT_XY);
-			flagIcon.setImageResource(R.drawable.flag);
+			flagIcon.setImageResource(R.drawable.flag_grey);
 			flagIcon.setLayoutParams(flagIconLayout);
 			bottomBarflagIconGrid.addView(flagIcon, flagIconLayout);
 
@@ -274,22 +343,31 @@ public class MainScreen extends Window
 			clickableFlagArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
+					if(theLock)
 					{
-						if(CurrentUser.getMe().getIntBalance() < 5)
+						return;
+					}
+					theLock = true;
+					if(MainScreen.getFlagClickable())
+					{
+						if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 						{
-							MessageBox.newMsgBox("You must have atleast 5 soldiers to place a cache", true);
+							if(CurrentUser.getMe().getIntBalance() < 5)
+							{
+								MessageBox.newMsgBox("You must have atleast 5 soldiers to place a cache", true);
+							}
+							else
+							{
+								killMe();
+								new PlaceCacheScreen();
+							}
 						}
 						else
 						{
-							killMe();
-							new PlaceCacheScreen();
+							MessageBox.newMsgBox("Cannot Get Your GPS Location", true);
 						}
 					}
-					else
-					{
-						MessageBox.newMsgBox("Cannot Get Your GPS Location", true);
-					}
+					theLock = false;
 				}
 			});
 			clickableFlagAreaGrid.addView(clickableFlagArea, clickableFlagAreaLayout);
@@ -338,7 +416,13 @@ public class MainScreen extends Window
 			clickableCastleArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					whenCastleClicked();	
+					if(theLock)
+					{
+						return;
+					}
+					theLock = true;
+					whenCastleClicked();
+					theLock = false;
 				}
 			});
 			clickableCastleAreaGrid.addView(clickableCastleArea, clickableCastleAreaLayout);
@@ -367,7 +451,13 @@ public class MainScreen extends Window
 			refreshIcon.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
-					ServerRequests.refreshData();
+					if(theLock)
+					{
+						return;
+					}
+					theLock = true;
+					ServerRequests.refreshData(true);
+					theLock = false;
 				}
 			});
 			bottomBarRefreshIconGrid.addView(refreshIcon, refreshIconLayout);
@@ -431,6 +521,11 @@ public class MainScreen extends Window
 			centerMeClickableArea.setOnClickListener(new OnClickListener() {
 				public void onClick(View v)
 				{
+					if(theLock)
+					{
+						return;
+					}
+					theLock = true;
 					if(TheMap.getMe() == null)
 					{
 						MessageBox.newMsgBox("Can't get the map!", true);
@@ -446,13 +541,14 @@ public class MainScreen extends Window
 							MessageBox.newMsgBox("Can't Get Your Location!", true);
 						}
 					}
+					theLock = false;
 				}
 			});
 			centerMeClickableAreaGrid.addView(centerMeClickableArea, centerMeClickableAreaLayout);
 
 			LayoutParams centerMeClickableAreaGridLayout = new LayoutParams(row3, col1);
 			mainArea.addView(centerMeClickableAreaGrid, centerMeClickableAreaGridLayout);
-
+			
 			IconUpdater.newIconUpdater();
 			MainScreen.setCastleClickable(false);
 
@@ -467,6 +563,36 @@ public class MainScreen extends Window
 					{
 						TheMap.getMe().zoomToThisPosition(savedLat, savedLon);
 						TheMap.getMe().updateCachePositions();
+						Thread thread = new Thread(new Runnable() {
+							public void run()
+							{
+								while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+								{
+								    //wait
+									try
+									{
+										Thread.sleep(100);
+									}
+									catch(Exception e)
+									{
+										
+									}
+								}
+								if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+								{
+									Fortitude.getFortitude().runOnUiThread(new Runnable() {
+										public void run()
+										{
+											if(ServerRequests.getTheMessageBox() != null)
+											{
+											    ServerRequests.getTheMessageBox().killMe();
+											}
+										}
+									});
+								}
+							}
+						});
+						thread.start();
 					}
 				}
 				firstTimeDone = true;
@@ -477,7 +603,7 @@ public class MainScreen extends Window
 		{
 			MessageBox.newMsgBox("Google maps crashed, please restart the app!", true);
 		}
-		
+
 		return mainArea;
 	}
 
@@ -495,7 +621,7 @@ public class MainScreen extends Window
 		{                   //and display the relevant user
 			theMarker = -1;
 			ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-			ServerRequests.refreshData(); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
+			ServerRequests.refreshData(false); //refresh to make sure the cache still exists, otherwise we are searching for a non existant cache
 			Thread thread2 = new Thread(new Runnable() {
 				public void run()
 				{
@@ -505,12 +631,20 @@ public class MainScreen extends Window
 					}
 					if(!ServerRequests.getRefreshDataSuccess())
 					{
+						if(ServerRequests.getTheMessageBox() != null)
+						{
+							ServerRequests.getTheMessageBox().killMe();
+						}
+						if(MessageBox.getMe() != null)
+						{
+							
+						}
 						return;
 					}
 					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 						public void run()
 						{
-							MessageBox.newMsgBox("Loading Cache Details", false);
+							ServerRequests.getTheMessageBox().changeMessageToDisplay("Loading Cache Details");
 						}
 					});
 					try
@@ -579,7 +713,7 @@ public class MainScreen extends Window
 							}
 							if(theMarker != -1)
 							{
-								if(ServerRequests.getNearbyCaches().get(theMarker).getOwnerId().equals(CurrentUser.getMe().getAccountId()))
+								if((ServerRequests.getNearbyCaches().get(theMarker).isMine()) || ServerRequests.getNearbyCaches().get(theMarker).isUnowned())
 								{
 									if(ServerRequests.getTheMessageBox() != null)
 									{
@@ -592,6 +726,11 @@ public class MainScreen extends Window
 									GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView()); //TEMP FIX, Messagebox wasn't properly dying here for some raison...	
 									MainScreen.getMe().killMe();
 									new VisitYourCacheScreen(ServerRequests.getNearbyCaches().get(theMarker));
+								}
+								else if(ServerRequests.getNearbyCaches().get(theMarker).isAdminCache())
+								{
+									MainScreen.getMe().killMe();
+									new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(theMarker).getCacheId(), ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), ServerRequests.getNearbyCaches().get(theMarker).getCacheName(), ServerRequests.getNearbyCaches().get(theMarker).getLat(), ServerRequests.getNearbyCaches().get(theMarker).getLon(), ServerRequests.getNearbyCaches().get(theMarker).getGarrison()), new User("-1", "OUTLAWS", "NOTHING", "NOTHING", "0"));
 								}
 								else
 								{
@@ -685,7 +824,22 @@ public class MainScreen extends Window
 	{
 		return refreshIcon;
 	}
+	
+	public ImageView getStarIcon()
+	{
+		return starIcon;
+	}
 
+	public static synchronized boolean getStarClickable()
+	{
+		return starClickable;
+	}
+	
+	public static synchronized void setStarClickable(boolean x)
+	{
+		starClickable = x;
+	}
+	
 	public static synchronized boolean getCastleClickable()
 	{
 		return castleClickable;
@@ -694,5 +848,15 @@ public class MainScreen extends Window
 	public static synchronized void setCastleClickable(boolean x)
 	{
 		castleClickable = x;
+	}
+
+	public static synchronized boolean getFlagClickable()
+	{
+		return flagClickable;
+	}
+
+	public static synchronized void setFlagClickable(boolean x)
+	{
+		flagClickable = x;
 	}
 }

@@ -22,12 +22,14 @@ public class HelpScreens extends Window
 	private static HelpScreens me;
 	private static int screenIdentity = 0;
 	private static final int maximumScreen = 1;
-	
-	public HelpScreens( int whatScreen )
+	private static int screenToReturnTo;
+
+	public HelpScreens(int whatScreen, int screenToReturn)
 	{
 		super(R.drawable.help_fortitude_bg);
 		me = this;
 		screenIdentity = whatScreen;
+		screenToReturnTo = screenToReturn;
 		if(screenIdentity == 1)
 		{
 			super.getBackgroundImage().setImageResource(R.drawable.help_buttons_bg);
@@ -65,7 +67,7 @@ public class HelpScreens extends Window
 				{
 					screenIdentity--;
 					HelpScreens.getMe().killMe();
-					new HelpScreens (screenIdentity);
+					new HelpScreens (screenIdentity, screenToReturnTo);
 				}
 			});
 
@@ -96,13 +98,7 @@ public class HelpScreens extends Window
 			}
 			public void whenClicked()
 			{
-				killMe();
-				new AccountScreen() {
-					public void showNextScreen()
-					{
-						new MainScreen();
-					}
-				};
+				showNextScreen();
 			}
 		});
 
@@ -130,7 +126,8 @@ public class HelpScreens extends Window
 				{
 					screenIdentity++;
 					HelpScreens.getMe().killMe();
-					new HelpScreens (screenIdentity);
+					new HelpScreens (screenIdentity, screenToReturnTo);
+
 				}
 			});
 
@@ -142,7 +139,7 @@ public class HelpScreens extends Window
 			rightButtonSpace.setLayoutParams(rightButtonLayout);
 			mainArea.addView(rightButtonSpace,leftButtonLayout);
 		}
-		
+
 		return mainArea;
 	}
 
@@ -169,6 +166,36 @@ public class HelpScreens extends Window
 	{
 		me = null;
 		this.removeAllViews();
+	}
+
+	////////
+	//
+	//showNextScreen
+	//
+	//This method is called when the user presses the cancel button and is overridden by methods that want to go somewhere 
+	//that isn't back to the main screen when the cancel button is pressed.
+	//
+	////////
+	public void showNextScreen()
+	{
+		killMe();
+		if(screenToReturnTo == 0)
+		{
+			new MainScreen();
+		}
+		else if(screenToReturnTo == 1)
+		{
+			new AccountScreen() {
+				public void showNextScreen()
+				{
+					new MainScreen();
+				}
+			};
+		}
+		else if(screenToReturnTo == 2)
+		{
+			new MainLoginScreen();
+		}
 	}
 
 }

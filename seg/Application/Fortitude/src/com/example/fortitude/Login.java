@@ -61,10 +61,9 @@ public class Login
 	//method to log in and retrieve a session ID
 	//
 	////////
-	public static void logIn(String uname, String password)
+	public static void logIn(String uname, String phash)
 	{
-		password = hashPassword(password);
-		ServerRequests.createSession(uname, password, false);
+		ServerRequests.createSession(uname, phash, false);
 	}  
 
 	////////

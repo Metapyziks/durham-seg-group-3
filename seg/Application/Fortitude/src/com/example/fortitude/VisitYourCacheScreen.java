@@ -130,7 +130,14 @@ public class VisitYourCacheScreen extends Window
     	usernameTextView.setTextColor(Color.rgb(160, 160, 160));
     	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	usernameTextView.setText(CurrentUser.getMe().getUserName());
+    	if(!VisitYourCacheScreen.getStaticTheCache().getGarrison().equals("-1"))
+    	{
+    	    usernameTextView.setText(CurrentUser.getMe().getUserName());
+    	}
+    	else
+    	{
+    		usernameTextView.setText("UNOWNED");
+    	}
     	mainArea.addView(usernameTextView, usernameTextViewLayout);
     	
     	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1); //fith row space
@@ -144,18 +151,25 @@ public class VisitYourCacheScreen extends Window
     	standingArmyGrid.setRowCount(1);
     	
     	LayoutParams standingArmyLeftSpaceLayout = new LayoutParams(row1, col1);
-    	standingArmyLeftSpaceLayout.width = super.getWindowWidth() / 2;
+    	standingArmyLeftSpaceLayout.width = super.getWindowWidth() / 3;
     	Space standingArmyLeftSpace = new Space(standingArmyGrid.getContext());
     	standingArmyLeftSpace.setLayoutParams(standingArmyLeftSpaceLayout);
     	standingArmyGrid.addView(standingArmyLeftSpace, standingArmyLeftSpaceLayout);
     	
     	LayoutParams standingArmyTextViewLayout = new LayoutParams(row1, col2); //standing army text view
-    	standingArmyTextViewLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 8);
+    	standingArmyTextViewLayout.width = ((super.getWindowWidth() / 3) * 2) - (super.getWindowWidth() / 8);
     	standingArmyTextViewLayout.height = super.getWindowHeight() / 20;
     	TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
     	standingArmyTextView.setTextSize(14);
     	standingArmyTextView.setTextColor(Color.WHITE);
-    	standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
+    	if(!VisitYourCacheScreen.getStaticTheCache().getGarrison().equals("-1"))
+    	{
+    	    standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
+    	}
+    	else
+    	{
+    		standingArmyTextView.setText("0 soldiers");
+    	}
     	standingArmyTextView.setGravity(Gravity.RIGHT);
     	standingArmyTextView.setLayoutParams(standingArmyTextViewLayout);
     	standingArmyGrid.addView(standingArmyTextView, standingArmyTextViewLayout);
@@ -182,14 +196,22 @@ public class VisitYourCacheScreen extends Window
     	LayoutParams withdrawUnitsButtonLayout = new LayoutParams(row1, col2); //plan route button
     	withdrawUnitsButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
     	withdrawUnitsButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton withdrawUnitsButton = (new FortitudeButton(R.drawable.increase_army, R.drawable.increase_army_pressed) {
+    	FortitudeButton withdrawUnitsButton = (new FortitudeButton(R.drawable.withdraw, R.drawable.withdraw_pressed) {
     		public void preClickActions()
     		{
     			
     		}
     		public void whenClicked()
     		{
-    			
+    			if(Integer.parseInt(VisitYourCacheScreen.getStaticTheCache().getGarrison()) > 0)
+    			{
+    				VisitYourCacheScreen.getMe();
+    				new WithdrawUnitsScreen();
+    			}
+    			else
+    			{
+    				MessageBox.newMsgBox("You Don't Have Any Soldiers In This Cache To Withdraw!", true);
+    			}
     		}
     	});
     	withdrawUnitsButton.setLayoutParams(withdrawUnitsButtonLayout);
@@ -204,14 +226,22 @@ public class VisitYourCacheScreen extends Window
     	LayoutParams depositUnitsLayout = new LayoutParams(row1, col4);
     	depositUnitsLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
     	depositUnitsLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton depositUnits = (new FortitudeButton(R.drawable.decrease_army, R.drawable.decrease_army_pressed) {
+    	FortitudeButton depositUnits = (new FortitudeButton(R.drawable.deposit, R.drawable.deposit_pressed) {
     		public void preClickActions()
     		{
     			
     		}
     		public void whenClicked()
     		{
-    			
+    			if(CurrentUser.getMe().getIntBalance() > 0)
+    			{
+    			    VisitYourCacheScreen.getMe().killMe();
+    			    new DepositUnitsScreen();
+    			}
+    			else
+    			{
+    				MessageBox.newMsgBox("You Don't Have Any Soldiers To Deposit!", true);
+    			}
     		}
     	});
     	depositUnits.setLayoutParams(depositUnitsLayout);
@@ -248,6 +278,7 @@ public class VisitYourCacheScreen extends Window
     		{
     			killMe();
     			new MainScreen();
+    			GUI.makeAllTheGUIElementsBetter(Fortitude.getFortitude().getWindow().getDecorView());
     		}
     	});
     	cancelButton.setLayoutParams(cancelButtonLayout);
@@ -305,5 +336,10 @@ public class VisitYourCacheScreen extends Window
 	public static Cache getStaticTheCache()
 	{
 		return staticTheCache;
+	}
+	
+	public static void setStaticTheCache(Cache c)
+	{
+		staticTheCache = c;
 	}
 }

@@ -82,6 +82,7 @@ public abstract class RequestThread implements Runnable
 		catch(Exception e)
 		{
 			setOutputMessage("Unable to connect to server: " + e.toString());
+			e.printStackTrace();
 			setSuccess("1");
 		}
 	}

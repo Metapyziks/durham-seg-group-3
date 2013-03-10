@@ -210,7 +210,13 @@ public class EnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-
+				EnemyCacheScreen.getMe().killMe();
+				new SendMessageScreen(EnemyCacheScreen.getTheUser().getUserName()) {
+					public void whenCancelled()
+					{
+						new EnemyCacheScreen(EnemyCacheScreen.getStaticTheCache(), EnemyCacheScreen.getTheUser());
+					}
+				};
 			}
 		});
 		sendMessageButton.setLayoutParams(sendMessageButtonLayout);
@@ -226,7 +232,7 @@ public class EnemyCacheScreen extends Window
 		seventhRowTextView.setGravity(Gravity.CENTER);
 		seventhRowTextView.setTextSize(12);
 		seventhRowTextView.setTextColor(Color.WHITE);
-		seventhRowTextView.setText("Stuff about distances between caches here :)");
+		seventhRowTextView.setText("");
 		seventhRowTextView.setLayoutParams(seventhRowTextViewLayout);
 		mainArea.addView(seventhRowTextView, seventhRowTextViewLayout);
 
@@ -312,7 +318,13 @@ public class EnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-
+				EnemyCacheScreen.getMe().killMe();
+				new ReportScreens(1) {
+					public void whenCancelled()
+					{
+						new EnemyCacheScreen(EnemyCacheScreen.getStaticTheCache(), EnemyCacheScreen.getTheUser());
+					}
+				};
 			}
 		});
 		reportCacheButton.setLayoutParams(reportCacheButtonLayout);
