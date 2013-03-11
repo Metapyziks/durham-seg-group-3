@@ -5,18 +5,18 @@ public class CurrentUser extends User
 	private static CurrentUser me = null;
 	private String sessionID;
 	private String phash;
-	private String balance;
+	private int balance;
 	private String numberOfCaches;
-	private String totalBalance;
+	private int totalGarrison;
 	
-	public CurrentUser(String accountid, String username, String joindate, String rank, String sessionID, String phash, String balance, String numberOfCaches, String totalBalance, String caches)
+	public CurrentUser(String accountid, String username, String joindate, String rank, String sessionID, String phash, int balance, String numberOfCaches, int totalGarrison, String caches)
 	{
 		super(accountid, username, joindate, rank, caches);
 		this.sessionID = sessionID;
 		this.phash = phash;
-		this.balance = truncateBalance(balance);
+		this.balance = balance;
 		this.numberOfCaches = truncateBalance(numberOfCaches);
-		this.totalBalance = Integer.toString((Integer.parseInt(truncateBalance(totalBalance))) + (Integer.parseInt(this.balance))); 
+		setGarrison(totalGarrison); 
 		me = this;
 	}
 	
@@ -25,9 +25,9 @@ public class CurrentUser extends User
 		sessionID = x;
 	}
 	
-	public void setBalance(String x)
+	public void setBalance(int x)
 	{
-		balance = truncateBalance(x);
+		balance = x;;
 	}
 	
 	public void setNumberOfCaches(String x)
@@ -35,19 +35,24 @@ public class CurrentUser extends User
 		numberOfCaches = truncateBalance(x);
 	}
 	
-	public void setTotalBalance(String x)
+	public int getGarrison()
 	{
-		totalBalance = Integer.toString((Integer.parseInt(truncateBalance(x))) + (Integer.parseInt(this.balance)));
-	}
-		
-	public String getTotalBalance()
-	{
-		return totalBalance;
+		return totalGarrison;
 	}
 	
-	public int getIntTotalBalance()
+	public void addToGarrison(int x)
 	{
-		return Integer.parseInt(totalBalance);
+		totalGarrison += x;
+	}
+	
+	public void setGarrison(int x)
+	{
+		totalGarrison = x;
+	}
+		
+	public int getTotalBalance()
+	{
+		return totalGarrison + balance;
 	}
 	
 	public String getNumberOfCaches()
@@ -65,14 +70,9 @@ public class CurrentUser extends User
 		return Integer.toString((int)(Double.parseDouble(x)));
 	}
 	
-	public String getBalance()
+	public int getBalance()
 	{
 		return balance;
-	}
-	
-	public int getIntBalance()
-	{
-		return Integer.parseInt(balance);
 	}
 	
 	public String getPhash()

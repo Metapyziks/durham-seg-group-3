@@ -32,7 +32,19 @@ public class NotificationManager
 		return stubs.get(index);
 	}
 	
-	public static void addStub(NotificationStub x)
+	public static synchronized void setAsRead(int id)
+	{
+		for(NotificationStub stub : stubs)
+		{
+			if(stub.getNotificationId() == id)
+			{
+				stub.setRead();
+				break;
+			}
+		}
+	}
+	
+	public static synchronized void addStub(NotificationStub x)
 	{
 		for(int i = 0; i < stubs.size(); i++)
 		{
@@ -65,6 +77,21 @@ public class NotificationManager
 	public static void clearStubs()
 	{
 		stubs.clear();
+	}
+	
+	public static synchronized ArrayList<NotificationStub> getMessages()
+	{
+		ArrayList<NotificationStub> stubsToReturn = new ArrayList<NotificationStub>();
+		
+		for(NotificationStub stub : stubs)
+		{
+			if(stub.getType().equals("Message"))
+			{
+				stubsToReturn.add(stub);
+			}
+		}
+		
+		return stubsToReturn;
 	}
 	
 	public static synchronized boolean isUnread()

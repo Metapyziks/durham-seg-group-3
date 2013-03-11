@@ -29,7 +29,7 @@ public class NotificationScreen extends Window
 	private Spec col5 = GridLayout.spec(4);
 	private Spec col6 = GridLayout.spec(5);
 
-	private static int pageId;
+	public static int pageId;
 	public static int rememberSize;
 
 	private static NotificationScreen me;
@@ -49,7 +49,7 @@ public class NotificationScreen extends Window
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setRowCount(5);
 		mainArea.setColumnCount(1);
-		
+
 		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
 		topBarImageLayout.width = super.getWindowWidth();
 		topBarImageLayout.height = super.getWindowHeight() / 20;
@@ -91,7 +91,7 @@ public class NotificationScreen extends Window
 
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-		
+
 		LayoutParams topSpaceRowLayout = new LayoutParams(row1, col1);
 		topSpaceRowLayout.height = super.getWindowHeight() / 5;
 		Space topSpaceRow = new Space(mainArea.getContext());
@@ -111,6 +111,66 @@ public class NotificationScreen extends Window
 			if(NotificationManager.getMessageStub(i) == null)
 			{
 				needRightArrow = false;
+			}
+			if(NotificationManager.getMessageStub(i) != null)
+			{
+				if(NotificationManager.getMessageStub(i).getType().equals("Message"))
+				{
+					n.setOnClickListener(new OnClickListener() {
+						public void onClick(View arg0)
+						{
+							NotificationPanel theView = (NotificationPanel) arg0;
+							NotificationStub theStub = theView.getStub();
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+							ServerRequests.readMessage(theStub.getNotificationId());
+							Thread thread = new Thread(new Runnable() {
+								public void run()
+								{
+									while(!ServerRequests.getStaticReadMessageComplete())
+									{
+										try
+										{
+											Thread.sleep(100);
+										}
+										catch(Exception e)
+										{
+											//oh well
+										}
+									}
+									if(ServerRequests.getStaticReadMessageSuccess())
+									{
+										NotificationManager.setAsRead(ServerRequests.getStaticMessageId());
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+												}
+												if(MessageBox.getMe() != null)
+												{
+													MessageBox.getMe().killMe();
+												}
+												NotificationScreen.getMe().killMe();
+												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), 0) {
+													public void whenCancelled()
+													{
+														new NotificationScreen(NotificationScreen.pageId);
+													}
+												};
+											}
+										});
+									}
+								}
+							});
+							thread.start();
+						}
+					});
+				}
+				else if(NotificationManager.getMessageStub(i).getType().equals("BattleReport"))
+				{
+
+				}
 			}
 			n.setLayoutParams(panelLayout);
 			notificationGrid.addView(n, panelLayout);
@@ -243,7 +303,7 @@ public class NotificationScreen extends Window
 											{
 												if(ServerRequests.getTheMessageBox() != null)
 												{
-												    ServerRequests.getTheMessageBox().killMe();
+													ServerRequests.getTheMessageBox().killMe();
 												}
 												pageId++;
 												NotificationScreen.getMe().killMe();
@@ -316,7 +376,7 @@ public class NotificationScreen extends Window
 			}
 		};
 	}
-	
+
 	////////
 	//
 	//getMe

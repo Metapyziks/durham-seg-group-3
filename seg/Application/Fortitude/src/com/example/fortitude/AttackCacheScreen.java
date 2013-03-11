@@ -142,7 +142,7 @@ public class AttackCacheScreen extends Window
 		seekBarLayout.width = super.getWindowWidth() / 2;
 		seekBarLayout.height = super.getWindowHeight() / 10;
 		unitsSeekBar = new SeekBar(fourthRowGrid.getContext());
-		unitsSeekBar.setMax(CurrentUser.getMe().getIntBalance() - 1);
+		unitsSeekBar.setMax(CurrentUser.getMe().getBalance() - 1);
 		unitsSeekBar.setProgress(0);
 		unitsSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
@@ -218,7 +218,7 @@ public class AttackCacheScreen extends Window
 					MessageBox.newMsgBox("Unable To Get Your GPS Location!", true);
 					return;
 				}
-				if(CurrentUser.getMe().getIntBalance() > 0)
+				if(CurrentUser.getMe().getBalance() > 0)
 				{
 					ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
 					ServerRequests.attackCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), AttackCacheScreen.getMe().getUnitsToPlaceBox().getText().toString(), AttackCacheScreen.getStaticTheCache().getCacheId());
@@ -257,7 +257,12 @@ public class AttackCacheScreen extends Window
 														{
 															MessageBox.getMe().killMe();
 														}
-														new PostBattleScreen(ServerRequests.getAttackCacheResponse(), AttackCacheScreen.getStaticTheCache());
+														new PostBattleScreen(ServerRequests.getAttackCacheResponse(), AttackCacheScreen.getStaticTheCache()) {
+															public void whenCancelled()
+															{
+																new MainScreen();
+															}
+														};
 													}
 												});
 											}

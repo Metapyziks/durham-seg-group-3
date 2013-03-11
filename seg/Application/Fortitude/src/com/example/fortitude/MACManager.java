@@ -5,10 +5,21 @@ import java.util.ArrayList;
 public class MACManager 
 {
 	private static ArrayList<String> macs;
+	private static String claimingAddress;
 	
 	static
 	{
 		macs = new ArrayList<String>();
+	}
+	
+	public static void setClaimingAddress(String x)
+	{
+		claimingAddress = x;
+	}
+	
+	public static String getClaimingAddress()
+	{
+		return claimingAddress;
 	}
 	
 	public static String getMacAddress(int i)

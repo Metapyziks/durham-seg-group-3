@@ -1,5 +1,7 @@
 package com.example.fortitude;
 
+import java.util.ArrayList;
+
 import android.widget.ImageView.ScaleType;
 import android.widget.ImageView;
 import android.widget.GridLayout;
@@ -8,6 +10,8 @@ import android.widget.GridLayout.Spec;
 import android.widget.Space;
 import android.widget.TextView;
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 
 public class InboxScreen extends Window 
 {
@@ -25,7 +29,7 @@ public class InboxScreen extends Window
 	private Spec col6 = GridLayout.spec(5);
 	
 	private static InboxScreen me;
-	private static int pageId;
+	public static int pageId;
 	
 	private boolean needRightArrow;
 	
@@ -54,7 +58,90 @@ public class InboxScreen extends Window
 		messagesGrid.setColumnCount(1);
 		messagesGrid.setRowCount(8);
 		
-		//ADD ME!!! row2 col1!!!
+		ArrayList<NotificationStub> messages = NotificationManager.getMessages();
+		
+		for(int i = (pageId * 8); i < ((pageId + 1) * 7); i++)
+		{
+			NotificationStub theStub = null;
+			if(!(i >= messages.size()))
+			{
+				theStub = messages.get(i);
+			}
+			LayoutParams panelLayout = new LayoutParams(GridLayout.spec(i - (pageId * 7)), col1);
+			panelLayout.width = super.getWindowWidth();
+			panelLayout.height = super.getWindowHeight() / 12;
+			NotificationPanel n = new NotificationPanel(messagesGrid.getContext(), theStub, super.getWindowWidth(), super.getWindowHeight());	
+			if(theStub == null)
+			{
+				needRightArrow = false;
+			}
+			if(theStub == null)
+			{
+				needRightArrow = false;
+			}
+			if(theStub != null)
+			{
+				if(theStub.getType().equals("Message"))
+				{
+					n.setOnClickListener(new OnClickListener() {
+						public void onClick(View arg0)
+						{
+							NotificationPanel theView = (NotificationPanel) arg0;
+							NotificationStub theStub = theView.getStub();
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+							ServerRequests.readMessage(theStub.getNotificationId());
+							Thread thread = new Thread(new Runnable() {
+								public void run()
+								{
+									while(!ServerRequests.getStaticReadMessageComplete())
+									{
+										try
+										{
+											Thread.sleep(100);
+										}
+										catch(Exception e)
+										{
+											//oh well
+										}
+									}
+									if(ServerRequests.getStaticReadMessageSuccess())
+									{
+										NotificationManager.setAsRead(ServerRequests.getStaticMessageId());
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+												}
+												if(MessageBox.getMe() != null)
+												{
+													MessageBox.getMe().killMe();
+												}
+												InboxScreen.getMe().killMe();
+												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), 1) {
+													public void whenCancelled()
+													{
+														new InboxScreen(InboxScreen.pageId);
+													}
+												};
+											}
+										});
+									}
+								}
+							});
+							thread.start();
+						}
+					});
+				}
+				else if(NotificationManager.getMessageStub(i).getType().equals("BattleReport"))
+				{
+
+				}
+			}
+			n.setLayoutParams(panelLayout);
+			messagesGrid.addView(n, panelLayout);
+		}
 		
 		LayoutParams messagesGridLayout = new LayoutParams(row2, col1);
 		mainArea.addView(messagesGrid, messagesGridLayout);
@@ -207,7 +294,9 @@ public class InboxScreen extends Window
 				}
 				public void whenClicked()
 				{
-					
+					pageId++;
+					InboxScreen.getMe().killMe();
+					new InboxScreen(pageId);
 				}
 			});
 			rightButton.setLayoutParams(rightButtonLayout);

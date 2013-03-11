@@ -3,6 +3,8 @@ package com.example.fortitude;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.ConnectException;
+import java.net.URLEncoder;
+
 import json.JSONObject;
 import java.net.SocketTimeoutException;
 import java.io.FileNotFoundException;

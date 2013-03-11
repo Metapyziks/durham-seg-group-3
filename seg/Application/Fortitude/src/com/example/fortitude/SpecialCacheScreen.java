@@ -64,7 +64,8 @@ public class SpecialCacheScreen extends Window
 			}
 			public void whenClicked() 
 			{
-
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+				ServerRequests.claimSpecial(MACManager.getClaimingAddress());
 			}			
 		});
 		claimButton.setLayoutParams(claimButtonLayout);

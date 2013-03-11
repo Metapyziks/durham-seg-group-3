@@ -25,11 +25,11 @@ public class ServerRequests
 	private static boolean getUserInfoSuccess = false;
 	private static boolean getUserBalanceComplete = false;
 	private static boolean getUserBalanceSuccess = false;
-	private static String staticUserBalance;
+	private static int staticUserBalance;
 	private static String usersToGet = null;
 	private static boolean staticInitialLogin;
 	private static String staticSessionId;
-	private static String staticTotalUnits;
+	private static int staticTotalUnits;
 	private static int getNearbyCachesInfoStatus;
 	private static ArrayList<Cache> nearbyCaches;
 	private static String staticCacheCount;
@@ -67,6 +67,17 @@ public class ServerRequests
 	private static boolean staticDeleteMessagebox;
 	private static boolean staticGetSpecialCachesComplete;
 	private static boolean staticGetSpecialCachesSuccess;
+	private static boolean staticClaimSpecialComplete;
+	private static boolean staticClaimSpecialSuccess;
+	private static String staticMacAddress;
+	private static boolean staticReadMessageComplete;
+	private static boolean staticReadMessageSuccess;
+	private static int staticMessageId;
+	private static String messageContent;
+	private static String messageSenderName;
+	private static String messageSubject;
+	private static boolean sendMessageComplete;
+	private static boolean sendMessageSuccess;
 
 	////////
 	//
@@ -83,6 +94,91 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static void setSendMessageSuccess(boolean x)
+	{
+		sendMessageSuccess = x;
+	}
+	
+	public static void setSendMessageComplete(boolean x)
+	{
+		sendMessageComplete = x;
+	}
+	
+	public static boolean getSendMessageSuccess()
+	{
+		return sendMessageSuccess;
+	}
+	
+	public static boolean getSendMessageComplete()
+	{
+		return sendMessageComplete;
+	}
+	
+	public static String getMessageSubject()
+	{
+		return messageSubject;
+	}
+	
+	public static String getMessageSenderName()
+	{
+		return messageSenderName;
+	}
+	
+	public static int getStaticMessageId()
+	{
+		return staticMessageId;
+	}
+	
+	public static String getMessageContent()
+	{
+		return messageContent;
+	}
+	
+	public static void setStaticReadMessageSuccess(boolean x)
+	{
+		staticReadMessageSuccess = x;
+	}
+	
+	public static void setStaticReadMessageComplete(boolean x)
+	{
+		staticReadMessageComplete = x;
+	}
+	
+	public static boolean getStaticReadMessageSuccess()
+	{
+		return staticReadMessageSuccess;
+	}
+	
+	public static boolean getStaticReadMessageComplete()
+	{
+		return staticReadMessageComplete;
+	}
+	
+	public static String getStaticMacAddress()
+	{
+		return staticMacAddress;
+	}
+
+	public static boolean getStaticClaimSpecialComplete()
+	{
+		return staticClaimSpecialComplete;
+	}
+
+	public static boolean getStaticClaimSpecialSuccess()
+	{
+		return staticClaimSpecialSuccess;
+	}
+
+	public static void setStaticClaimSpecialComplete(boolean x)
+	{
+		staticClaimSpecialComplete = x;
+	}
+
+	public static void setStaticClaimSpecialSuccess(boolean x)
+	{
+		staticClaimSpecialSuccess = x;
+	}
+
 	public static void setStaticGetSpecialCachesComplete(boolean x)
 	{
 		staticGetSpecialCachesComplete = x;
@@ -438,12 +534,12 @@ public class ServerRequests
 		theMessageBox = x;
 	}
 
-	public static String getStaticTotalUnits()
+	public static int getStaticTotalUnits()
 	{
 		return staticTotalUnits;
 	}
 
-	public static void setStaticTotalUnits(String x)
+	public static void setStaticTotalUnits(int x)
 	{
 		staticTotalUnits = x;
 	}
@@ -498,12 +594,12 @@ public class ServerRequests
 		getUserInfoSuccess = x;
 	}
 
-	public static void setStaticUserBalance(String x)
+	public static void setStaticUserBalance(int x)
 	{
 		staticUserBalance = x;
 	}
 
-	public static String getStaticUserBalance()
+	public static int getStaticUserBalance()
 	{
 		return staticUserBalance;
 	}
@@ -668,7 +764,7 @@ public class ServerRequests
 																Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																	public void run()
 																	{
-																		ServerRequests.getNewsStubs(System.currentTimeMillis(), 16);
+																		ServerRequests.getNewsStubs(System.currentTimeMillis(), 30);
 																		Thread thread = new Thread(new Runnable() {
 																			public void run()
 																			{
@@ -870,8 +966,8 @@ public class ServerRequests
 							return;
 						}
 						this.setOutputMessage("done");
-						ServerRequests.setStaticUserBalance(response.get("balance").asString());
-						ServerRequests.setStaticTotalUnits(response.get("garrison").asString());
+						ServerRequests.setStaticUserBalance(response.get("balance").asInteger());
+						ServerRequests.setStaticTotalUnits(response.get("garrison").asInteger());
 						ServerRequests.setStaticCacheCount(response.get("cachecount").asString());
 						this.setSuccess("2");
 					}
@@ -926,7 +1022,7 @@ public class ServerRequests
 		Thread thread = new Thread(runnable);
 		thread.start();
 	}
-	
+
 	public static void signInError()
 	{
 		if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect credentials"))
@@ -1496,7 +1592,7 @@ public class ServerRequests
 					{
 						CurrentUser.getMe().setBalance(ServerRequests.getStaticUserBalance());
 						CurrentUser.getMe().setNumberOfCaches(ServerRequests.getStaticCacheCount());
-						CurrentUser.getMe().setTotalBalance(ServerRequests.getStaticTotalUnits());
+						CurrentUser.getMe().setGarrison(ServerRequests.getStaticTotalUnits());
 						Fortitude.getFortitude().runOnUiThread(new Runnable() {
 							public void run()
 							{
@@ -1516,7 +1612,7 @@ public class ServerRequests
 									}
 								}
 								ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-								ServerRequests.getNewsStubs(System.currentTimeMillis(), 16);
+								ServerRequests.getNewsStubs(System.currentTimeMillis(), 30);
 								Thread thread = new Thread(new Runnable() {
 									public void run()
 									{
@@ -2459,7 +2555,19 @@ public class ServerRequests
 							int timestamp = item.get("timestamp").asInteger();
 							String type = item.get("type").asString();
 							String status = item.get("status").asString();
-							NotificationManager.addStub(new NotificationStub(notificationid, receiverid, timestamp, type, status));
+							String person = "";
+							String context = "";
+							if(type.equals("Message"))
+							{
+								person = item.get("sender").asString();
+								context = item.get("subject").asString();
+							}
+							else if(type.equals("BattleReport"))
+							{
+								person = item.get("attacker").asString();
+								context = item.get("cache").asString();
+							}
+							NotificationManager.addStub(new NotificationStub(notificationid, receiverid, timestamp, type, status, person, context));
 						}
 						this.setOutputMessage("done");
 						this.setSuccess("2");
@@ -2793,6 +2901,451 @@ public class ServerRequests
 		thread.start();
 	}
 
+	public static void claimSpecial(String macAddress)
+	{
+		staticClaimSpecialComplete = false;
+		staticClaimSpecialSuccess = false;
+		staticMacAddress = macAddress;
+
+		ServerRequests.setStaticClaimSpecialComplete(false);
+		ServerRequests.setStaticClaimSpecialSuccess(false);
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setStaticClaimSpecialSuccess(false);
+					ServerRequests.setStaticClaimSpecialComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Claim Special Cache!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Claim Special Cache!");
+							this.setSuccess("1");
+							return;
+						}
+						String name = response.get("event").get("name").asString();
+						int reward = response.get("event").get("reward").asInteger();
+						CurrentUser.getMe().setBalance(CurrentUser.getMe().getBalance() + reward);
+						this.setOutputMessage("Congratulations! You have successfully found and claimed the hidden cache " + name + ", and have been rewarded with " + reward + " soldiers!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/claimspecial?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&address=" + ServerRequests.getStaticMacAddress());
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setStaticClaimSpecialSuccess(false);
+					ServerRequests.setStaticClaimSpecialComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setStaticClaimSpecialSuccess(false);
+						ServerRequests.setStaticClaimSpecialComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								SpecialCacheScreen.getMe().killMe();
+								new MainScreen();
+								MessageBox.newMsgBox(staticOutputMessage, true);
+							}
+						});
+						ServerRequests.setStaticClaimSpecialSuccess(true);
+						ServerRequests.setStaticClaimSpecialComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+
+	public static void readMessage(int messageId)
+	{
+		ServerRequests.setStaticReadMessageSuccess(false);
+		ServerRequests.setStaticReadMessageComplete(false);
+		staticMessageId = messageId;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setStaticReadMessageSuccess(false);
+					ServerRequests.setStaticReadMessageComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get Message!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get Message!");
+							this.setSuccess("1");
+							return;
+						}
+						messageSenderName = response.get("sender").asString();
+						messageSubject = response.get("subject").asString();
+						messageContent = response.get("content").asString();
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/readmessage?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&messageid=" + ServerRequests.getStaticMessageId());
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setStaticReadMessageSuccess(false);
+					ServerRequests.setStaticReadMessageComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setStaticReadMessageSuccess(false);
+						ServerRequests.setStaticReadMessageComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+							}
+						});
+						ServerRequests.setStaticReadMessageSuccess(true);
+						ServerRequests.setStaticReadMessageComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+	
+	public static void sendMessage(String receiver, String subject, String content)
+	{
+		ServerRequests.setSendMessageComplete(false);
+		ServerRequests.setSendMessageSuccess(false);
+		
+		messageContent = content;
+		messageSenderName = receiver;
+		messageSubject = subject;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setSendMessageSuccess(false);
+					ServerRequests.setSendMessageComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Send Message!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Send Message!");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					messageSubject = URLEncoder.encode(messageSubject, "ISO-8859-1");
+					messageSenderName = URLEncoder.encode(messageSenderName, "ISO-8859-1");
+					messageContent = URLEncoder.encode(messageContent, "ISO-8859-1");
+					rt.setURL("http://" + ServerIP + "/api/sendmessage?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&receiver=" + ServerRequests.getMessageSenderName() + "&subject=" + ServerRequests.getMessageSubject() + "&content=" + ServerRequests.getMessageContent());
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setSendMessageSuccess(false);
+					ServerRequests.setSendMessageComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setSendMessageSuccess(false);
+						ServerRequests.setSendMessageComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+							}
+						});
+						ServerRequests.setSendMessageSuccess(true);
+						ServerRequests.setSendMessageComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+	
 	private static void sleepFunction()
 	{
 		try

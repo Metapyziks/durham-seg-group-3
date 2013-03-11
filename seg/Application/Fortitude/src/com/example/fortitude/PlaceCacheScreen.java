@@ -114,7 +114,7 @@ public class PlaceCacheScreen extends Window
 		seekBarLayout.width = super.getWindowWidth() / 2;
 		seekBarLayout.height = super.getWindowHeight() / 10;
 		unitsSeekBar = new SeekBar(secondRowGrid.getContext());
-		unitsSeekBar.setMax(CurrentUser.getMe().getIntBalance() - 5);
+		unitsSeekBar.setMax(CurrentUser.getMe().getBalance() - 5);
 		unitsSeekBar.setProgress(0);
 		unitsSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)

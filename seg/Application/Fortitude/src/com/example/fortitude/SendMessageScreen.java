@@ -30,6 +30,8 @@ public abstract class SendMessageScreen extends Window
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
 	private TextField recipientField;
+	private TextField subjectField;
+	private TextField contentField;
 	private static SendMessageScreen me;
 	private static String receipient;
 	
@@ -100,10 +102,9 @@ public abstract class SendMessageScreen extends Window
 		TextFieldImage secondInputTextFieldImage = new TextFieldImage();
 		secondInputTextFieldImage.setLayoutParams(secondInputTextFieldLayout);
 		subjectGrid.addView(secondInputTextFieldImage, secondInputTextFieldLayout);
-		
-		recipientField = new TextField(16);
-		recipientField.setLayoutParams(secondInputTextFieldLayout);
-		subjectGrid.addView(recipientField, secondInputTextFieldLayout);
+		subjectField = new TextField(20);
+		subjectField.setLayoutParams(secondInputTextFieldLayout);
+		subjectGrid.addView(subjectField, secondInputTextFieldLayout);
 		
 		LayoutParams subjectGridLayout = new LayoutParams(row4, col1); //add Subject Grid to view
 		mainArea.addView(subjectGrid, subjectGridLayout);
@@ -132,10 +133,10 @@ public abstract class SendMessageScreen extends Window
 		thirdInputTextFieldImage.setLayoutParams(thirdInputTextFieldLayout);
 		messageGrid.addView(thirdInputTextFieldImage, thirdInputTextFieldLayout);
 		
-		recipientField = new TextField(1000);
-		recipientField.setGravity(Gravity.TOP);
-		recipientField.setLayoutParams(thirdInputTextFieldLayout);
-		messageGrid.addView(recipientField, thirdInputTextFieldLayout);
+		contentField = new TextField(1000);
+		contentField.setGravity(Gravity.TOP);
+		contentField.setLayoutParams(thirdInputTextFieldLayout);
+		messageGrid.addView(contentField, thirdInputTextFieldLayout);
 		
 		LayoutParams messageGridLayout = new LayoutParams(row6, col1);// Adding main message to view
 		mainArea.addView(messageGrid, messageGridLayout);
@@ -168,7 +169,42 @@ public abstract class SendMessageScreen extends Window
 
 			public void whenClicked() 
 			{
-
+				if(!validateFields())
+				{
+					return;
+				}
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+				ServerRequests.sendMessage(recipientField.getText().toString(), subjectField.getText().toString(), contentField.getText().toString());
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+						while(!ServerRequests.getSendMessageComplete())
+						{
+							try
+							{
+								Thread.sleep(100);
+							}
+							catch(Exception e)
+							{
+								//oh well
+							}
+						}
+						if(ServerRequests.getSendMessageSuccess())
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							SendMessageScreen.getMe().killMe();
+							whenCancelled();
+						}
+					}
+				});
+				thread.start();
 			}			
 		});
 		sendButton.setLayoutParams(sendButtonLayout);
@@ -204,6 +240,26 @@ public abstract class SendMessageScreen extends Window
 		mainArea.addView(buttonRowGrid, buttonRowGridLayout);
 		
 		return mainArea;
+	}
+	
+	private boolean validateFields()
+	{
+		if(recipientField.getText().toString().length() < 5)
+		{
+			MessageBox.newMsgBox("Receipient name must be greater than 5 characters!", true);
+			return false;
+		}
+		else if(subjectField.getText().toString().length() < 1)
+		{
+			MessageBox.newMsgBox("Please enter a subject!", true);
+			return false;
+		}
+		else if(contentField.getText().toString().length() < 1)
+		{
+			MessageBox.newMsgBox("Please enter a message to send!", true);
+			return false;
+		}
+		return true;
 	}
 	
     public void killMe()

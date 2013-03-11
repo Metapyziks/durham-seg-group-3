@@ -18,13 +18,21 @@ public class NotificationPanel extends GridLayout
 	private Spec col2 = GridLayout.spec(1);
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
+	
+	private NotificationStub stub;
 
 	public NotificationPanel(Context c, NotificationStub stub, int windowWidth, int windowHeight)
 	{
 		super(c);
 		super.setColumnCount(5);
 		super.setRowCount(1);
+		this.stub = stub;
 		addContentToMe(stub, windowWidth, windowHeight);
+	}
+	
+	public NotificationStub getStub()
+	{
+		return stub;
 	}
 
 	private void addContentToMe(NotificationStub stub, int windowWidth, int windowHeight)
@@ -86,15 +94,17 @@ public class NotificationPanel extends GridLayout
 		textViewLayout.width = windowWidth - (leftSpaceLayout.width + iconBoxLayout.width + middleSpaceLayout.width);
 		TextView textView = new TextView(super.getContext());
 		textView.setTextSize(14);
-		textView.setGravity(Gravity.CENTER);
+		textView.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
 		textView.setTextColor(Color.WHITE);
 		if(stub.getType().equals("Message"))
 		{
-			textView.setText("You have received a message.");
+			String text = (stub.getPerson() + " : " + stub.getContext());
+			textView.setText(text.substring(0, Math.min(20, text.length())));
 		}
 		else if(stub.getType().equals("BattleReport"))
 		{
-			textView.setText("A cache has been attacked!");
+			String text = stub.getContext() + " has been attacked!";
+			textView.setText(text.substring(0, Math.min(20, text.length())));
 		}
 		textView.setLayoutParams(textViewLayout);
 		super.addView(textView, textViewLayout);

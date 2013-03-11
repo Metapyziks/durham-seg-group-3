@@ -110,7 +110,7 @@ public class ScoutFailureScreen extends Window
 			}
 			public void whenClicked()
 			{
-				if(CurrentUser.getMe().getIntBalance() > 0)
+				if(CurrentUser.getMe().getBalance() > 0)
 				{
 					killMe();
 					new ScoutEnemyCache(ScoutFailureScreen.getStaticTheCache());

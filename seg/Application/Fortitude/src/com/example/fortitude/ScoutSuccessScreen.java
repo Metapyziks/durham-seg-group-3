@@ -144,7 +144,7 @@ public class ScoutSuccessScreen extends Window
 			}
 			public void whenClicked()
 			{
-				if(CurrentUser.getMe().getIntBalance() > 0)
+				if(CurrentUser.getMe().getBalance() > 0)
 				{
 					ScoutSuccessScreen.getMe().killMe();
 					new AttackCacheScreen(ScoutSuccessScreen.getStaticTheCache());

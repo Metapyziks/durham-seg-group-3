@@ -178,7 +178,7 @@ public class VisitEnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-				if(CurrentUser.getMe().getIntBalance() == 0)
+				if(CurrentUser.getMe().getBalance() == 0)
 				{
 					MessageBox.newMsgBox("You require atleast 1 soldier to be able to scout", true);
 				}
@@ -208,7 +208,7 @@ public class VisitEnemyCacheScreen extends Window
 			}
 			public void whenClicked()
 			{
-				if(CurrentUser.getMe().getIntBalance() > 0)
+				if(CurrentUser.getMe().getBalance() > 0)
 				{
 				    VisitEnemyCacheScreen.getMe().killMe();
 				    new AttackCacheScreen(VisitEnemyCacheScreen.getStaticTheCache());

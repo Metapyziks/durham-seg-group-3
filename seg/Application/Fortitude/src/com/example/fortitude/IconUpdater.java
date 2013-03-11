@@ -33,7 +33,7 @@ public class IconUpdater
 	{
 		shouldIRun = true;
 		wifiEnableCounter = 0;
-		wifiScanCounter = 0;
+		wifiScanCounter = 7;
 		me = this;
 		runUpdater();
 	}
@@ -152,6 +152,7 @@ public class IconUpdater
 										{
 											if(mac.equals(address))
 											{
+												MACManager.setClaimingAddress(mac);
 												foundSpecialCache = true;
 												break;
 											}
@@ -162,16 +163,16 @@ public class IconUpdater
 										MainScreen.setStarClickable(true);
 										if(MainScreen.getMe() != null)
 										{
-											MainScreen.getMe().getStarIcon().setVisibility(View.VISIBLE);
-											//MainScreen.getMe().getStarIcon().setImageResource();
-										}
+										    MainScreen.getMe().getStarIcon().setImageResource(R.drawable.star);
+										} 
 									}
 									else
 									{
+										MACManager.setClaimingAddress("");
 										MainScreen.setStarClickable(false);
 										if(MainScreen.getMe() != null)
 										{
-											MainScreen.getMe().getStarIcon().setVisibility(View.INVISIBLE);
+											MainScreen.getMe().getStarIcon().setImageResource(R.drawable.empty);
 										}
 									}
 								}

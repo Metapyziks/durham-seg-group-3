@@ -211,9 +211,8 @@ public class MainScreen extends Window
 		starIconLayout.width = super.getWindowHeight() / 10;
 		starIconLayout.height = super.getWindowHeight() / 10;
 		starIcon = new ImageView(starGrid.getContext());
-		starIcon.setImageResource(R.drawable.star);
+		starIcon.setImageResource(R.drawable.empty);
 		starIcon.setLayoutParams(starIconLayout);
-		starIcon.setVisibility(View.INVISIBLE);
 		starIcon.setOnClickListener(new OnClickListener() {
 			public void onClick(View arg0) {
 				if(theLock)
@@ -352,7 +351,7 @@ public class MainScreen extends Window
 					{
 						if(TheMap.getMe().getGoogleMap().getMyLocation() != null)
 						{
-							if(CurrentUser.getMe().getIntBalance() < 5)
+							if(CurrentUser.getMe().getBalance() < 5)
 							{
 								MessageBox.newMsgBox("You must have atleast 5 soldiers to place a cache", true);
 							}

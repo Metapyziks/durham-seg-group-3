@@ -127,7 +127,7 @@ public abstract class AccountScreen extends Window
 		TextView availableSoldiersTextView = new TextView(availableSoldiersGrid.getContext());
 		availableSoldiersTextView.setTextSize(14);
 		availableSoldiersTextView.setTextColor(Color.WHITE);
-		availableSoldiersTextView.setText(CurrentUser.getMe().getBalance());
+		availableSoldiersTextView.setText(Integer.toString(CurrentUser.getMe().getBalance()));
 		availableSoldiersTextView.setGravity(Gravity.RIGHT);
 		availableSoldiersTextView.setLayoutParams(availableSoldiersTextViewLayout);
 		availableSoldiersGrid.addView(availableSoldiersTextView, availableSoldiersTextViewLayout);
@@ -157,7 +157,7 @@ public abstract class AccountScreen extends Window
 		TextView totalSoldiersTextView = new TextView(totalSoldiersGrid.getContext());
 		totalSoldiersTextView.setTextSize(14);
 		totalSoldiersTextView.setTextColor(Color.WHITE);
-		totalSoldiersTextView.setText(CurrentUser.getMe().getTotalBalance());
+		totalSoldiersTextView.setText(Integer.toString(CurrentUser.getMe().getTotalBalance()));
 		totalSoldiersTextView.setGravity(Gravity.RIGHT);
 		totalSoldiersTextView.setLayoutParams(totalSoldiersTextViewLayout);
 		totalSoldiersGrid.addView(totalSoldiersTextView, totalSoldiersTextViewLayout);

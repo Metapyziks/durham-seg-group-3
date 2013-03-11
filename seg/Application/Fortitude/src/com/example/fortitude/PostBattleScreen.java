@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.graphics.Color;
 import android.graphics.Typeface;
 
-public class PostBattleScreen extends Window 
+public abstract class PostBattleScreen extends Window 
 {
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
@@ -256,7 +256,7 @@ public class PostBattleScreen extends Window
     		public void whenClicked()
     		{
     			killMe();
-    			new MainScreen();
+    			whenCancelled();
     		}
     	});
     	cancelButton.setLayoutParams(cancelButtonLayout);
@@ -286,10 +286,17 @@ public class PostBattleScreen extends Window
 		new AccountScreen() {
 			public void showNextScreen()
 			{
-				new PostBattleScreen(PostBattleScreen.getStaticTheResponse(), PostBattleScreen.getStaticTheCache());
+				new PostBattleScreen(PostBattleScreen.getStaticTheResponse(), PostBattleScreen.getStaticTheCache()) {
+					public void whenCancelled()
+					{
+						new MainScreen();
+					}
+				};
 			}
 		};
 	}
+	
+	public abstract void whenCancelled();
 
 	////////
 	//
