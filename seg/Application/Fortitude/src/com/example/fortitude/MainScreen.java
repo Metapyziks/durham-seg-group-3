@@ -560,7 +560,7 @@ public class MainScreen extends Window
 				{
 					if(TheMap.getMe().getGoogleMap() != null)
 					{
-						TheMap.getMe().zoomToThisPosition(savedLat, savedLon);
+						TheMap.getMe().zoomToThisPosition(Double.parseDouble(savedLat), Double.parseDouble(savedLon));
 						TheMap.getMe().updateCachePositions();
 						Thread thread = new Thread(new Runnable() {
 							public void run()
@@ -729,11 +729,11 @@ public class MainScreen extends Window
 								else if(ServerRequests.getNearbyCaches().get(theMarker).isAdminCache())
 								{
 									MainScreen.getMe().killMe();
-									new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(theMarker).getCacheId(), ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), ServerRequests.getNearbyCaches().get(theMarker).getCacheName(), ServerRequests.getNearbyCaches().get(theMarker).getLat(), ServerRequests.getNearbyCaches().get(theMarker).getLon(), ServerRequests.getNearbyCaches().get(theMarker).getGarrison()), new User("-1", "OUTLAWS", "NOTHING", "NOTHING", "0"));
+									new VisitEnemyCacheScreen(new Cache(ServerRequests.getNearbyCaches().get(theMarker).getCacheId(), ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), ServerRequests.getNearbyCaches().get(theMarker).getCacheName(), ServerRequests.getNearbyCaches().get(theMarker).getLat(), ServerRequests.getNearbyCaches().get(theMarker).getLon(), ServerRequests.getNearbyCaches().get(theMarker).getGarrison()), new User(-1, "OUTLAWS", "NOTHING", "NOTHING", "0"));
 								}
 								else
 								{
-									ServerRequests.getUserInfo(ServerRequests.getNearbyCaches().get(theMarker).getOwnerId(), false); 
+									ServerRequests.getUserInfo(Integer.toString(ServerRequests.getNearbyCaches().get(theMarker).getOwnerId()), false); 
 									Thread thread = new Thread(new Runnable() {
 										public void run()
 										{

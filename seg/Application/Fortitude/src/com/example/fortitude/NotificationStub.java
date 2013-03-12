@@ -1,6 +1,6 @@
 package com.example.fortitude;
 
-public class NotificationStub 
+public class NotificationStub extends Reportable
 {
 	private int notificationId;
 	private int accountId;
@@ -12,7 +12,7 @@ public class NotificationStub
 	
 	public NotificationStub(int notificationId, int accountId, long timeStamp, String type, String read, String person, String context)
 	{
-		this.notificationId = notificationId;
+		super(notificationId);
 		this.accountId = accountId;
 		this.timeStamp = timeStamp;
 		this.type = type;
@@ -43,7 +43,7 @@ public class NotificationStub
 	
 	public int getNotificationId()
 	{
-		return notificationId;
+		return super.getIdentifier();
 	}
 	
 	public int getAccountId()

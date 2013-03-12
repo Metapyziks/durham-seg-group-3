@@ -47,7 +47,7 @@ public class MessageBox extends Window
 	{
 		if(me != null)
 		{
-			return null;
+			return null; //perhaps me?
 		}
 
 		disableAllTheChildren(Fortitude.getFortitude().getWindow().getDecorView());

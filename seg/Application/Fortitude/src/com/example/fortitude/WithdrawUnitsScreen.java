@@ -36,7 +36,7 @@ public class WithdrawUnitsScreen extends Window
 	private static WithdrawUnitsScreen me;
 	private SeekBar unitsSeekBar;
 	private TextView unitsToPlaceBox;
-	private static String rememberId;
+	private static int rememberId;
 
 	public WithdrawUnitsScreen()
 	{
@@ -185,7 +185,7 @@ public class WithdrawUnitsScreen extends Window
 		seekBarLayout.width = super.getWindowWidth() / 2;
 		seekBarLayout.height = super.getWindowHeight() / 10;
 		unitsSeekBar = new SeekBar(SliderRowGrid.getContext());
-		unitsSeekBar.setMax(Integer.parseInt(VisitYourCacheScreen.getStaticTheCache().getGarrison()) - 1);
+		unitsSeekBar.setMax(VisitYourCacheScreen.getStaticTheCache().getGarrison() - 1);
 		unitsSeekBar.setProgress(0);
 		unitsSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
@@ -279,7 +279,7 @@ public class WithdrawUnitsScreen extends Window
 					return;
 				}
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("ConnectingToServer", false));
-				ServerRequests.depositUnits(Double.toString(lat), Double.toString(lon), VisitYourCacheScreen.getStaticTheCache().getCacheId(), Integer.toString(Integer.parseInt(WithdrawUnitsScreen.getMe().unitsToPlaceBox.getText().toString()) * -1));
+				ServerRequests.depositUnits(Double.toString(lat), Double.toString(lon), "" + VisitYourCacheScreen.getStaticTheCache().getCacheId(), Integer.toString(Integer.parseInt(WithdrawUnitsScreen.getMe().unitsToPlaceBox.getText().toString()) * -1));
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
@@ -327,7 +327,7 @@ public class WithdrawUnitsScreen extends Window
 													boolean foundCache = false;
 													for(Cache c : ServerRequests.getNearbyCaches())
 													{
-														if(c.getCacheId().equals(rememberId))
+														if(c.getCacheId() == rememberId)
 														{
 															foundCache = true;
 															VisitYourCacheScreen.setStaticTheCache(c);

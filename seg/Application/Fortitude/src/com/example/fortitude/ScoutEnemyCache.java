@@ -143,7 +143,7 @@ public class ScoutEnemyCache extends Window
 		seekBarLayout.width = super.getWindowWidth() / 2;
 		seekBarLayout.height = super.getWindowHeight() / 10;
 		unitsSeekBar = new SeekBar(fourthRowGrid.getContext());
-		unitsSeekBar.setMax(CurrentUser.getMe().getBalance() - 1);
+		unitsSeekBar.setMax(Math.min(CurrentUser.getMe().getBalance() - 1, 19));
 		unitsSeekBar.setProgress(0);
 		unitsSeekBar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
 			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
@@ -220,7 +220,7 @@ public class ScoutEnemyCache extends Window
 					return;
 				}
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.scoutCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), ScoutEnemyCache.getStaticTheCache().getCacheId(), ScoutEnemyCache.getMe().getUnitsToPlaceBox());
+				ServerRequests.scoutCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), Integer.toString(ScoutEnemyCache.getStaticTheCache().getCacheId()), ScoutEnemyCache.getMe().getUnitsToPlaceBox());
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{

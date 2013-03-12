@@ -8,16 +8,28 @@ public class CurrentUser extends User
 	private int balance;
 	private String numberOfCaches;
 	private int totalGarrison;
+	private boolean messagesAcitve;
 	
-	public CurrentUser(String accountid, String username, String joindate, String rank, String sessionID, String phash, int balance, String numberOfCaches, int totalGarrison, String caches)
+	public CurrentUser(int accountid, String username, String joindate, String rank, String sessionID, String phash, int balance, String numberOfCaches, int totalGarrison, String caches)
 	{
 		super(accountid, username, joindate, rank, caches);
 		this.sessionID = sessionID;
 		this.phash = phash;
 		this.balance = balance;
 		this.numberOfCaches = truncateBalance(numberOfCaches);
-		setGarrison(totalGarrison); 
+		setGarrison(totalGarrison);
+		messagesAcitve = true;
 		me = this;
+	}
+	
+	public void setMessagesActive(boolean x)
+	{
+		messagesAcitve = x;
+	}
+	
+	public boolean getMessagesActive()
+	{
+		return messagesAcitve;
 	}
 	
 	public void setSessionID(String x)

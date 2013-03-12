@@ -72,13 +72,29 @@ public class ServerRequests
 	private static String staticMacAddress;
 	private static boolean staticReadMessageComplete;
 	private static boolean staticReadMessageSuccess;
-	private static int staticMessageId;
 	private static String messageContent;
 	private static String messageSenderName;
 	private static String messageSubject;
 	private static boolean sendMessageComplete;
 	private static boolean sendMessageSuccess;
-
+	private static boolean battleReportSuccess;
+	private static boolean battleReportComplete;
+    private static int staticMessageId;
+    private static boolean blockUserSuccess;
+    private static boolean blockUserComplete;
+    private static boolean blockTrue;
+    private static String usernameToBeBlocked;
+    private static boolean getBlockedUsersSuccessful;
+    private static boolean getBlockedUsersComplete;
+    private static boolean getUpdateSettingComplete;
+    private static boolean getUpdateSettingSuccess;
+    public static String settingName;
+    public static String newVal;
+    public static boolean reportThingSuccess;
+    public static boolean reportThingComplete;
+    public static int reportId;
+    public static String reportType;
+    
 	////////
 	//
 	//Constructor
@@ -94,66 +110,156 @@ public class ServerRequests
 	//A series of static accessors and mutators to share resources between threads.
 	//
 	////////
+	public static void setGetUpdateSettingComplete(boolean x)
+	{
+		getUpdateSettingComplete = x;
+	}
+	
+	public static void setGetUpdateSettingSuccess(boolean x)
+	{
+		getUpdateSettingSuccess = x;
+	}
+	
+	public static boolean getUpdateSettingSuccess()
+	{
+		return getUpdateSettingSuccess;
+	}
+	
+	public static boolean getUpdateSettingComplete()
+	{
+		return getUpdateSettingComplete;
+	}
+	
+	public static void setGetBlockedUsersComplete(boolean x)
+	{
+		getBlockedUsersComplete = x;
+	}
+	
+	public static void setGetBlockedUsersSuccessful(boolean x)
+	{
+		getBlockedUsersSuccessful = x;
+	}
+	
+	public static boolean getGetBlockedUsersSuccessful()
+	{
+		return getBlockedUsersSuccessful;
+	}
+	
+	public static boolean getGetBlockedUsersComplete()
+	{
+		return getBlockedUsersComplete;
+	}
+	
+	public static String getUsernameToBeBlocked()
+	{
+		return usernameToBeBlocked;
+	}
+	
+	public static boolean getBlockTrue()
+	{
+		return blockTrue;
+	}
+	
+	public static void setBlockUserSuccess(boolean x)
+	{
+		blockUserSuccess = x;
+	}
+	
+	public static void setBlockUserComplete(boolean x)
+	{
+		blockUserComplete = x;
+	}
+	
+	public static boolean getBlockUserSuccess()
+	{
+		return blockUserSuccess;
+	}
+	
+	public static boolean getBlockUserComplete()
+	{
+		return blockUserComplete;
+	}
+	
+	public static void setBattleReportComplete(boolean x)
+	{
+		battleReportComplete = x;
+	}
+	
+	public static void setBattleReportSuccess(boolean x)
+	{
+		battleReportSuccess = x;
+	}
+	
+	public static boolean getBattleReportComplete()
+	{
+		return battleReportComplete;
+	}
+	
+	public static boolean getBattleReportSuccess()
+	{
+		return battleReportSuccess;
+	}
+	
 	public static void setSendMessageSuccess(boolean x)
 	{
 		sendMessageSuccess = x;
 	}
-	
+
 	public static void setSendMessageComplete(boolean x)
 	{
 		sendMessageComplete = x;
 	}
-	
+
 	public static boolean getSendMessageSuccess()
 	{
 		return sendMessageSuccess;
 	}
-	
+
 	public static boolean getSendMessageComplete()
 	{
 		return sendMessageComplete;
 	}
-	
+
 	public static String getMessageSubject()
 	{
 		return messageSubject;
 	}
-	
+
 	public static String getMessageSenderName()
 	{
 		return messageSenderName;
 	}
-	
+
 	public static int getStaticMessageId()
 	{
 		return staticMessageId;
 	}
-	
+
 	public static String getMessageContent()
 	{
 		return messageContent;
 	}
-	
+
 	public static void setStaticReadMessageSuccess(boolean x)
 	{
 		staticReadMessageSuccess = x;
 	}
-	
+
 	public static void setStaticReadMessageComplete(boolean x)
 	{
 		staticReadMessageComplete = x;
 	}
-	
+
 	public static boolean getStaticReadMessageSuccess()
 	{
 		return staticReadMessageSuccess;
 	}
-	
+
 	public static boolean getStaticReadMessageComplete()
 	{
 		return staticReadMessageComplete;
 	}
-	
+
 	public static String getStaticMacAddress()
 	{
 		return staticMacAddress;
@@ -641,6 +747,9 @@ public class ServerRequests
 
 		staticUname = uname;
 		staticPhash = phash;
+		
+		NotificationManager.clearStubs();
+		BlockedManager.clearBlocked();
 
 		Runnable runnable = new Runnable() {
 
@@ -699,7 +808,15 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/session?uname=" + ServerRequests.getStaticUname() + "&phash=" + ServerRequests.getStaticPhash());
+				try
+				{
+				    rt.setURL("http://" + ServerIP + "/api/session?uname=" + encode(ServerRequests.getStaticUname()) + "&phash=" + encode(ServerRequests.getStaticPhash()));
+				}
+				catch(Exception e)
+				{
+					signInError();
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -791,61 +908,108 @@ public class ServerRequests
 																										Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																											public void run()
 																											{
-																												if(ServerRequests.getTheMessageBox() != null)
-																												{
-																													ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
-																												}
-																												else if(MessageBox.getMe() != null)
-																												{
-																													MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
-																												}
-																												else
-																												{
-																													ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
-																												}
+																												ServerRequests.getBlocked();
+																												Thread thread = new Thread(new Runnable() {
+																													public void run()
+																													{
+																														while(!ServerRequests.getGetBlockedUsersComplete())
+																														{
+																															ServerRequests.sleepFunction();
+																														}
+																														if(ServerRequests.getGetBlockedUsersSuccessful())
+																														{
+																															Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																																public void run()
+																																{
+																																	ServerRequests.setting("receivemessages");
+																																	Thread thread = new Thread(new Runnable() {
+																																		public void run()
+																																		{
+																																			while(!ServerRequests.getUpdateSettingComplete())
+																																			{
+																																				ServerRequests.sleepFunction();
+																																			}
+																																			if(ServerRequests.getUpdateSettingSuccess())
+																																			{
+																																				if(ServerRequests.settingName.equals("Default"))
+																																				{
+																																			        CurrentUser.getMe().setMessagesActive(true);
+																																				}
+																																				else
+																																				{
+																																					CurrentUser.getMe().setMessagesActive(false);
+																																				}
+																																			    Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																																					public void run()
+																																					{
+																																						if(TheMap.getGotInitialLocation())
+																																						{
+																																							if(TheMap.getMe() != null)
+																																							{
+																																								TheMap.getMe().updateCachePositions();
+																																								while(ServerRequests.getGetNearbyCachesInfoStatus() == 0)
+																																								{
+																																									ServerRequests.sleepFunction();
+																																								}
+																																								if(ServerRequests.getGetNearbyCachesInfoStatus() == 2)
+																																								{
+																																									Thread thread = new Thread(new Runnable() {
+																																										public void run()
+																																										{
 
-																												//ServerRequests.getTheMessageBox().killMe();
-																												//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
-																											}
-																										});
-																										try
-																										{
-																											Thread.sleep(1500);
-																										}
-																										catch(Exception e)
-																										{
-																											//oh well
-																										}
-																										Fortitude.getFortitude().runOnUiThread(new Runnable() {
-																											public void run()
-																											{
-																												if(ServerRequests.getTheMessageBox() != null)
-																												{
-																													ServerRequests.getTheMessageBox().killMe();
-																												}
-																												TheMap.newTheMap(Fortitude.getFortitude());
-																												if(staticInitialLogin)
-																												{
-																													if(MainLoginScreen.getMe() != null)
-																													{
-																														MainLoginScreen.getMe().killMe();
+																																											signInSuccess();
+																																										}
+																																									});
+																																									thread.start();
+																																								}
+																																								else
+																																								{
+																																									signInError();
+																																								}
+																																							}
+																																							else
+																																							{
+																																								Thread thread = new Thread(new Runnable() {
+																																									public void run()
+																																									{
+
+																																										signInSuccess();
+																																									}
+																																								});
+																																								thread.start();
+																																							}
+																																						}
+																																						else
+																																						{
+																																							Thread thread = new Thread(new Runnable() {
+																																								public void run()
+																																								{
+
+																																									signInSuccess();
+																																								}
+																																							});
+																																							thread.start();
+																																						}
+																																					}
+																																				});
+																																			}
+																																			else
+																																			{
+																																				signInError();
+																																			}
+																																		}
+																																	});
+																																	thread.start();
+																																}
+																															});
+																														}
+																														else
+																														{
+																															signInError();
+																														}
 																													}
-																													if(AutoSignInErrorScreen.getMe() != null)
-																													{
-																														AutoSignInErrorScreen.getMe().killMe();
-																													}
-																													if(SplashScreen.getMe() != null)
-																													{
-																														SplashScreen.getMe().killMe();
-																													}
-																													new MainScreen();
-																												}
-																												else
-																												{
-																													NewUserScreen.getMe().killMe();
-																													new HelpScreens(0, 0);
-																													MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
-																												}
+																												});
+																												thread.start();
 																											}
 																										});
 																									}
@@ -902,6 +1066,70 @@ public class ServerRequests
 		thread.start();
 	}
 
+	public static void signInSuccess()
+	{
+		Fortitude.getFortitude().runOnUiThread(new Runnable() {
+			public void run()
+			{
+				if(ServerRequests.getTheMessageBox() != null)
+				{
+					ServerRequests.getTheMessageBox().changeMessageToDisplay("Successfully Signed In!");
+				}
+				else if(MessageBox.getMe() != null)
+				{
+					MessageBox.getMe().changeMessageToDisplay("Successfully Signed In!");
+				}
+				else
+				{
+					ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+				}
+
+				//ServerRequests.getTheMessageBox().killMe();
+				//ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Successfully Signed In!", false));
+			}
+		});
+		try
+		{
+			Thread.sleep(1500);
+		}
+		catch(Exception e)
+		{
+			//oh well
+		}
+		Fortitude.getFortitude().runOnUiThread(new Runnable() {
+			public void run()
+			{
+				if(ServerRequests.getTheMessageBox() != null)
+				{
+					ServerRequests.getTheMessageBox().killMe();
+				}
+				TheMap.newTheMap(Fortitude.getFortitude());
+				if(staticInitialLogin)
+				{
+					if(MainLoginScreen.getMe() != null)
+					{
+						MainLoginScreen.getMe().killMe();
+					}
+					if(AutoSignInErrorScreen.getMe() != null)
+					{
+						AutoSignInErrorScreen.getMe().killMe();
+					}
+					if(SplashScreen.getMe() != null)
+					{
+						SplashScreen.getMe().killMe();
+					}
+					new MainScreen();
+				}
+				else
+				{
+					NewUserScreen.getMe().killMe();
+					new HelpScreens(0, 0);
+					MessageBox.newMsgBox("User Created!\n\nYou have been sent an email containing a link that you must follow inorder to activate your account!  Take a look through the help screens and when you're done press cancel to start playing!", true);
+				}
+			}
+		});
+	}
+	
 	////////
 	//
 	//getUserStats
@@ -973,7 +1201,30 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/userstats?uname=" + ServerRequests.getStaticUname() + "&session=" + staticSessionId);
+				try
+				{
+				    rt.setURL("http://" + ServerIP + "/api/userstats?uname=" + encode(ServerRequests.getStaticUname()) + "&session=" + encode(staticSessionId));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setGetUserBalanceSuccess(false);
+					ServerRequests.setGetUserBalanceComplete(true);
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -1143,7 +1394,28 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/register?uname=" + ServerRequests.getStaticUname() + "&phash=" + ServerRequests.getStaticPhash() + "&email=" + ServerRequests.getStaticEmail());
+				try
+				{
+				    rt.setURL("http://" + ServerIP + "/api/register?uname=" + encode(ServerRequests.getStaticUname()) + "&phash=" + encode(ServerRequests.getStaticPhash()) + "&email=" + encode(ServerRequests.getStaticEmail()));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -1244,7 +1516,28 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/sendpassreset?email=" + ServerRequests.getStaticEmail());
+				try
+				{
+				    rt.setURL("http://" + ServerIP + "/api/sendpassreset?email=" + encode(ServerRequests.getStaticEmail()));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 
@@ -1353,7 +1646,7 @@ public class ServerRequests
 						}
 						for(int i = 0; i < response.get("users").length(); i++)
 						{
-							String accountid = Integer.toString(response.get("users").get(i).get("accountid").asInteger());
+							int accountid = response.get("users").get(i).get("accountid").asInteger();
 							String uname = response.get("users").get(i).get("uname").asString();
 							String joindate = Integer.toString(response.get("users").get(i).get("joindate").asInteger());
 							String rank = response.get("users").get(i).get("rank").asString();
@@ -1365,13 +1658,36 @@ public class ServerRequests
 					}
 
 				};
-				if(ServerRequests.getGetUserInfoUseUsernames())
+				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + ServerRequests.getUsersToGet());
+					if(ServerRequests.getGetUserInfoUseUsernames())
+					{
+						rt.setURL("http://" + ServerIP + "/api/userinfo?unames=" + encode(ServerRequests.getUsersToGet()));
+					}
+					else
+					{
+						rt.setURL("http://" + ServerIP + "/api/userinfo?uids=" + encode(ServerRequests.getUsersToGet()));
+					}
 				}
-				else
+				catch(Exception e)
 				{
-					rt.setURL("http://" + ServerIP + "/api/userinfo?uids=" + ServerRequests.getUsersToGet());
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setGetUserInfoSuccess(false);
+					ServerRequests.setGetUserInfoComplete(true);
+					return;
 				}
 				Thread thread = new Thread(rt);
 				thread.start();
@@ -1479,12 +1795,12 @@ public class ServerRequests
 						}
 						for(int i = 0; i < response.get("caches").length(); i++)
 						{
-							String cacheid = Integer.toString(response.get("caches").get(i).get("cacheid").asInteger());
-							String ownerid = Integer.toString(response.get("caches").get(i).get("ownerid").asInteger());
+							int cacheid = response.get("caches").get(i).get("cacheid").asInteger();
+							int ownerid = response.get("caches").get(i).get("ownerid").asInteger();
 							String name = response.get("caches").get(i).get("name").asString();
-							String latitude = response.get("caches").get(i).get("latitude").asString();
-							String longitude = response.get("caches").get(i).get("longitude").asString();
-							String garrison = response.get("caches").get(i).get("garrison").asString();
+							Double latitude = response.get("caches").get(i).get("latitude").asDouble();
+							Double longitude = response.get("caches").get(i).get("longitude").asDouble();
+							int garrison = response.get("caches").get(i).get("garrison").asInteger();
 							Cache c = new Cache(cacheid, ownerid, name, latitude, longitude, garrison);
 							ServerRequests.getNearbyCaches().add(c);
 						}
@@ -1492,7 +1808,29 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/nearbycaches?uname=" + ServerRequests.getStaticUname() + "&session=" + ServerRequests.getStaticSessionId() + "&lat=" + ServerRequests.getStaticLat() + "&lon=" + ServerRequests.getStaticLon() + "&radius=" + ServerRequests.getCacheRadius());
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/nearbycaches?uname=" + encode(ServerRequests.getStaticUname()) + "&session=" + encode(ServerRequests.getStaticSessionId()) + "&lat=" + encode(ServerRequests.getStaticLat()) + "&lon=" + encode(ServerRequests.getStaticLon()) + "&radius=" + encode(ServerRequests.getCacheRadius()));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setGetNearbyCachesInfoStatus(1);
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -1640,54 +1978,102 @@ public class ServerRequests
 																Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																	public void run()
 																	{
-																		if(TheMap.getMe().getCacheRoutePosition().equals("null"))
-																		{
-																			if(staticDeleteMessagebox)
-																			{
-																				if(ServerRequests.getTheMessageBox() != null)
-																				{
-																					ServerRequests.getTheMessageBox().killMe();
-																				}
-																				if(MessageBox.getMe() != null)
-																				{
-																					MessageBox.getMe().killMe();
-																				}
-																			}
-																			ServerRequests.setRefreshDataSuccess(true);
-																			ServerRequests.setRefreshDataComplete(true);
-																			return;
-																		}
-																		ServerRequests.getTheMessageBox().changeMessageToDisplay("Mapping Route");
-																		ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+																		ServerRequests.getBlocked();
 																		Thread thread = new Thread(new Runnable() {
 																			public void run()
 																			{
-																				while(!ServerRequests.getStaticGoogleRouteComplete())
+																				while(!ServerRequests.getGetBlockedUsersComplete())
 																				{
-																					//wait
-																					sleepFunction();
+																					ServerRequests.sleepFunction();
 																				}
-																				if(ServerRequests.getStaticGoogleRouteSuccess())
+																				if(ServerRequests.getGetBlockedUsersSuccessful())
 																				{
 																					Fortitude.getFortitude().runOnUiThread(new Runnable() {
 																						public void run()
 																						{
-																							if(staticDeleteMessagebox)
-																							{
-																								if(ServerRequests.getTheMessageBox() != null)
+																							ServerRequests.setting("receivemessages");
+																							Thread thread = new Thread(new Runnable() {
+																								public void run()
 																								{
-																									ServerRequests.getTheMessageBox().killMe();
+																									while(!ServerRequests.getUpdateSettingComplete)
+																									{
+																										ServerRequests.sleepFunction();
+																									}
+																									if(ServerRequests.getUpdateSettingSuccess())
+																									{
+																										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																											public void run()
+																											{
+																												if(TheMap.getMe().getCacheRoutePosition().equals("null"))
+																												{
+																													if(staticDeleteMessagebox)
+																													{
+																														if(ServerRequests.getTheMessageBox() != null)
+																														{
+																															ServerRequests.getTheMessageBox().killMe();
+																														}
+																														if(MessageBox.getMe() != null)
+																														{
+																															MessageBox.getMe().killMe();
+																														}
+																													}
+																													ServerRequests.setRefreshDataSuccess(true);
+																													ServerRequests.setRefreshDataComplete(true);
+																													return;
+																												}
+																												ServerRequests.getTheMessageBox().changeMessageToDisplay("Mapping Route");
+																												ServerRequests.getGoogleMapRoute(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()) + "," + Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), TheMap.getMe().getCacheRoutePosition());
+																												Thread thread = new Thread(new Runnable() {
+																													public void run()
+																													{
+																														while(!ServerRequests.getStaticGoogleRouteComplete())
+																														{
+																															//wait
+																															sleepFunction();
+																														}
+																														if(ServerRequests.getStaticGoogleRouteSuccess())
+																														{
+																															Fortitude.getFortitude().runOnUiThread(new Runnable() {
+																																public void run()
+																																{
+																																	if(staticDeleteMessagebox)
+																																	{
+																																		if(ServerRequests.getTheMessageBox() != null)
+																																		{
+																																			ServerRequests.getTheMessageBox().killMe();
+																																		}
+																																		if(MessageBox.getMe() != null)
+																																		{
+																																			MessageBox.getMe().killMe();
+																																		}
+																																	}
+																																}
+																															});
+																														}
+																														ServerRequests.setRefreshDataSuccess(true);
+																														ServerRequests.setRefreshDataComplete(true);
+																													}
+																												});
+																												thread.start();
+																											}
+																										});
+																									}
+																									else
+																									{
+																										ServerRequests.setRefreshDataSuccess(false);
+																										ServerRequests.setRefreshDataComplete(true);
+																									}
 																								}
-																								if(MessageBox.getMe() != null)
-																								{
-																									MessageBox.getMe().killMe();
-																								}
-																							}
+																							});
+																							thread.start();
 																						}
 																					});
 																				}
-																				ServerRequests.setRefreshDataSuccess(true);
-																				ServerRequests.setRefreshDataComplete(true);
+																				else
+																				{
+																					ServerRequests.setRefreshDataSuccess(false);
+																					ServerRequests.setRefreshDataComplete(true);
+																				}
 																			}
 																		});
 																		thread.start();
@@ -1776,7 +2162,30 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + ServerRequests.getStaticOriginPosition() + "&destination=" + ServerRequests.getStaticDestinationPosition() + "&sensor=true");
+				try
+				{
+					rt.setURL("http://maps.googleapis.com/maps/api/directions/json?origin=" + encode(ServerRequests.getStaticOriginPosition()) + "&destination=" + encode(ServerRequests.getStaticDestinationPosition()) + "&sensor=true");
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setStaticGoogleRouteSuccess(false);
+					ServerRequests.setStaticGoogleRouteComplete(true);
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 
@@ -1897,7 +2306,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/placecache?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToPlace() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/placecache?&uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&units=" + encode(ServerRequests.getUnitsToPlace()) + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -1913,7 +2322,7 @@ public class ServerRequests
 							{
 								MessageBox.getMe().killMe();
 							}
-							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing scout url", true));	
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
 						}
 					});
 					ServerRequests.setPlaceCacheSuccess(false);
@@ -2036,7 +2445,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/scout?units=" + ServerRequests.getStaticScoutsSent() + "&cacheid=" + ServerRequests.getCacheIdToScout() + "&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/scout?units=" + encode(ServerRequests.getStaticScoutsSent()) + "&cacheid=" + encode(ServerRequests.getCacheIdToScout()) + "&uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -2184,7 +2593,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/attack?&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&units=" + ServerRequests.getUnitsToAttackWith() + "&cacheid=" + ServerRequests.getCacheIdToAttack() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/attack?&uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&units=" + encode(ServerRequests.getUnitsToAttackWith()) + "&cacheid=" + encode(ServerRequests.getCacheIdToAttack()) + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -2265,7 +2674,7 @@ public class ServerRequests
 	//returns part of the url required for location verification requests (place cache etc...)
 	//
 	////////
-	public static String constructLocationUrlStuff(String latitude, String longitude) throws UnsupportedEncodingException, NoSuchAlgorithmException
+	public static String constructLocationUrlStuff(String latitude, String longitude) throws UnsupportedEncodingException, NoSuchAlgorithmException, Exception
 	{
 		final byte[] salt = new byte[] {((byte)0x2a), ((byte)0x1e), ((byte)0x97), ((byte)0xab), ((byte)0x2b), ((byte)0xb1), ((byte)0x3c)};
 
@@ -2301,7 +2710,7 @@ public class ServerRequests
 		for(int ii = 0; ii < digest.length; ++ii) {
 			builder.append(Integer.toHexString((digest[ii] & 0xFF) | 0x100).substring(1, 3));
 		}
-		return "lat=" + latitude + "&lng=" + longitude + "&time=" + theTimeStamp + "&hash=" + builder.toString();
+		return "lat=" + encode(latitude) + "&lng=" + encode(longitude) + "&time=" + encode(theTimeStamp) + "&hash=" + encode(builder.toString());
 	}
 
 	public static void sessionExpiredActions()
@@ -2431,7 +2840,28 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/sendverify?email=" + ServerRequests.getStaticEmail());
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/sendverify?email=" + encode(ServerRequests.getStaticEmail()));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -2574,7 +3004,30 @@ public class ServerRequests
 					}
 
 				};
-				rt.setURL("http://" + ServerIP + "/api/newsstubs?uname=" + CurrentUser.getMe().getUserName() + "&phash=" + CurrentUser.getMe().getPhash() + "&count=" + ServerRequests.getStaticNumberOfStubs() + "&since=" + ServerRequests.getStaticTimeStamp() + "&filter=" + ServerRequests.getStaticNewsFilter());
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/newsstubs?uname=" + encode(CurrentUser.getMe().getUserName()) + "&phash=" + encode(CurrentUser.getMe().getPhash()) + "&count=" + encode(ServerRequests.getStaticNumberOfStubs()) + "&since=" + encode(ServerRequests.getStaticTimeStamp()) + "&filter=" + encode(ServerRequests.getStaticNewsFilter()));
+				}
+				catch(Exception e)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setStaticGetNewsSuccess(false);
+					ServerRequests.setStaticGetNewsComplete(true);
+					return;
+				}
 				Thread thread = new Thread(rt);
 				thread.start();
 				boolean connecting = false;
@@ -2692,7 +3145,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/transfer?units=" + ServerRequests.getStaticScoutsSent() + "&cacheid=" + ServerRequests.getCacheIdToScout() + "&uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
+					rt.setURL("http://" + ServerIP + "/api/transfer?units=" + encode(ServerRequests.getStaticScoutsSent()) + "&cacheid=" + encode(ServerRequests.getCacheIdToScout()) + "&uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&" + ServerRequests.constructLocationUrlStuff(ServerRequests.getStaticLat(), ServerRequests.getStaticLon()));
 				}
 				catch(Exception e)
 				{
@@ -2827,7 +3280,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/specialevents?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID());
+					rt.setURL("http://" + ServerIP + "/api/specialevents?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()));
 				}
 				catch(Exception e)
 				{
@@ -2963,7 +3416,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/claimspecial?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&address=" + ServerRequests.getStaticMacAddress());
+					rt.setURL("http://" + ServerIP + "/api/claimspecial?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&address=" + encode(ServerRequests.getStaticMacAddress()));
 				}
 				catch(Exception e)
 				{
@@ -3112,7 +3565,7 @@ public class ServerRequests
 				};
 				try
 				{
-					rt.setURL("http://" + ServerIP + "/api/readmessage?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&messageid=" + ServerRequests.getStaticMessageId());
+					rt.setURL("http://" + ServerIP + "/api/readmessage?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&messageid=" + encode(ServerRequests.getStaticMessageId()));
 				}
 				catch(Exception e)
 				{
@@ -3197,12 +3650,12 @@ public class ServerRequests
 		});
 		thread.start();
 	}
-	
+
 	public static void sendMessage(String receiver, String subject, String content)
 	{
 		ServerRequests.setSendMessageComplete(false);
 		ServerRequests.setSendMessageSuccess(false);
-		
+
 		messageContent = content;
 		messageSenderName = receiver;
 		messageSubject = subject;
@@ -3257,10 +3710,7 @@ public class ServerRequests
 				};
 				try
 				{
-					messageSubject = URLEncoder.encode(messageSubject, "ISO-8859-1");
-					messageSenderName = URLEncoder.encode(messageSenderName, "ISO-8859-1");
-					messageContent = URLEncoder.encode(messageContent, "ISO-8859-1");
-					rt.setURL("http://" + ServerIP + "/api/sendmessage?uname=" + CurrentUser.getMe().getUserName() + "&session=" + CurrentUser.getMe().getSessionID() + "&receiver=" + ServerRequests.getMessageSenderName() + "&subject=" + ServerRequests.getMessageSubject() + "&content=" + ServerRequests.getMessageContent());
+					rt.setURL("http://" + ServerIP + "/api/sendmessage?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&receiver=" + encode(ServerRequests.getMessageSenderName()) + "&subject=" + encode(ServerRequests.getMessageSubject()) + "&content=" + encode(ServerRequests.getMessageContent()));
 				}
 				catch(Exception e)
 				{
@@ -3345,7 +3795,656 @@ public class ServerRequests
 		});
 		thread.start();
 	}
+
+	public static void battleReport(int messageId)
+	{
+		ServerRequests.setBattleReportComplete(false);
+		ServerRequests.setBattleReportSuccess(false);
+
+		staticMessageId = messageId;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setBattleReportSuccess(false);
+					ServerRequests.setBattleReportComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get Report!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get Report!");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("Done!");
+						ServerRequests.setAttackCacheResponse(response);
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/battlereport?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&reportid=" + encode(ServerRequests.staticMessageId));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setBattleReportSuccess(false);
+					ServerRequests.setBattleReportComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setBattleReportSuccess(false);
+						ServerRequests.setBattleReportComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setBattleReportSuccess(true);
+						ServerRequests.setBattleReportComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+    
+	public static void setBlocked(String usernameToBeBlockedx, boolean blocked)
+	{
+		ServerRequests.setBlockUserSuccess(false);
+		ServerRequests.setBlockUserComplete(false);
+
+		ServerRequests.usernameToBeBlocked = usernameToBeBlockedx;
+		ServerRequests.blockTrue = blocked;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setBlockUserSuccess(false);
+					ServerRequests.setBlockUserComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Block User!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Block User!");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/setblocked?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&account=" + encode(ServerRequests.usernameToBeBlocked) + "&block=" + ServerRequests.blockTrue);
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setBlockUserSuccess(false);
+					ServerRequests.setBlockUserComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setBlockUserSuccess(false);
+						ServerRequests.setBlockUserComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setBlockUserSuccess(true);
+						ServerRequests.setBlockUserComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+    
+	public static void getBlocked()
+	{
+		ServerRequests.setGetBlockedUsersSuccessful(false);
+		ServerRequests.setGetBlockedUsersComplete(false);
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setGetBlockedUsersSuccessful(false);
+					ServerRequests.setGetBlockedUsersComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Get Blocked User List!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Get Blocked User List!");
+							this.setSuccess("1");
+							return;
+						}
+						JSONValue[] valArray = response.get("users").asArray();
+						BlockedManager.clearBlocked();
+						for(JSONValue val : valArray)
+						{
+							JSONObject obj = (JSONObject)val;
+							BlockedManager.addBlocked(obj.get("uname").asString());
+						}
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/blockedusers?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setGetBlockedUsersSuccessful(false);
+					ServerRequests.setGetBlockedUsersComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getStaticOutputMessage().equals("auth error: session expired"))
+								{
+									sessionExpiredActions();
+								}
+								else if(ServerRequests.getStaticOutputMessage().equals("auth error: incorrect session code"))
+								{
+									sessionExpiredActions();
+								}
+								else
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									else if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ServerRequests.setTheMessageBox(MessageBox.newMsgBox(ServerRequests.getStaticOutputMessage(), true));
+								}
+							}
+						});
+						connecting = true;
+						ServerRequests.setGetBlockedUsersSuccessful(false);
+						ServerRequests.setGetBlockedUsersComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setGetBlockedUsersSuccessful(true);
+						ServerRequests.setGetBlockedUsersComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
 	
+	public static void setting(String setting)
+	{
+		setting(setting, null);
+	}
+	
+	public static void setting(String setting, String newVal)
+	{
+		ServerRequests.settingName = setting;
+		ServerRequests.newVal = newVal;
+		ServerRequests.setGetUpdateSettingComplete(false);
+		ServerRequests.setGetUpdateSettingSuccess(false);
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.setGetUpdateSettingSuccess(false);
+					ServerRequests.setGetUpdateSettingComplete(true);
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Set Setting!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Set Setting!");
+							this.setSuccess("1");
+							return;
+						}
+						ServerRequests.settingName = response.get("value").asString();
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					String valueMaybe = "";
+					if(ServerRequests.newVal != null)
+					{
+						valueMaybe = "&value=" + encode(ServerRequests.newVal);
+					}
+					rt.setURL("http://" + ServerIP + "/api/setting?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&name=" + encode(ServerRequests.settingName) + valueMaybe);
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.setGetUpdateSettingSuccess(false);
+					ServerRequests.setGetUpdateSettingComplete(true);
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
+						ServerRequests.setGetUpdateSettingSuccess(false);
+						ServerRequests.setGetUpdateSettingComplete(true);
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.setGetUpdateSettingSuccess(true);
+						ServerRequests.setGetUpdateSettingComplete(true);
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+    
+	public static void report(int identity, String type, String messageToSendWith)
+	{
+		ServerRequests.reportThingSuccess = false;
+		ServerRequests.reportThingComplete = false;
+		ServerRequests.reportId = identity;
+		ServerRequests.reportType = type;
+		ServerRequests.staticOutputMessage = messageToSendWith;
+
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				String ServerIP = Fortitude.getFortitude().getResources().getString(R.string.ServerIP);
+
+				if(ServerIP == null)
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Unable To Retrieve Setting 'ServerIP'", true));
+						}
+					});
+					ServerRequests.reportThingSuccess = false;
+					ServerRequests.reportThingComplete = true;
+					return;
+				}
+
+				RequestThread rt = new RequestThread() {
+
+					public void processResponse(JSONObject response) throws Exception
+					{
+						if(response == null)
+						{
+							this.setOutputMessage("Failed To Send Report!");
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("error") != null)
+						{
+							this.setOutputMessage(response.get("error").asString());
+							this.setSuccess("1");
+							return;
+						}
+						if(response.get("success") == null)
+						{
+							this.setOutputMessage("Failed To Send Report!");
+							this.setSuccess("1");
+							return;
+						}
+						this.setOutputMessage("Done!");
+						this.setSuccess("2");
+					}
+				};
+				try
+				{
+					rt.setURL("http://" + ServerIP + "/api/sendreport?uname=" + encode(CurrentUser.getMe().getUserName()) + "&session=" + encode(CurrentUser.getMe().getSessionID()) + "&type=" + encode(ServerRequests.reportType) + "&contextid=" + encode(ServerRequests.reportId) + "&message=" + encode(ServerRequests.staticOutputMessage));
+				}
+				catch(Exception e)
+				{
+					System.out.println(e.getStackTrace()[0]);
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							else if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Error hashing url", true));	
+						}
+					});
+					ServerRequests.reportThingSuccess = false;
+					ServerRequests.reportThingComplete = true;
+					return;
+				}
+				Thread thread = new Thread(rt);
+				thread.start();
+				boolean connecting = false;
+				while(connecting == false)
+				{
+					sleepFunction();
+					if(rt.getSuccess().equals("1"))
+					{
+						connecting = true;
+						staticOutputMessage = rt.getOutputMessage();
+						Fortitude.getFortitude().runOnUiThread(new Runnable() {
+							public void run()
+							{
+								if(ServerRequests.getTheMessageBox() != null)
+								{
+									ServerRequests.getTheMessageBox().killMe();
+								}
+								if(MessageBox.getMe() != null)
+								{
+									MessageBox.getMe().killMe();
+								}
+								ServerRequests.setTheMessageBox(MessageBox.newMsgBox(staticOutputMessage, true));
+								ServerRequests.reportThingSuccess = false;
+								ServerRequests.reportThingComplete = true;
+							}
+						});
+						
+					}
+					else if(rt.getSuccess().equals("2"))
+					{
+						connecting = true;
+						ServerRequests.reportThingSuccess = true;
+						ServerRequests.reportThingComplete = true;
+					}
+				}
+			}
+		});
+		thread.start();
+	}
+	
+	public static String encode(String x) throws Exception
+	{
+		return URLEncoder.encode(x, "ISO-8859-1");
+	}
+
+	public static String encode(int x) throws Exception
+	{
+		return encode(Integer.toString(x));
+	}
+
+	public static String encode(long x) throws Exception
+	{
+		return encode(Long.toString(x));
+	}
+
 	private static void sleepFunction()
 	{
 		try

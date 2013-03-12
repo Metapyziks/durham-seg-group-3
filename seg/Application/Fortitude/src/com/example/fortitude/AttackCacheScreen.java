@@ -221,7 +221,7 @@ public class AttackCacheScreen extends Window
 				if(CurrentUser.getMe().getBalance() > 0)
 				{
 					ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-					ServerRequests.attackCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), AttackCacheScreen.getMe().getUnitsToPlaceBox().getText().toString(), AttackCacheScreen.getStaticTheCache().getCacheId());
+					ServerRequests.attackCache(Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLatitude()), Double.toString(TheMap.getMe().getGoogleMap().getMyLocation().getLongitude()), AttackCacheScreen.getMe().getUnitsToPlaceBox().getText().toString(), Integer.toString(AttackCacheScreen.getStaticTheCache().getCacheId()));
 					Thread thread = new Thread(new Runnable() {
 						public void run()
 						{

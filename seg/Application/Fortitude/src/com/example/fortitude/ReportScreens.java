@@ -26,17 +26,20 @@ public abstract class ReportScreens extends Window
 	private Spec col4 = GridLayout.spec(3);
 	
 	private TextField recipientField;
+	public static Reportable reportable;
 	private static int screenIdentity = 0;
 	// 0 = User Profile
 	// 1 = User Owned Cache
 	// 2 = Resource Cache
 	// 3 = User Communication
 	private static ReportScreens me;
+	private static String reportableType;
 	
-	public ReportScreens(int whatScreen)
+	public ReportScreens(int whatScreen, Reportable reportablex)
 	{
 		super(R.drawable.report_user_profile_bg);
 		me = this;
+		reportable = reportablex;
 		screenIdentity = whatScreen;
 		if(screenIdentity == 1)
 		{
@@ -49,6 +52,23 @@ public abstract class ReportScreens extends Window
 		if(screenIdentity == 3)
 		{
 			super.getBackgroundImage().setImageResource(R.drawable.report_message_bg);
+		}
+		
+		if(reportable instanceof Cache)
+		{
+			reportableType = "Cache";
+		}
+		else if(reportable instanceof User)
+		{
+			reportableType = "Account";
+		}
+		else if(reportable instanceof NotificationStub)
+		{
+			reportableType = "Message";
+		}
+		else
+		{
+			reportableType = "ERROR!";
 		}
 		
 		super.addContentToContentPane(addContentToPane());
@@ -119,7 +139,50 @@ public abstract class ReportScreens extends Window
 
 			public void whenClicked() 
 			{
-				
+				String content = recipientField.getText().toString();
+				if(content.length() < 1)
+				{
+					MessageBox.newMsgBox("Please enter a reason for why you are sending the report", true);
+					return;
+				}
+				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+				ServerRequests.report(reportable.getIdentifier(), reportableType, content);
+				Thread thread = new Thread(new Runnable() {
+					public void run()
+					{
+						while(!ServerRequests.reportThingComplete)
+						{
+							try
+							{
+								Thread.sleep(100);
+							}
+							catch(Exception e)
+							{
+								
+							}
+						}
+						if(ServerRequests.reportThingSuccess)
+						{
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									ReportScreens.getMe().killMe();
+									whenCancelled();
+									MessageBox.newMsgBox("Thankyou for reporting, we'll take a look at and deal with what you sent, and contact you about the issue if we need to", true);
+								}
+							});
+						}
+					}
+				});
+				thread.start();
 			}
 		});
 		submitButton.setLayoutParams(submitButtonLayout);

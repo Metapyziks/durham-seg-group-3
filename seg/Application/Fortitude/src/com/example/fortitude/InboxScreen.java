@@ -119,7 +119,7 @@ public class InboxScreen extends Window
 													MessageBox.getMe().killMe();
 												}
 												InboxScreen.getMe().killMe();
-												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), 1) {
+												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), ServerRequests.getStaticMessageId(), 1) {
 													public void whenCancelled()
 													{
 														new InboxScreen(InboxScreen.pageId);
@@ -194,7 +194,8 @@ public class InboxScreen extends Window
 			}
 			public void whenClicked() 
 			{
-			
+				InboxScreen.getMe().killMe();
+				new MessageSettingsScreen();
 			}
 		});
 		settingsButton.setLayoutParams(settingsButtonLayout);

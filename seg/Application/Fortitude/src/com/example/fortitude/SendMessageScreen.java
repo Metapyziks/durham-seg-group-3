@@ -34,44 +34,44 @@ public abstract class SendMessageScreen extends Window
 	private TextField contentField;
 	private static SendMessageScreen me;
 	private static String receipient;
-	
+
 	public SendMessageScreen(String xreceipient)
 	{
 		super(R.drawable.send_message_bg);
-    	me = this;
-    	receipient = xreceipient;
-    	super.addContentToContentPane(createWindowPane());
+		me = this;
+		receipient = xreceipient;
+		super.addContentToContentPane(createWindowPane());
 	}
-	
+
 	private GridLayout createWindowPane()
 	{
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setColumnCount(1);
 		mainArea.setRowCount(9);
-		
+
 		LayoutParams topSpaceLayout = new LayoutParams(row1, col1); //top space
 		topSpaceLayout.height = (int) (super.getWindowHeight() * 0.2345);
 		Space topSpace = new Space(mainArea.getContext());
 		topSpace.setLayoutParams(topSpaceLayout);
 		mainArea.addView(topSpace, topSpaceLayout);
-		
+
 		GridLayout recipientGrid = new GridLayout(mainArea.getContext()); //Recipient Grid
 		recipientGrid.setColumnCount(3);
 		recipientGrid.setRowCount(1);
-		
+
 		LayoutParams firstInputSpaceLayout = new LayoutParams(row1, col1); //first input space spacer
 		firstInputSpaceLayout.width = (int) (super.getWindowWidth() * 0.45);
 		Space firstInputSpace = new Space(recipientGrid.getContext());
 		firstInputSpace.setLayoutParams(firstInputSpaceLayout);
 		recipientGrid.addView(firstInputSpace, firstInputSpaceLayout);
-		
+
 		LayoutParams firstInputTextFieldLayout = new LayoutParams(row1, col2); //first input text field
 		firstInputTextFieldLayout.width = (int) (super.getWindowWidth() * 0.5);
 		firstInputTextFieldLayout.height = super.getWindowHeight() / 12;
 		TextFieldImage firstInputTextFieldImage = new TextFieldImage();
 		firstInputTextFieldImage.setLayoutParams(firstInputTextFieldLayout);
 		recipientGrid.addView(firstInputTextFieldImage, firstInputTextFieldLayout);
-		
+
 		recipientField = new TextField(16);
 		recipientField.setText(receipient);
 		recipientField.setLayoutParams(firstInputTextFieldLayout);
@@ -79,23 +79,23 @@ public abstract class SendMessageScreen extends Window
 
 		LayoutParams receipientGridLayout = new LayoutParams(row2, col1); //Add Recipient grid to view
 		mainArea.addView(recipientGrid, receipientGridLayout);
-		
+
 		LayoutParams secondRowSpacerLayout = new LayoutParams (row3, col1); //Spacer between Recipient and Subject
 		secondRowSpacerLayout.height = (int) (super.getWindowHeight() * 0.03);
 		Space secondRowSpacer = new Space(mainArea.getContext());
 		secondRowSpacer.setLayoutParams(secondRowSpacerLayout);
 		mainArea.addView(secondRowSpacer, secondRowSpacerLayout);
-		
+
 		GridLayout subjectGrid = new GridLayout (mainArea.getContext()); //Subject Grid
 		subjectGrid.setColumnCount(3);
 		subjectGrid.setRowCount(1);
-		
+
 		LayoutParams secondInputSpaceLayout = new LayoutParams(row1, col1); //second input space spacer
 		secondInputSpaceLayout.width = (int) (super.getWindowWidth() * 0.45);
 		Space secondInputSpace = new Space(subjectGrid.getContext());
 		secondInputSpace.setLayoutParams(secondInputSpaceLayout);
 		subjectGrid.addView(secondInputSpace, secondInputSpaceLayout);
-		
+
 		LayoutParams secondInputTextFieldLayout = new LayoutParams(row1, col2); //second input text field
 		secondInputTextFieldLayout.width = (int) (super.getWindowWidth() * 0.5);
 		secondInputTextFieldLayout.height = super.getWindowHeight() / 12;
@@ -105,26 +105,26 @@ public abstract class SendMessageScreen extends Window
 		subjectField = new TextField(20);
 		subjectField.setLayoutParams(secondInputTextFieldLayout);
 		subjectGrid.addView(subjectField, secondInputTextFieldLayout);
-		
+
 		LayoutParams subjectGridLayout = new LayoutParams(row4, col1); //add Subject Grid to view
 		mainArea.addView(subjectGrid, subjectGridLayout);
-		
+
 		LayoutParams thirdRowSpacerLayout = new LayoutParams (row5, col1); //Spacer between subject and main message
 		thirdRowSpacerLayout.height = (int) (super.getWindowHeight() * 0.03);
 		Space thirdRowSpacer = new Space(mainArea.getContext());
 		thirdRowSpacer.setLayoutParams(thirdRowSpacerLayout);
 		mainArea.addView(thirdRowSpacer, thirdRowSpacerLayout);
-		
+
 		GridLayout messageGrid = new GridLayout (mainArea.getContext());
 		messageGrid.setColumnCount(3);
 		messageGrid.setRowCount(1);
-		
+
 		LayoutParams thirdInputSpaceLayout = new LayoutParams(row1, col1); //third input space spacer
 		thirdInputSpaceLayout.width = (int) (super.getWindowWidth() * 0.1);
 		Space thirdInputSpace = new Space(messageGrid.getContext());
 		thirdInputSpace.setLayoutParams(thirdInputSpaceLayout);
 		messageGrid.addView(thirdInputSpace, thirdInputSpaceLayout);
-		
+
 		LayoutParams thirdInputTextFieldLayout = new LayoutParams(row1, col2); //third input text field
 		thirdInputTextFieldLayout.width = (int) (super.getWindowWidth() * 0.8);
 		thirdInputTextFieldLayout.height = super.getWindowHeight() / 3;
@@ -132,41 +132,39 @@ public abstract class SendMessageScreen extends Window
 		thirdInputTextFieldImage.setImageResource(R.drawable.large_text_field);
 		thirdInputTextFieldImage.setLayoutParams(thirdInputTextFieldLayout);
 		messageGrid.addView(thirdInputTextFieldImage, thirdInputTextFieldLayout);
-		
+
 		contentField = new TextField(1000);
 		contentField.setGravity(Gravity.TOP);
 		contentField.setLayoutParams(thirdInputTextFieldLayout);
 		messageGrid.addView(contentField, thirdInputTextFieldLayout);
-		
+
 		LayoutParams messageGridLayout = new LayoutParams(row6, col1);// Adding main message to view
 		mainArea.addView(messageGrid, messageGridLayout);
-		
+
 		LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, col1);
 		seventhRowSpaceLayout.height = super.getWindowHeight() / 15;
 		Space seventhRowSpace = new Space(mainArea.getContext());
 		seventhRowSpace.setLayoutParams(seventhRowSpaceLayout);
 		mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);
-		
+
 		GridLayout buttonRowGrid = new GridLayout (mainArea.getContext()); // Button Grid
 		buttonRowGrid.setColumnCount(5);
 		buttonRowGrid.setRowCount(1);
-		
+
 		LayoutParams firstButtonSpaceLayout = new LayoutParams(row1, col1); //first button spacer
 		firstButtonSpaceLayout.width = super.getWindowWidth() / 12;
 		Space firstButtonSpace = new Space(buttonRowGrid.getContext());
 		firstButtonSpace.setLayoutParams(firstButtonSpaceLayout);
 		buttonRowGrid.addView(firstButtonSpace, firstButtonSpaceLayout);
-		
+
 		LayoutParams sendButtonLayout = new LayoutParams(row1, col2); // Send Button
 		sendButtonLayout.height = super.getWindowHeight() /10;
 		sendButtonLayout.width = (int) (super.getWindowWidth() *0.4);
 		FortitudeButton sendButton = (new FortitudeButton(R.drawable.send_message, R.drawable.send_message_pressed) {
-
 			public void preClickActions() 
 			{
-				
-			}
 
+			}
 			public void whenClicked() 
 			{
 				if(!validateFields())
@@ -191,16 +189,21 @@ public abstract class SendMessageScreen extends Window
 						}
 						if(ServerRequests.getSendMessageSuccess())
 						{
-							if(ServerRequests.getTheMessageBox() != null)
-							{
-								ServerRequests.getTheMessageBox().killMe();
-							}
-							if(MessageBox.getMe() != null)
-							{
-								MessageBox.getMe().killMe();
-							}
-							SendMessageScreen.getMe().killMe();
-							whenCancelled();
+							Fortitude.getFortitude().runOnUiThread(new Runnable() {
+								public void run()
+								{
+									if(ServerRequests.getTheMessageBox() != null)
+									{
+										ServerRequests.getTheMessageBox().killMe();
+									}
+									if(MessageBox.getMe() != null)
+									{
+										MessageBox.getMe().killMe();
+									}
+									SendMessageScreen.getMe().killMe();
+									whenCancelled();
+								}
+							});
 						}
 					}
 				});
@@ -209,13 +212,13 @@ public abstract class SendMessageScreen extends Window
 		});
 		sendButton.setLayoutParams(sendButtonLayout);
 		buttonRowGrid.addView(sendButton, sendButtonLayout);
-		
+
 		LayoutParams secondButtonSpaceLayout = new LayoutParams(row1, col3); //second button spacer
 		secondButtonSpaceLayout.width = super.getWindowWidth() / 12;
 		Space secondButtonSpace = new Space(buttonRowGrid.getContext());
 		secondButtonSpace.setLayoutParams(secondButtonSpaceLayout);
 		buttonRowGrid.addView(secondButtonSpace, secondButtonSpaceLayout);
-		
+
 		LayoutParams cancelButtonLayout = new LayoutParams(row1, col4); //cancel button
 		cancelButtonLayout.height = super.getWindowHeight() /10;
 		cancelButtonLayout.width = (int) (super.getWindowWidth() *0.4);
@@ -223,7 +226,7 @@ public abstract class SendMessageScreen extends Window
 
 			public void preClickActions() 
 			{
-				
+
 			}
 
 			public void whenClicked() 
@@ -231,17 +234,17 @@ public abstract class SendMessageScreen extends Window
 				SendMessageScreen.getMe().killMe();
 				whenCancelled();
 			}
-			
+
 		});
 		cancelButton.setLayoutParams(cancelButtonLayout);
 		buttonRowGrid.addView(cancelButton, cancelButtonLayout);
-		
+
 		LayoutParams buttonRowGridLayout = new LayoutParams(row8, col1);
 		mainArea.addView(buttonRowGrid, buttonRowGridLayout);
-		
+
 		return mainArea;
 	}
-	
+
 	private boolean validateFields()
 	{
 		if(recipientField.getText().toString().length() < 5)
@@ -261,17 +264,17 @@ public abstract class SendMessageScreen extends Window
 		}
 		return true;
 	}
-	
-    public void killMe()
-    {
-    	me = null;
-    	this.removeAllViews();
-    }
-    
-    public static SendMessageScreen getMe()
-    {
-    	return me;
-    }
-    
-    public abstract void whenCancelled();
+
+	public void killMe()
+	{
+		me = null;
+		this.removeAllViews();
+	}
+
+	public static SendMessageScreen getMe()
+	{
+		return me;
+	}
+
+	public abstract void whenCancelled();
 }

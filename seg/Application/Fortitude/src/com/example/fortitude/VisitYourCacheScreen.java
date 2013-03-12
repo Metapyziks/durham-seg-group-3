@@ -130,7 +130,7 @@ public class VisitYourCacheScreen extends Window
     	usernameTextView.setTextColor(Color.rgb(160, 160, 160));
     	usernameTextView.setGravity(Gravity.CENTER);
     	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	if(!VisitYourCacheScreen.getStaticTheCache().getGarrison().equals("-1"))
+    	if(VisitYourCacheScreen.getStaticTheCache().isMine())
     	{
     	    usernameTextView.setText(CurrentUser.getMe().getUserName());
     	}
@@ -162,7 +162,7 @@ public class VisitYourCacheScreen extends Window
     	TextView standingArmyTextView = new TextView(standingArmyGrid.getContext());
     	standingArmyTextView.setTextSize(14);
     	standingArmyTextView.setTextColor(Color.WHITE);
-    	if(!VisitYourCacheScreen.getStaticTheCache().getGarrison().equals("-1"))
+    	if(VisitYourCacheScreen.getStaticTheCache().isMine())
     	{
     	    standingArmyTextView.setText(staticTheCache.getGarrison() + " soldiers");
     	}
@@ -203,7 +203,7 @@ public class VisitYourCacheScreen extends Window
     		}
     		public void whenClicked()
     		{
-    			if(Integer.parseInt(VisitYourCacheScreen.getStaticTheCache().getGarrison()) > 0)
+    			if(VisitYourCacheScreen.getStaticTheCache().getGarrison() > 0)
     			{
     				VisitYourCacheScreen.getMe();
     				new WithdrawUnitsScreen();

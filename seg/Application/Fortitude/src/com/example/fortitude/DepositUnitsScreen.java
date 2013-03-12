@@ -36,7 +36,7 @@ public class DepositUnitsScreen extends Window
 	private static DepositUnitsScreen me;
 	private SeekBar unitsSeekBar;
 	private TextView unitsToPlaceBox;
-	private static String rememberId;
+	private static int rememberId;
 
 	public DepositUnitsScreen()
 	{
@@ -134,7 +134,7 @@ public class DepositUnitsScreen extends Window
 		usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
 		if(VisitYourCacheScreen.getStaticTheCache().isUnowned())
 		{
-			usernameTextView.setText("OUTLAWS");
+			usernameTextView.setText("UNOWNED");
 		}
 		else
 		{
@@ -293,7 +293,7 @@ public class DepositUnitsScreen extends Window
 					return;
 				}
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.depositUnits(Double.toString(lat), Double.toString(lon), VisitYourCacheScreen.getStaticTheCache().getCacheId(), DepositUnitsScreen.getMe().unitsToPlaceBox.getText().toString());
+				ServerRequests.depositUnits(Double.toString(lat), Double.toString(lon), Integer.toString(VisitYourCacheScreen.getStaticTheCache().getCacheId()), DepositUnitsScreen.getMe().unitsToPlaceBox.getText().toString());
 				Thread thread = new Thread(new Runnable() {
 					public void run()
 					{
@@ -341,7 +341,7 @@ public class DepositUnitsScreen extends Window
 													boolean foundCache = false;
 													for(Cache c : ServerRequests.getNearbyCaches())
 													{
-														if(c.getCacheId().equals(rememberId))
+														if(c.getCacheId() == rememberId)
 														{
 															foundCache = true;
 															VisitYourCacheScreen.setStaticTheCache(c);

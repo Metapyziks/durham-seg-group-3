@@ -99,12 +99,12 @@ public class NotificationPanel extends GridLayout
 		if(stub.getType().equals("Message"))
 		{
 			String text = (stub.getPerson() + " : " + stub.getContext());
-			textView.setText(text.substring(0, Math.min(20, text.length())));
+			textView.setText(text.substring(0, Math.min(30, text.length())));
 		}
 		else if(stub.getType().equals("BattleReport"))
 		{
 			String text = stub.getContext() + " has been attacked!";
-			textView.setText(text.substring(0, Math.min(20, text.length())));
+			textView.setText(text.substring(0, Math.min(30, text.length())));
 		}
 		textView.setLayoutParams(textViewLayout);
 		super.addView(textView, textViewLayout);

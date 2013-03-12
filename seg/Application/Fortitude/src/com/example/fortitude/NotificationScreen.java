@@ -12,6 +12,8 @@ import android.widget.ImageView.ScaleType;
 import android.widget.ImageView;
 import android.graphics.Color;
 
+import json.JSONObject;
+
 public class NotificationScreen extends Window 
 {
 	private Spec row1 = GridLayout.spec(0);
@@ -152,7 +154,7 @@ public class NotificationScreen extends Window
 													MessageBox.getMe().killMe();
 												}
 												NotificationScreen.getMe().killMe();
-												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), 0) {
+												new ViewMessageScreen(ServerRequests.getMessageSenderName(), ServerRequests.getMessageSubject(), ServerRequests.getMessageContent(), ServerRequests.getStaticMessageId(), 0) {
 													public void whenCancelled()
 													{
 														new NotificationScreen(NotificationScreen.pageId);
@@ -169,7 +171,65 @@ public class NotificationScreen extends Window
 				}
 				else if(NotificationManager.getMessageStub(i).getType().equals("BattleReport"))
 				{
-
+					n.setOnClickListener(new OnClickListener() {
+						public void onClick(View arg0)
+						{
+							NotificationPanel theView = (NotificationPanel) arg0;
+							NotificationStub theStub = theView.getStub();
+							ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+							ServerRequests.battleReport(theStub.getNotificationId());
+							Thread thread = new Thread(new Runnable() {
+								public void run()
+								{
+									while(!ServerRequests.getBattleReportComplete())
+									{
+										//wait
+										try
+										{
+											Thread.sleep(100);
+										}
+										catch(Exception e)
+										{
+											//oh well
+										}
+									}
+									if(ServerRequests.getBattleReportSuccess())
+									{
+										Fortitude.getFortitude().runOnUiThread(new Runnable() {
+											public void run()
+											{
+												Cache c = new Cache((JSONObject)(ServerRequests.getAttackCacheResponse().get("cache")));
+												if(TheMap.getMe() != null)
+												{
+													if(TheMap.getMe() != null)
+													{
+														TheMap.getMe().zoomToThisPosition(c.getLat(), c.getLon());
+													}
+												}
+												if(ServerRequests.getTheMessageBox() != null)
+												{
+													ServerRequests.getTheMessageBox().killMe();
+												}
+												if(MessageBox.getMe() != null)
+												{
+													MessageBox.getMe().killMe();
+												}
+												NotificationManager.setAsRead(ServerRequests.getStaticMessageId());
+												NotificationScreen.getMe().killMe();
+												new PostBattleScreen(ServerRequests.getAttackCacheResponse(), c) {
+													public void whenCancelled()
+													{
+														new NotificationScreen(NotificationScreen.pageId);
+													}
+												};
+											}
+										});
+									}
+								}
+							});
+							thread.start();
+						}
+					});
 				}
 			}
 			n.setLayoutParams(panelLayout);
@@ -276,7 +336,7 @@ public class NotificationScreen extends Window
 							MessageBox.newMsgBox("Error Fetching News", true);
 							return;
 						}
-						ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Fetching Older News", true));
+						ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Fetching Older News", false));
 						rememberSize = NotificationManager.getSize();
 						ServerRequests.getNewsStubs(NotificationManager.getMessageStub((pageId * 8) + 7).getTimeStamp(), 16);
 						Thread thread = new Thread(new Runnable() {

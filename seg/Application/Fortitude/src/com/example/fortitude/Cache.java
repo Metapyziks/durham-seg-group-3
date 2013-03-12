@@ -1,55 +1,61 @@
 package com.example.fortitude;
 
-public class Cache 
+import json.JSONObject;
+
+public class Cache extends Reportable
 {
-	private String cacheId;
-	private String ownerId;
+	private int ownerId;
 	private String cacheName;
-	private String lat;
-	private String lon;
-	private String garrison;
+	private double lat;
+	private double lon;
+	private int garrison;
 	
-	public Cache(String cacheId, String ownerId, String cacheName, String lat, String lon, String garrison)
+	public Cache(int cacheId, int ownerId, String cacheName, double lat, double lon, int garrison)
 	{
-		this.cacheId = cacheId;
+		super(cacheId);
 		this.ownerId = ownerId;
 		this.cacheName = cacheName;
 		this.lat = lat;
 		this.lon = lon;
-		this.garrison = truncateServerNumber(garrison);
+		this.garrison = garrison;
+	}
+	
+	public Cache(JSONObject object)
+	{
+		super(object.get("cacheid").asInteger());
+		this.ownerId = object.get("ownerid").asInteger();
+		this.cacheName = object.get("name").asString();
+		this.lat = object.get("latitude").asDouble();
+		this.lon = object.get("longitude").asDouble();
+		this.garrison = object.get("garrison").asInteger();
 	}
 	
 	public boolean isUnowned()
 	{
-		return getOwnerId().equals("0");
+		return getOwnerId() == 0;
 	}
 	
 	public boolean isAdminCache()
 	{
-		return getOwnerId().equals("-1");
+		return getOwnerId() == -1;
 	}
 	
 	public boolean isMine()
 	{
-		return getOwnerId().equals(CurrentUser.getMe().getAccountId());
+		return getOwnerId() == CurrentUser.getMe().getAccountId();
 	}
 	
 	public void setGarrison(int newGarrison)
 	{
-		garrison = Integer.toString(newGarrison);
+		garrison = newGarrison;
 	}
 	
-	private String truncateServerNumber(String x)
+	public int getCacheId()
 	{
-		return Integer.toString((int)(Double.parseDouble(x)));
+		return super.getIdentifier();
 	}
 	
-	public String getCacheId()
-	{
-		return cacheId;
-	}
-	
-	public String getOwnerId()
+	public int getOwnerId()
 	{
 		return ownerId;
 	}
@@ -59,17 +65,17 @@ public class Cache
 		return cacheName;
 	}
 	
-	public String getLat()
+	public double getLat()
 	{
 		return lat;
 	}
 	
-	public String getLon()
+	public double getLon()
 	{
 		return lon;
 	}
 	
-	public String getGarrison()
+	public int getGarrison()
 	{
 		return garrison;
 	}

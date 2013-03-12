@@ -1,9 +1,8 @@
 package com.example.fortitude;
 
 //Class that describes a user and contains all of their user info apart from their email and password.
-public class User
+public class User extends Reportable
 {
-  private String accountid; //id of account as stored on the server
   private String username; //username of user
   private String joindate; //date (time since the epoc in milliseconds) since the user joined
   private String rank; //Whether the user is verified or not.
@@ -14,9 +13,9 @@ public class User
   //Constructor
   //
   ////////
-  public User(String accountid, String username, String joindate, String rank, String caches)
+  public User(int accountid, String username, String joindate, String rank, String caches)
   {
-      this.accountid = accountid;
+      super(accountid);
       this.username = username;
       this.joindate = joindate;
       this.rank = rank;	
@@ -28,6 +27,11 @@ public class User
 	  return caches;
   }
   
+  public boolean isBlocked()
+  {
+	  return BlockedManager.isBlocked(getUserName());
+  }
+  
   ////////
   //
   //getAccountId
@@ -35,9 +39,9 @@ public class User
   // returns accountid
   //
   ////////
-  public String getAccountId()
+  public int getAccountId()
   {
-      return accountid;
+      return super.getIdentifier();
   }
 
   ////////

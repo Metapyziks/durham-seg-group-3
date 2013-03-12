@@ -25,31 +25,34 @@ public class EnemyProfileScreen extends Window
 	private Spec row8 = GridLayout.spec(7);
 	private Spec row9 = GridLayout.spec(8);
 	private Spec row10 = GridLayout.spec(9);
-	
+
 	private Spec col1 = GridLayout.spec(0);
 	private Spec col2 = GridLayout.spec(1);
 	private Spec col3 = GridLayout.spec(2);
 	private Spec col4 = GridLayout.spec(3);
-	
+
 	private static User staticTheUser;
 	private static Cache staticCacheComeFrom;
 	private static EnemyProfileScreen me;
-	
-	public EnemyProfileScreen(User theUser, Cache cacheComeFrom)
+	public static int screenGoTo;
+	public static FortitudeButton blockUserButton;
+
+	public EnemyProfileScreen(User theUser, Cache cacheComeFrom, int screenGoTox)
 	{
 		super(R.drawable.user_profile);
 		me = this;
 		staticTheUser = theUser;
 		staticCacheComeFrom = cacheComeFrom;
+		screenGoTo = screenGoTox;  
 		addContentToContentPane(createWindowPane());
 	}
-	
+
 	private GridLayout createWindowPane()
 	{
 		GridLayout mainArea = new GridLayout(Fortitude.getFortitude());
 		mainArea.setColumnCount(1);
 		mainArea.setRowCount(10);
-		
+
 		LayoutParams topBarImageLayout = new LayoutParams(row1, col1); //top bar image
 		topBarImageLayout.width = super.getWindowWidth();
 		topBarImageLayout.height = super.getWindowHeight() / 20;
@@ -64,11 +67,11 @@ public class EnemyProfileScreen extends Window
 			}
 		});
 		mainArea.addView(topBarImage, topBarImageLayout);
-		
+
 		GridLayout topBarGrid = new GridLayout(mainArea.getContext());
 		topBarGrid.setColumnCount(2);
 		topBarGrid.setRowCount(1);
-		
+
 		LayoutParams userNameTextViewLayout = new LayoutParams(row1, col1); //username text view
 		userNameTextViewLayout.width = super.getWindowWidth() / 2;
 		userNameTextViewLayout.height = super.getWindowHeight() / 20;
@@ -88,187 +91,227 @@ public class EnemyProfileScreen extends Window
 		userBalanceTextView.setLayoutParams(userBalanceTextViewLayout);
 		userBalanceTextView.setGravity(Gravity.RIGHT);
 		topBarGrid.addView(userBalanceTextView, userBalanceTextViewLayout);
-		
+
 		LayoutParams topBarGridLayout = new LayoutParams(row1, col1);
 		mainArea.addView(topBarGrid, topBarGridLayout);
-		
-    	LayoutParams positionalSpaceLayout = new LayoutParams(row1, col1); //positional spacer
-    	positionalSpaceLayout.height = (super.getWindowHeight() / 5) + (super.getWindowHeight() / 40);
-    	Space positionalSpace = new Space(mainArea.getContext());
-    	positionalSpace.setLayoutParams(positionalSpaceLayout);
-    	mainArea.addView(positionalSpace, positionalSpaceLayout);
-    	
-    	LayoutParams usernameTextViewLayout = new LayoutParams(row2, col1); //USERNAME TEXTVIEW
-    	usernameTextViewLayout.width = super.getWindowWidth();
-    	usernameTextViewLayout.height = super.getWindowWidth() / 4;
-    	TextView usernameTextView = new TextView(mainArea.getContext());
-    	usernameTextView.setTextSize(26);
-    	usernameTextView.setTextColor(Color.rgb(218, 218, 218));
-    	usernameTextView.setGravity(Gravity.CENTER);
-    	usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
-    	usernameTextView.setText(EnemyProfileScreen.getStaticTheUser().getUserName());
-    	mainArea.addView(usernameTextView, usernameTextViewLayout);
-    	
-    	LayoutParams thirdRowSpaceLayout = new LayoutParams(row3, col1);
-    	thirdRowSpaceLayout.height = (super.getWindowHeight() / 10) - (super.getWindowHeight() / 100);
-    	Space thirdRowSpace = new Space(mainArea.getContext());
-    	thirdRowSpace.setLayoutParams(thirdRowSpaceLayout);
-    	mainArea.addView(thirdRowSpace, thirdRowSpaceLayout);
-    	
-    	GridLayout totalCachesGrid = new GridLayout(mainArea.getContext());
-    	totalCachesGrid.setColumnCount(3);
-    	totalCachesGrid.setRowCount(1);
-    	
-    	LayoutParams totalCachesLeftSpaceLayout = new LayoutParams(row1, col1);
-    	totalCachesLeftSpaceLayout.width = super.getWindowWidth() / 2;
-    	Space totalCachesLeftSpace = new Space(totalCachesGrid.getContext());
-    	totalCachesLeftSpace.setLayoutParams(totalCachesLeftSpaceLayout);
-    	totalCachesGrid.addView(totalCachesLeftSpace, totalCachesLeftSpaceLayout);
-    	
-    	LayoutParams totalCachesTextViewLayout = new LayoutParams(row1, col2); //total caches textView
-    	totalCachesTextViewLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	totalCachesTextViewLayout.height = super.getWindowHeight() / 20;
-    	TextView totalCachesTextView = new TextView(totalCachesGrid.getContext());
-    	totalCachesTextView.setTextSize(14);
-    	totalCachesTextView.setTextColor(Color.WHITE);
-    	totalCachesTextView.setText(EnemyProfileScreen.getStaticTheUser().getCaches() + " caches");
-    	totalCachesTextView.setGravity(Gravity.RIGHT);
-    	totalCachesTextView.setLayoutParams(totalCachesTextViewLayout);
-    	totalCachesGrid.addView(totalCachesTextView, totalCachesTextViewLayout);
-		
-        LayoutParams totalCachesGridLayout = new LayoutParams(row4, col1);
-    	mainArea.addView(totalCachesGrid, totalCachesGridLayout);
-    	
-    	LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1);
-    	fithRowSpaceLayout.height = super.getWindowHeight() / 12;
-    	Space fithRowSpace = new Space(mainArea.getContext());
-    	fithRowSpace.setLayoutParams(fithRowSpaceLayout);
-    	mainArea.addView(fithRowSpace, fithRowSpaceLayout);
-    	
-    	GridLayout firstButtonRowGrid = new GridLayout(mainArea.getContext());
-    	firstButtonRowGrid.setColumnCount(5);
-    	firstButtonRowGrid.setRowCount(1);
-    	
-    	LayoutParams firstButtonRowLeftSpaceLayout = new LayoutParams(row1, col1);
-    	firstButtonRowLeftSpaceLayout.width = (super.getWindowWidth() / 12);
-    	Space firstButtonRowLeftSpace = new Space(firstButtonRowGrid.getContext());
-    	firstButtonRowLeftSpace.setLayoutParams(firstButtonRowLeftSpaceLayout);
-    	firstButtonRowGrid.addView(firstButtonRowLeftSpace, firstButtonRowLeftSpaceLayout);
-    	
-    	LayoutParams sendMessageButtonLayout = new LayoutParams(row1, col2); //send message button
-    	sendMessageButtonLayout.height = super.getWindowHeight() / 10;
-    	sendMessageButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	FortitudeButton sendMessageButton = (new FortitudeButton(R.drawable.send_message, R.drawable.send_message_pressed) {
-    		public void preClickActions()
-    		{
-    			
-    		}
-    		public void whenClicked()
-    		{
-    			EnemyProfileScreen.getMe().killMe();
-    			new SendMessageScreen(EnemyProfileScreen.getStaticTheUser().getUserName()) {
-    				public void whenCancelled()
-    				{
-    					new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom());
-    				}
-    			};
-    		}
-    	});
-    	sendMessageButton.setLayoutParams(sendMessageButtonLayout);
-    	firstButtonRowGrid.addView(sendMessageButton, sendMessageButtonLayout);
-    	
-    	LayoutParams firstRowMiddleSpaceLayout = new LayoutParams(row1, col3); //first row middle space
+
+		LayoutParams positionalSpaceLayout = new LayoutParams(row1, col1); //positional spacer
+		positionalSpaceLayout.height = (super.getWindowHeight() / 5) + (super.getWindowHeight() / 40);
+		Space positionalSpace = new Space(mainArea.getContext());
+		positionalSpace.setLayoutParams(positionalSpaceLayout);
+		mainArea.addView(positionalSpace, positionalSpaceLayout);
+
+		LayoutParams usernameTextViewLayout = new LayoutParams(row2, col1); //USERNAME TEXTVIEW
+		usernameTextViewLayout.width = super.getWindowWidth();
+		usernameTextViewLayout.height = super.getWindowWidth() / 4;
+		TextView usernameTextView = new TextView(mainArea.getContext());
+		usernameTextView.setTextSize(26);
+		usernameTextView.setTextColor(Color.rgb(218, 218, 218));
+		usernameTextView.setGravity(Gravity.CENTER);
+		usernameTextView.setTypeface(Typeface.createFromAsset(Fortitude.getFortitude().getAssets(), "Fonts/Copperplate-Gothic-Light-Regular.ttf"));
+		usernameTextView.setText(EnemyProfileScreen.getStaticTheUser().getUserName());
+		mainArea.addView(usernameTextView, usernameTextViewLayout);
+
+		LayoutParams thirdRowSpaceLayout = new LayoutParams(row3, col1);
+		thirdRowSpaceLayout.height = (super.getWindowHeight() / 10) - (super.getWindowHeight() / 100);
+		Space thirdRowSpace = new Space(mainArea.getContext());
+		thirdRowSpace.setLayoutParams(thirdRowSpaceLayout);
+		mainArea.addView(thirdRowSpace, thirdRowSpaceLayout);
+
+		GridLayout totalCachesGrid = new GridLayout(mainArea.getContext());
+		totalCachesGrid.setColumnCount(3);
+		totalCachesGrid.setRowCount(1);
+
+		LayoutParams totalCachesLeftSpaceLayout = new LayoutParams(row1, col1);
+		totalCachesLeftSpaceLayout.width = super.getWindowWidth() / 2;
+		Space totalCachesLeftSpace = new Space(totalCachesGrid.getContext());
+		totalCachesLeftSpace.setLayoutParams(totalCachesLeftSpaceLayout);
+		totalCachesGrid.addView(totalCachesLeftSpace, totalCachesLeftSpaceLayout);
+
+		LayoutParams totalCachesTextViewLayout = new LayoutParams(row1, col2); //total caches textView
+		totalCachesTextViewLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+		totalCachesTextViewLayout.height = super.getWindowHeight() / 20;
+		TextView totalCachesTextView = new TextView(totalCachesGrid.getContext());
+		totalCachesTextView.setTextSize(14);
+		totalCachesTextView.setTextColor(Color.WHITE);
+		totalCachesTextView.setText(EnemyProfileScreen.getStaticTheUser().getCaches() + " caches");
+		totalCachesTextView.setGravity(Gravity.RIGHT);
+		totalCachesTextView.setLayoutParams(totalCachesTextViewLayout);
+		totalCachesGrid.addView(totalCachesTextView, totalCachesTextViewLayout);
+
+		LayoutParams totalCachesGridLayout = new LayoutParams(row4, col1);
+		mainArea.addView(totalCachesGrid, totalCachesGridLayout);
+
+		LayoutParams fithRowSpaceLayout = new LayoutParams(row5, col1);
+		fithRowSpaceLayout.height = super.getWindowHeight() / 12;
+		Space fithRowSpace = new Space(mainArea.getContext());
+		fithRowSpace.setLayoutParams(fithRowSpaceLayout);
+		mainArea.addView(fithRowSpace, fithRowSpaceLayout);
+
+		GridLayout firstButtonRowGrid = new GridLayout(mainArea.getContext());
+		firstButtonRowGrid.setColumnCount(5);
+		firstButtonRowGrid.setRowCount(1);
+
+		LayoutParams firstButtonRowLeftSpaceLayout = new LayoutParams(row1, col1);
+		firstButtonRowLeftSpaceLayout.width = (super.getWindowWidth() / 12);
+		Space firstButtonRowLeftSpace = new Space(firstButtonRowGrid.getContext());
+		firstButtonRowLeftSpace.setLayoutParams(firstButtonRowLeftSpaceLayout);
+		firstButtonRowGrid.addView(firstButtonRowLeftSpace, firstButtonRowLeftSpaceLayout);
+
+		LayoutParams sendMessageButtonLayout = new LayoutParams(row1, col2); //send message button
+		sendMessageButtonLayout.height = super.getWindowHeight() / 10;
+		sendMessageButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+		FortitudeButton sendMessageButton = (new FortitudeButton(R.drawable.send_message, R.drawable.send_message_pressed) {
+			public void preClickActions()
+			{
+
+			}
+			public void whenClicked()
+			{
+				EnemyProfileScreen.getMe().killMe();
+				new SendMessageScreen(EnemyProfileScreen.getStaticTheUser().getUserName()) {
+					public void whenCancelled()
+					{
+						new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.screenGoTo);
+					}
+				};
+			}
+		});
+		sendMessageButton.setLayoutParams(sendMessageButtonLayout);
+		firstButtonRowGrid.addView(sendMessageButton, sendMessageButtonLayout);
+
+		LayoutParams firstRowMiddleSpaceLayout = new LayoutParams(row1, col3); //first row middle space
 		firstRowMiddleSpaceLayout.width = super.getWindowWidth() / 15;
 		Space firstRowMiddleSpace = new Space(firstButtonRowGrid.getContext());
 		firstRowMiddleSpace.setLayoutParams(firstRowMiddleSpaceLayout);
 		firstButtonRowGrid.addView(firstRowMiddleSpace, firstRowMiddleSpaceLayout);
-		
-    	LayoutParams blockUserButtonLayout = new LayoutParams(row1, col4); //block user button
-    	blockUserButtonLayout.height = super.getWindowHeight() / 10;
-    	blockUserButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	FortitudeButton blockUserButton = (new FortitudeButton(R.drawable.block_user, R.drawable.block_user_pressed) {
-    		public void preClickActions()
-    		{
-    			
-    		}
-    		public void whenClicked()
-    		{
-    			
-    		}
-    	});
-    	blockUserButton.setLayoutParams(blockUserButtonLayout);
-    	firstButtonRowGrid.addView(blockUserButton, blockUserButtonLayout);
-    	
-    	LayoutParams firstButtonRowGridLayout = new LayoutParams(row6, col1);
-    	mainArea.addView(firstButtonRowGrid, firstButtonRowGridLayout);
-    	
-    	LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, col1); //seventh row space
-    	seventhRowSpaceLayout.height = super.getWindowHeight() / 20;
-    	Space seventhRowSpace = new Space(mainArea.getContext());
-    	seventhRowSpace.setLayoutParams(seventhRowSpaceLayout);
-    	mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);
-    	
-    	GridLayout secondButtonRowGrid = new GridLayout(mainArea.getContext());
-    	secondButtonRowGrid.setColumnCount(5);
-    	secondButtonRowGrid.setRowCount(1);
-    	
-    	LayoutParams secondButtonRowLeftSpaceLayout = new LayoutParams(row1, col1);
-    	secondButtonRowLeftSpaceLayout.width = (super.getWindowWidth() / 12);
-    	Space secondButtonRowLeftSpace = new Space(secondButtonRowGrid.getContext());
-    	secondButtonRowLeftSpace.setLayoutParams(secondButtonRowLeftSpaceLayout);
-    	secondButtonRowGrid.addView(secondButtonRowLeftSpace, secondButtonRowLeftSpaceLayout);
-    	
-    	LayoutParams reportButtonLayout = new LayoutParams(row1, col2); //cancel button
-    	reportButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	reportButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton reportButton = (new FortitudeButton(R.drawable.report, R.drawable.report_pressed) {
-    		public void preClickActions()
-    		{
-    			
-    		}
-    		public void whenClicked()
-    		{
-    			EnemyProfileScreen.getMe().killMe();
-    			new ReportScreens(0) {
-    				public void whenCancelled()
-    				{
-    				    new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom());
-    				}
-    			};
-    		}
-    	});
-    	reportButton.setLayoutParams(reportButtonLayout);
-    	secondButtonRowGrid.addView(reportButton, reportButtonLayout);
-    	
-    	LayoutParams secondRowMiddleSpaceLayout = new LayoutParams(row1, col3); //second row middle space
+
+		LayoutParams blockUserButtonLayout = new LayoutParams(row1, col4); //block user button
+		blockUserButtonLayout.height = super.getWindowHeight() / 10;
+		blockUserButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+		if(!EnemyProfileScreen.getStaticTheUser().isBlocked())
+		{
+			blockUserButton = (new FortitudeButton(R.drawable.block_user, R.drawable.block_user_pressed) {
+				public void preClickActions()
+				{
+
+				}
+				public void whenClicked()
+				{
+					EnemyProfileScreen.blockedPressed();
+				}
+			});
+		}
+		else
+		{
+			blockUserButton = (new FortitudeButton(R.drawable.unblock_user, R.drawable.unblock_user_pressed) {
+				public void preClickActions()
+				{
+
+				}
+				public void whenClicked()
+				{
+					EnemyProfileScreen.blockedPressed();
+				}
+			});
+		}
+		blockUserButton.setLayoutParams(blockUserButtonLayout);
+		firstButtonRowGrid.addView(blockUserButton, blockUserButtonLayout);
+
+		LayoutParams firstButtonRowGridLayout = new LayoutParams(row6, col1);
+		mainArea.addView(firstButtonRowGrid, firstButtonRowGridLayout);
+
+		LayoutParams seventhRowSpaceLayout = new LayoutParams(row7, col1); //seventh row space
+		seventhRowSpaceLayout.height = super.getWindowHeight() / 20;
+		Space seventhRowSpace = new Space(mainArea.getContext());
+		seventhRowSpace.setLayoutParams(seventhRowSpaceLayout);
+		mainArea.addView(seventhRowSpace, seventhRowSpaceLayout);
+
+		GridLayout secondButtonRowGrid = new GridLayout(mainArea.getContext());
+		secondButtonRowGrid.setColumnCount(5);
+		secondButtonRowGrid.setRowCount(1);
+
+		LayoutParams secondButtonRowLeftSpaceLayout = new LayoutParams(row1, col1);
+		secondButtonRowLeftSpaceLayout.width = (super.getWindowWidth() / 12);
+		Space secondButtonRowLeftSpace = new Space(secondButtonRowGrid.getContext());
+		secondButtonRowLeftSpace.setLayoutParams(secondButtonRowLeftSpaceLayout);
+		secondButtonRowGrid.addView(secondButtonRowLeftSpace, secondButtonRowLeftSpaceLayout);
+
+		LayoutParams reportButtonLayout = new LayoutParams(row1, col2); //cancel button
+		reportButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+		reportButtonLayout.height = super.getWindowHeight() / 10;
+		FortitudeButton reportButton = (new FortitudeButton(R.drawable.report, R.drawable.report_pressed) {
+			public void preClickActions()
+			{
+
+			}
+			public void whenClicked()
+			{
+				if(EnemyProfileScreen.getStaticTheUser().getAccountId() == CurrentUser.getMe().getAccountId())
+				{
+					MessageBox.newMsgBox("You can't report yourself!", true);
+					return;
+				}
+				EnemyProfileScreen.getMe().killMe();
+				new ReportScreens(0, EnemyProfileScreen.getStaticTheUser()) {
+					public void whenCancelled()
+					{
+						new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.screenGoTo);
+					}
+				};
+			}
+		});
+		reportButton.setLayoutParams(reportButtonLayout);
+		secondButtonRowGrid.addView(reportButton, reportButtonLayout);
+
+		LayoutParams secondRowMiddleSpaceLayout = new LayoutParams(row1, col3); //second row middle space
 		secondRowMiddleSpaceLayout.width = super.getWindowWidth() / 15;
 		Space secondRowMiddleSpace = new Space(secondButtonRowGrid.getContext());
 		secondRowMiddleSpace.setLayoutParams(secondRowMiddleSpaceLayout);
 		secondButtonRowGrid.addView(secondRowMiddleSpace, secondRowMiddleSpaceLayout);
-    	
-    	LayoutParams cancelButtonLayout = new LayoutParams(row1, col4); //cancel button
-    	cancelButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
-    	cancelButtonLayout.height = super.getWindowHeight() / 10;
-    	FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
-    		public void preClickActions()
-    		{
-    			
-    		}
-    		public void whenClicked()
-    		{
-    			EnemyProfileScreen.getMe().killMe();
-    			new EnemyCacheScreen(EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.getStaticTheUser());
-    		}
-    	});
-    	cancelButton.setLayoutParams(cancelButtonLayout);
-    	secondButtonRowGrid.addView(cancelButton, cancelButtonLayout);
-    	
-    	LayoutParams secondButtonRowGridLayout = new LayoutParams(row8, col1);
-    	mainArea.addView(secondButtonRowGrid, secondButtonRowGridLayout);
-    	
+
+		LayoutParams cancelButtonLayout = new LayoutParams(row1, col4); //cancel button
+		cancelButtonLayout.width = (super.getWindowWidth() / 2) - (super.getWindowWidth() / 10);
+		cancelButtonLayout.height = super.getWindowHeight() / 10;
+		FortitudeButton cancelButton = (new FortitudeButton(R.drawable.cancel, R.drawable.cancel_pressed) {
+			public void preClickActions()
+			{
+
+			}
+			public void whenClicked()
+			{
+				EnemyProfileScreen.getMe().killMe();
+				if(screenGoTo == 0)
+				{
+					new EnemyCacheScreen(EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.getStaticTheUser());
+				}
+				else
+				{
+					new ViewMessageScreen(ViewMessageScreen.sender, ViewMessageScreen.subject, ViewMessageScreen.content, ViewMessageScreen.notificationId ,ViewMessageScreen.goToPage) {
+						public void whenCancelled() 
+						{
+							if(ViewMessageScreen.goToPage == 0)
+							{
+								new NotificationScreen(NotificationScreen.pageId);
+							}
+							else if(ViewMessageScreen.goToPage == 1)
+							{
+								new InboxScreen(InboxScreen.pageId);
+							}
+						}
+					};
+				}
+			}
+		});
+		cancelButton.setLayoutParams(cancelButtonLayout);
+		secondButtonRowGrid.addView(cancelButton, cancelButtonLayout);
+
+		LayoutParams secondButtonRowGridLayout = new LayoutParams(row8, col1);
+		mainArea.addView(secondButtonRowGrid, secondButtonRowGridLayout);
+
 		return mainArea;
 	}
-	
+
 	////////
 	//
 	//topBarClicked
@@ -282,11 +325,11 @@ public class EnemyProfileScreen extends Window
 		new AccountScreen() {
 			public void showNextScreen()
 			{
-				new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom());
+				new EnemyProfileScreen(EnemyProfileScreen.getStaticTheUser(), EnemyProfileScreen.getStaticCacheComeFrom(), EnemyProfileScreen.screenGoTo);
 			}
 		};
 	}
-	
+
 	////////
 	//
 	//getMe
@@ -298,27 +341,83 @@ public class EnemyProfileScreen extends Window
 	{
 		return me;
 	}
-	
-    ////////
-    //
-    //killMe
-    //
-    //removes this window from view
-    //
-    ////////
-    public void killMe()
-    {
-    	me = null;
-    	this.removeAllViews();
-    }
-    
-    public static User getStaticTheUser()
-    {
-    	return staticTheUser;
-    }
-    
-    public static Cache getStaticCacheComeFrom()
-    {
-    	return staticCacheComeFrom;
-    }
+
+	////////
+	//
+	//killMe
+	//
+	//removes this window from view
+	//
+	////////
+	public void killMe()
+	{
+		me = null;
+		this.removeAllViews();
+	}
+
+	public static User getStaticTheUser()
+	{
+		return staticTheUser;
+	}
+
+	public static Cache getStaticCacheComeFrom()
+	{
+		return staticCacheComeFrom;
+	}
+
+	public static void blockedPressed()
+	{
+		if(EnemyProfileScreen.getStaticTheUser().getAccountId() == CurrentUser.getMe().getAccountId())
+		{
+			MessageBox.newMsgBox("You can't report yourself!", true);
+			return;
+		}
+		ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
+		ServerRequests.setBlocked(EnemyProfileScreen.getStaticTheUser().getUserName(), !EnemyProfileScreen.getStaticTheUser().isBlocked());
+		Thread thread = new Thread(new Runnable() {
+			public void run()
+			{
+				while(!ServerRequests.getBlockUserComplete())
+				{
+					//wait
+					try
+					{
+						Thread.sleep(100);
+					}
+					catch(Exception e)
+					{
+
+					}
+				}
+				if(ServerRequests.getBlockUserSuccess())
+				{
+					Fortitude.getFortitude().runOnUiThread(new Runnable() {
+						public void run()
+						{
+							if(ServerRequests.getTheMessageBox() != null)
+							{
+								ServerRequests.getTheMessageBox().killMe();
+							}
+							if(MessageBox.getMe() != null)
+							{
+								MessageBox.getMe().killMe();
+							}
+							EnemyProfileScreen.getMe().killMe();
+							if(EnemyProfileScreen.getStaticTheUser().isBlocked())
+							{
+								BlockedManager.addBlocked(EnemyProfileScreen.getStaticTheUser().getUserName());
+							}
+							else
+							{
+								BlockedManager.removeBlocked(EnemyProfileScreen.getStaticTheUser().getUserName());
+							}
+							new EnemyProfileScreen(EnemyProfileScreen.staticTheUser, EnemyProfileScreen.staticCacheComeFrom, EnemyProfileScreen.screenGoTo);
+							MessageBox.newMsgBox("Success!", true);
+						}
+					});
+				}
+			}
+		});
+		thread.start();
+	}
 }
