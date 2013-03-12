@@ -100,7 +100,7 @@ public class ActivateUserScreen extends Window
 			public void whenClicked()
 			{
 				ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-				ServerRequests.resendActivationEmail(emailField.getText().toString());
+				ServerRequests.resendActivationEmail(emailField.getText().toString().toLowerCase());
 			}
 		});
 		sendEmailButton.setLayoutParams(sendEmailButtonLayout);

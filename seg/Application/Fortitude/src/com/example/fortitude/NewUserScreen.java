@@ -254,7 +254,7 @@ public class NewUserScreen extends Window
 		if(validateUserInput())
 		{
 	    	ServerRequests.setTheMessageBox(MessageBox.newMsgBox("Connecting To Server", false));
-		    Login.createUser(usernameField.getText().toString(), passwordField1.getText().toString(), emailField1.getText().toString());
+		    Login.createUser(usernameField.getText().toString().toLowerCase(), passwordField1.getText().toString(), emailField1.getText().toString().toLowerCase());
 		}
 	}
 
