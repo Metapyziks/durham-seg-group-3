@@ -399,6 +399,11 @@ public class MessageSettingsScreen extends Window
 					});
 					thread.start();
 				}
+				else
+				{
+					MessageSettingsScreen.getMe().killMe();
+					new InboxScreen(InboxScreen.pageId);
+				}
 			}
 		});
 		cancelButton.setLayoutParams(cancelButtonLayout);

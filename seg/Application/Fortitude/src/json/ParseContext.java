@@ -35,7 +35,7 @@ class ParseContext
 		
 		do
 		{
-			string = br.readLine() + "\n";
+			string = br.readLine();
 			
 			if(string != null)
 			{
@@ -82,6 +82,7 @@ class ParseContext
 				}
 
 				sb.append(string);
+				sb.append('\n');
 				
 				if(exitCharLoop)
 				{
@@ -91,7 +92,7 @@ class ParseContext
 
 		} while(System.currentTimeMillis() - currentTime < 15000);
 		
-		if(System.currentTimeMillis() - currentTime >= 15000)
+		if(System.currentTimeMillis() - currentTime >= 20000)
 		{
 			throw new EOFException();
 		}

@@ -218,7 +218,8 @@ public abstract class PostBattleScreen extends Window
 		captivesTextView.setTextColor(Color.WHITE);
 		captivesTextView.setTextSize(14);
 		captivesTextView.setGravity(Gravity.CENTER);
-		if(staticTheCache.getOwnerId() == CurrentUser.getMe().getAccountId())
+		boolean fromHistory = PostBattleScreen.getStaticTheResponse().get("victory").asBoolean() != (PostBattleScreen.getStaticTheResponse().get("attackersurvivors").asInteger() > 0);
+		if(fromHistory)
 		{
 			if(PostBattleScreen.getStaticTheResponse().get("victory").asString().equals("true"))
 			{
@@ -233,11 +234,11 @@ public abstract class PostBattleScreen extends Window
 		{
 			if(PostBattleScreen.getStaticTheResponse().get("victory").asString().equals("true"))
 			{
-				captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenderdeserters").asString()))) + " of your soldiers chose to surrender and join the attacking army.");
+				captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("defenderdeserters").asString()))) + " of the enemy soldiers chose to surrender and have joined your army.");
 			}
 			else
 			{
-				captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackerdeserters").asString()))) + " of the enemy soldiers chose to surrender and have joined your army.");
+				captivesTextView.setText(Integer.toString((int)(Double.parseDouble(PostBattleScreen.getStaticTheResponse().get("attackerdeserters").asString()))) + " of your soldiers chose to surrender and join the attacking army.");
 			}
 		}
 		captivesTextView.setLayoutParams(captivesTextViewLayout);
